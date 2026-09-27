@@ -1,7 +1,18 @@
+using FoodManagementProject.Models;
+using Microsoft.EntityFrameworkCore;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Creating the connection with the test database
+var connectionString = builder.Configuration.GetConnectionString("FoodDbConnection")
+    ?? throw new InvalidOperationException("FoodDb connection not found."); // implementing an exception for possible error
+
+builder.Services.AddDbContext<IngredientsDbV1Context>(options => options.UseNpgsql(connectionString));
+
 
 var app = builder.Build();
 
