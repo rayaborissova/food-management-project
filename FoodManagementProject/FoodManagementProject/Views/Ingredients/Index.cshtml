@@ -1,0 +1,64 @@
+@model IEnumerable<FoodManagementProject.Models.Ingredient>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+
+    <form method="get">
+        <input type="text" name="search" placeholder="Search ingredients" />
+        <button type="submit">Search</button>
+    </form>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IngredientName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IngredientNameNormalized)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IngredientSource)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                    @Html.DisplayFor(model => item.Category.CategoryName) <!--to display category names instead of id-->
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.IngredientName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.IngredientNameNormalized)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.IngredientSource)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Status)
+            </td>
+            <td><!--will be switched to have "add to inventory"-->
+                <a asp-action="Edit" asp-route-id="@item.IngredientId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.IngredientId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.IngredientId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

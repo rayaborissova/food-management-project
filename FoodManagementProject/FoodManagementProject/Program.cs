@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 var connectionString = builder.Configuration.GetConnectionString("FoodDbConnection")
     ?? throw new InvalidOperationException("FoodDb connection not found."); // implementing an exception for possible error
 
-builder.Services.AddDbContext<IngredientsDbV1Context>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<FoodManagementDbContext>(options => options.UseNpgsql(connectionString));
 
 
 var app = builder.Build();
