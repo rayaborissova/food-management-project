@@ -1,15 +1,23 @@
 is_global = true
 build_property.TargetFramework = net10.0
-build_property.TargetFrameworkIdentifier = .NETCoreApp
-build_property.TargetFrameworkVersion = v10.0
+build_property.TargetFramework = net10.0
+build_property.TargetPlatformMinVersion = 
 build_property.TargetPlatformMinVersion = 
 build_property.UsingMicrosoftNETSdkWeb = true
+build_property.UsingMicrosoftNETSdkWeb = true
+build_property.ProjectTypeGuids = 
 build_property.ProjectTypeGuids = 
 build_property.InvariantGlobalization = 
+build_property.InvariantGlobalization = 
+build_property.PlatformNeutralAssembly = 
 build_property.PlatformNeutralAssembly = 
 build_property.EnforceExtendedAnalyzerRules = 
-build_property.EntryPointFilePath = 
+build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property._SupportedPlatformList = Linux,macOS,Windows
+build_property.TargetFrameworkIdentifier = .NETCoreApp
+build_property.TargetFrameworkVersion = v10.0
+build_property.EntryPointFilePath = 
 build_property.RootNamespace = FoodManagementProject
 build_property.RootNamespace = FoodManagementProject
 build_property.ProjectDir = C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManagementProject\FoodManagementProject\
@@ -29,6 +37,54 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Ingredients/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5ncmVkaWVudHNcQ3JlYXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Ingredients/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5ncmVkaWVudHNcRGVsZXRlLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Ingredients/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5ncmVkaWVudHNcRGV0YWlscy5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Ingredients/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5ncmVkaWVudHNcRWRpdC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Ingredients/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW5ncmVkaWVudHNcSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Add.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XEFkZC5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XENyZWF0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XERlbGV0ZS5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XERldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XEVkaXQuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XEluZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Review.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XFJldmlldy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Shared/Error.cshtml]

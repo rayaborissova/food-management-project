@@ -1,0 +1,58 @@
+﻿@model FoodManagementProject.Models.InventoryReviewViewModel
+
+@{
+    ViewData["Title"] = "Review ingredients";
+}
+
+<div class="ingredient-add-page">
+    <h1 class="ingredient-page-title">Review ingredients</h1>
+    <p class="ingredient-page-description">Quantity, unit, and expiration date are optional. If you enter quantity, choose a unit.</p>
+
+    <form asp-controller="Inventory" asp-action="Save" method="post">
+        <div asp-validation-summary="All" class="inventory-validation-errors"></div>
+
+        <div class="ingredient-table-container">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Expiration date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i=0; i < Model.Items.Count; i++)
+                    {
+                        <tr>
+                            <td>@Model.Items[i].IngredientName
+                                <input type="hidden" asp-for="Items[i].IngredientId"/>
+                            </td>
+                            <td>
+                                <input asp-for="Items[i].Quantity" type="number" min="0.5" step="0.5" aria-label="Quantity for @Model.Items[i].IngredientName" class="ingredient-search-input"/>
+                            </td>
+                            <td>
+                                <select asp-for="Items[i].UnitId" aria-label="Unit for @Model.Items[i].IngredientName" class="ingredient-search-input">
+                                    <option value="">Not specified</option>
+
+                                    @foreach (var unit in Model.AvailableUnits)
+                                        {
+                                            <option value="@unit.UnitId">@unit.UnitName</option>
+                                        }
+                                </select>
+                            </td>
+                            <td>
+                                <input asp-for="Items[i].ExpirationDate" type="date" aria-label="Expiration date for @Model.Items[i].IngredientName" class="ingredient-search-input"/>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit" class="ingredient-search-button">Add to inventory</button>
+    </form>
+
+    <a asp-controller="Inventory" asp-action="Add" class="ingredient-back-link" >Back to selection</a>
+
+</div>

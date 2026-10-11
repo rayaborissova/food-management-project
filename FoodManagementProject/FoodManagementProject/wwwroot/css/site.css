@@ -29,3 +29,183 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/*Add ingredients page*/
+.ingredient-add-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    color: rgb(183, 159, 160);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.ingredient-page-title {
+    margin: 0 0 12px;
+    font-size: 32px;
+}
+
+.ingredient-page-description {
+    margin: 0 0 24px;
+    color: rgb(65, 50, 57);
+    line-height: 1.5;
+}
+
+.ingredient-search-form {
+    margin-bottom: 20px;
+}
+
+/*For the ingredient search*/
+.ingredient-search-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.ingredient-search-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.ingredient-search-input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: white;
+    color: rgb(65, 50, 57);
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.ingredient-search-button {
+    padding: 12px;
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: cornflowerblue;
+    color: whitesmoke;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.ingredient-search-button:hover {
+    background-color:aqua;
+}
+
+/*For the ingredient result*/
+.ingredient-table-container {
+    margin-bottom: 24px;
+    overflow-x: auto;
+}
+
+.ingredient-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.ingredient-table th, .ingredient-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid black;
+}
+
+.ingredient-table th {
+    background-color: rebeccapurple;
+    font-weight:bold;
+    color: white;
+}
+
+.ingredient-table tbody tr:hover {
+    background-color: lightpink;
+}
+
+.ingredient-checkbox {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    vertical-align: middle;
+    accent-color: blue;
+    cursor: pointer;
+}
+
+.ingredient-name-label {
+    cursor: pointer;
+}
+
+.ingredient-empty-message {
+    padding: 16px;
+    border: 1px solid black;
+    border-radius: 6px;
+    background-color: rgb(202, 106, 106);
+    line-height: 1.5;
+}
+
+/* back link*/
+.ingredient-back-link {
+    display: inline-block;
+    padding: 10px 16px;
+    border: 1px solid black;
+    border-radius: 6px;
+    color: cornflowerblue;
+    text-decoration: none;
+}
+
+.ingredient-back-link:hover {
+    background-color: hotpink;
+}
+
+/*visible focus when navigating with a keyboard on a desktop*/
+.ingredient-search-input:focus-visible, .ingredient-search-button:focus-visible, 
+.ingredient-checkbox:focus-visible, .ingredient-back-link:focus-visible {
+    outline: 3px solid blue;
+    outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+    .ingredient-search-controls {
+        flex-direction: column;
+    }
+
+    .ingredient-page-title {
+        font-size: 26px;
+    }
+}
+
+/*styling for errors*/
+.inventory-validation-errors {
+    margin-bottom: 16px;
+    color: rgb(144, 39, 39);
+}
+
+.inventory-validation-errors ul {
+    padding-left: 12px;
+}
+
+.inventory-edit-field {
+    margin-bottom: 16px;
+}
+
+/*styling for the delete inventory page and button*/
+.inventory-delete-details dt {
+    margin: 4px 0 0;
+}
+
+.inventory-delete-details dd {
+    font-weight: bold;
+    margin-top: 16px;
+}
+
+.inventory-delete-button {
+    background-color: rgb(146, 6, 6);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px 20px;
+    margin: 20px 0;
+    font:inherit;
+    cursor: pointer;
+}
+
+.inventory-delete-button:hover {
+    background-color: #531414
+}
