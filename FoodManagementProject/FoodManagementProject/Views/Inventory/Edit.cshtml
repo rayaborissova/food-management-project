@@ -1,0 +1,48 @@
+@model FoodManagementProject.Models.InventoryEditViewModel
+
+@{
+    ViewData["Title"] = "Edit inventory";
+}
+
+<div class="ingredient-add-page">
+    <h1 class="ingredient-page-title">Edit inventory</h1>
+
+    <p class="ingredient-page-description">Editing: <strong>@Model.IngredientName</strong></p>
+    <p>Enter both quantity and unit, or leave both empty. Expiration date is optional.</p>
+
+    <form asp-controller="Inventory" asp-action="Edit" asp-route-ingredientbatchid="@Model.IngredientBatchId" method="post">
+        <div asp-validation-summary="All" class="inventory-validation-errors"></div>
+        <input type="hidden" asp-for="IngredientBatchId" />
+
+        <div class="inventory-edit-field">
+            <label asp-for="Quantity" class="ingredient-search-label">Quantity</label>
+
+            <input asp-for="Quantity" type="number" min="0.01" step="any" class="ingredient-search-input" />
+        </div>
+
+        <div class="inventory-edit-field">
+            <label asp-for="UnitId" class="ingredient-search-label">Unit</label>
+
+            <select asp-for="UnitId" class="ingredient-search-input">
+                <option value="">Not specified</option>
+
+                @foreach (var unit in Model.AvailableUnits)
+                        {
+                            <option value="@unit.UnitId">@unit.UnitName</option>
+                        }
+            </select>
+        </div>
+
+        <div class="inventory-edit-field">
+            <label asp-for="ExpirationDate" class="ingredient-search-label">Expiration date</label>
+
+            <input asp-for="ExpirationDate" type="date" class="ingredient-search-input" />
+        </div>
+
+        <button type="submit" class="ingredient-search-button">Save changes</button>
+    </form> 
+
+    <div>
+        <a asp-action="Index" class="ingredient-back-link">Back to Inventory</a>
+    </div>
+</div>

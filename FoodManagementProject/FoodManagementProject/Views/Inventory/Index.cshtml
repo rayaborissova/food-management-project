@@ -1,0 +1,58 @@
+@model IEnumerable<FoodManagementProject.Models.InventoryBatch>
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+
+<div class="ingredient-add-page">
+
+    <h1 class="ingredient-page-title">Inventory</h1>
+
+    <!--message to be displayed after a sucessful save-->
+    @if (TempData["InventorySuccess"] is string successMessage)
+    {
+        <p role="status">@successMessage</p>
+        <script>
+            sessionStorage.removeItem("inventorySelectedIngredientsIds")
+        </script>
+    }
+
+    <p>
+        <a asp-controller="Inventory" asp-action="Add" class="ingredient-back-link">Add Ingredients</a>
+    </p>
+
+
+    @if (!Model.Any())
+    {
+        <p class="ingredient-empty-message">Your inventory is empty. Add ingredients to get started</p>
+    } else
+    {
+        <div class="ingredient-table-container">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Expiration date</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var batch in Model)
+                    {
+                        <tr>
+                            <td>@batch.Ingredient.IngredientName</td> 
+                            <td>@(batch.Quantity.HasValue ? batch.Quantity.Value.ToString("0.##") : "Not specified")</td>
+                            <td>@(batch.Unit?.UnitName ?? "Not specified")</td>
+                            <td>@(batch.ExpirationDate.HasValue ? batch.ExpirationDate.Value.ToString("dd/MM/yyyy") : "Not specified")</td>
+                            <td><a asp-action="Edit" asp-route-ingredientbatchid="@batch.IngredientBatchId">Edit</a></td>
+                            <td><a asp-action="Delete" asp-route-ingredientbatchid="@batch.IngredientBatchId">Delete</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rayab\\source\\repos\\food-management-project\\FoodManagementProject\\FoodManagementProject\\FoodManagementProject.csproj": {}
+    "C:\\Users\\RayaBorissova\\OneDrive - aubg.edu\\Documents\\SENIOR PROJECT\\FoodManagementProject\\FoodManagementProject\\FoodManagementProject.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rayab\\source\\repos\\food-management-project\\FoodManagementProject\\FoodManagementProject\\FoodManagementProject.csproj": {
+    "C:\\Users\\RayaBorissova\\OneDrive - aubg.edu\\Documents\\SENIOR PROJECT\\FoodManagementProject\\FoodManagementProject\\FoodManagementProject.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rayab\\source\\repos\\food-management-project\\FoodManagementProject\\FoodManagementProject\\FoodManagementProject.csproj",
+        "projectUniqueName": "C:\\Users\\RayaBorissova\\OneDrive - aubg.edu\\Documents\\SENIOR PROJECT\\FoodManagementProject\\FoodManagementProject\\FoodManagementProject.csproj",
         "projectName": "FoodManagementProject",
-        "projectPath": "C:\\Users\\rayab\\source\\repos\\food-management-project\\FoodManagementProject\\FoodManagementProject\\FoodManagementProject.csproj",
-        "packagesPath": "C:\\Users\\rayab\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rayab\\source\\repos\\food-management-project\\FoodManagementProject\\FoodManagementProject\\obj\\",
+        "projectPath": "C:\\Users\\RayaBorissova\\OneDrive - aubg.edu\\Documents\\SENIOR PROJECT\\FoodManagementProject\\FoodManagementProject\\FoodManagementProject.csproj",
+        "packagesPath": "C:\\Users\\RayaBorissova\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\RayaBorissova\\OneDrive - aubg.edu\\Documents\\SENIOR PROJECT\\FoodManagementProject\\FoodManagementProject\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\rayab\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\RayaBorissova\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,6 +26,7 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {

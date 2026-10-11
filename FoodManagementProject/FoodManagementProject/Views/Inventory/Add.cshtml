@@ -1,0 +1,169 @@
+﻿@model IEnumerable<FoodManagementProject.Models.Ingredient>
+
+@{
+    ViewData["Title"] = "Add Ingredients";
+}
+
+<div class="ingredient-add-page">
+    <h1 class="ingredient-page-title">Add Ingredients</h1>
+    <p class="ingredient-page-description"> Search for ingredients and select the ones you have.</p>
+
+    <form asp-controller="Inventory" asp-action="Add" method="get" class="ingredient-search-form">
+        <label for="ingredient-search" class="ingredient-search-label">
+            Search ingredients
+        </label>
+
+        <div class="ingredient-search-controls">
+            <input id="ingredient-search" type="search" name="search" value="@ViewData["Search"]" placeholder="Search chicken" class="ingredient-search-input" />
+            <button type="submit" class="ingredient-search-button">Search</button>
+        </div>
+    </form>
+
+    <p id="selection-count" aria-live="polite">0 ingredients selected</p>
+    <button type="button" id="clear-selection">Clear selection</button>
+
+    @if (!Model.Any())
+    {
+        <p class="ingredient-empty-message">
+            No matching ingredient found. Please try another search.
+        </p>
+    } else
+    {
+        <div class="ingredient-table-container">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Select</th>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ingredient in Model) /*creates one table row for each ingredient*/
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" 
+                                    value="@ingredient.IngredientId" class="ingredient-checkbox" />
+                            </td> <!-- stores id of the ingredient as the value of the checkbox-->
+                            <td>
+                                <label for="ingredient-@ingredient.IngredientId" class="ingredient-name-label">
+                                    @ingredient.IngredientName
+                                </label> <!-- name is connected to the checkbox as well so clicking on name ticks it-->
+                            </td>
+                            <td>
+                                @ingredient.Category?.CategoryName
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <form asp-controller="Inventory" asp-action="Review" method="post" id="review-selected-form">
+        <div id="selected-ingredient-inputs"></div>
+        <button type="submit" class="ingredient-search-button">Review selected</button>
+    </form>
+
+
+    <a asp-controller="Inventory" asp-action="Index" class="ingredient-back-link">
+        Back to Inventory
+    </a>
+</div>
+
+<script>
+    const storageKey = "inventorySelectedIngredientsIds";
+    
+    // reading the stored ingredient ids, and if nothing is selected, it returns empty
+    let selectedIds = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
+
+    // finding all ingredient checkboxes displayed on the page
+    const checkboxes = document.querySelectorAll('input[name="selectedIngredientIds"]');
+
+    // finding the paragraph that displays the number selected
+    const selectionCount = document.getElementById("selection-count");
+
+    // finding the button that clears the selection
+    const clearButton = document.getElementById("clear-selection");
+
+    // updating the displayed number of selected ingredients
+    function updateSelectionCount() {
+        selectionCount.textContent = selectedIds.length + " ingredients selected";
+    }
+
+    // storing the current selections and updating their count
+    function saveSelection() {
+        sessionStorage.setItem(storageKey, JSON.stringify(selectedIds));
+
+        updateSelectionCount();
+    }
+
+    for(const checkbox of checkboxes) {
+
+        //for every box, ticking if the id is already in the remembered selection
+        checkbox.checked = selectedIds.includes(checkbox.value);
+
+        // whenever the user ticks or unticks
+        checkbox.addEventListener("change", function(){
+            if (checkbox.checked) {
+
+                // adding the id if not in selection
+                if (!selectedIds.includes(checkbox.value)) {
+                    selectedIds.push(checkbox.value);
+                }
+            } else {
+
+                // keeping every id except the unticked one
+                selectedIds = selectedIds.filter(id => id !== checkbox.value);
+            }
+
+            // remember and refresh the count
+            saveSelection();
+        });
+    }
+
+    // when the clear button ic clicked
+    clearButton.addEventListener("click", function() {
+
+        // the remembered selection list is emptied
+        selectedIds = [];
+
+        // all currently displayed boxes are unticked
+        for (const checkbox of checkboxes) {
+            checkbox.checked = false;
+        }
+
+        //storing the empty list and updating count to 0
+        saveSelection();
+    });
+
+    //displaying the count after loading
+    updateSelectionCount();
+
+
+    const reviewForm = document.getElementById("review-selected-form");
+    const selectedInputs = document.getElementById("selected-ingredient-inputs");
+
+    reviewForm.addEventListener("submit", function (event) {
+        if (selectedIds.length === 0) {
+            event.preventDefault();
+            alert("Select at least one ingredient.");
+            return
+        }
+        
+        // removing inputs from earlier submission attempts
+        selectedInputs.replaceChildren();
+
+        // sending the ids of every selected ingredient, those hidden from the search as well
+        for (const id of selectedIds) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "selectedIngredientIds";
+            input.value = id;
+
+            selectedInputs.appendChild(input);
+        }
+
+    });
+</script>
