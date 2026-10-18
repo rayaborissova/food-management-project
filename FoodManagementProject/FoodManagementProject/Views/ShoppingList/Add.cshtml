@@ -55,6 +55,12 @@
         </div>
     }
 
+    <form asp-controller="ShoppingList" asp-action="Review" method="post" id="review-selection-form">
+        <div id="selected-ingredient-input"></div>
+
+        <button type="submit" class="ingredient-search-button">Review selected</button>
+    </form>
+
     <a asp-controller="ShoppingList" asp-action="Index" class="ingredient-back-link">Back to shopping list</a>
 
 </div>
@@ -105,5 +111,29 @@
      });
 
      updateSelectionCount();
+
+     const reviewForm = document.getElementById("review-selection-form");
+     const selectedInputs = document.getElementById("selected-ingredient-input");
+
+     reviewForm.addEventListener("submit", function(event){
+         if (selectedIds.length == 0) {
+             event.preventDefault();
+             alert("Select at least one ingredient.");
+             return;
+         }
+         selectedInputs.replaceChildren();
+
+         for(const id of selectedIds) {
+             const input = document.createElement("input");
+
+             input.type = "hidden";
+             input.name = "selectedIngredientIds";
+             input.value = id;
+
+             selectedInputs.appendChild(input);
+         }
+
+     });
+
 
 </script>

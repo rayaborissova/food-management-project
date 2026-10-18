@@ -8,6 +8,21 @@
     <h1 class="ingredient-page-title">Shopping List</h1>
     <p class="ingredient-page-description">Check off ingredients as you shop</p>
 
+    @if (TempData["ShoppingListSuccess"] is string successMessage)
+    {
+        <p role="status">@successMessage</p>
+
+        <script>
+            sessionStorage.removeItem("shoppingListSelectedIngredientIds");
+        </script>
+    }
+
+    @if (TempData["ShoppingListEditSuccess"] is string editMessage)
+    {
+        <p role="status">@editMessage</p>
+    }
+
+
     @if (!Model.Any())
     {
         <p class="ingredient-empty-message">Your shopping list is empty</p>
@@ -17,7 +32,7 @@
             {
                 <section class="shopping-category">
                     <h2 class="shopping-category-title">@categoryGroup.Key</h2>
-                    <ul class="shopping-list">
+                    <ul class="shopping-items">
                     @foreach (var item in categoryGroup)
                     {
                             <li class="shopping-item">
@@ -31,10 +46,11 @@
                                     }
                                     @if(item.Unit != null)
                                     {
-                                        @item.Unit.UnitName
+                                        <text> @item.Unit.UnitName</text>
                                     }
                                 </span>
                                 </label>
+                                <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="shopping-edit-link">Edit</a>
                             </li>
                     }
                     </ul>
@@ -48,3 +64,40 @@
     </a>
 
 </div>
+
+
+<script>
+    const purchaseStorageKey = "shoppingListCheckedItemIds";
+
+    let checkedItemIds = JSON.parse(sessionStorage.getItem(purchaseStorageKey) || "[]");
+
+    const purchaseCheckboxes = document.querySelectorAll('input[name="purchasedItemIds"]');
+
+    //keeping only the IDs that still appear as active
+    const activeItemIds = Array.from(purchaseCheckboxes, checkbox => checkbox.value);
+
+    checkedItemIds = checkedItemIds.filter(id => activeItemIds.includes(id));
+
+    function savePurchaseChecks() {
+        sessionStorage.setItem(purchaseStorageKey, JSON.stringify(checkedItemIds));
+    }
+
+    for (const checkbox of purchaseCheckboxes) {
+        //restoring the checkmark
+        checkbox.checked = checkedItemIds.includes(checkbox.value);
+
+        checkbox.addEventListener("change", function() {
+            if(checkbox.checked) {
+                if(!checkedItemIds.includes(checkbox.value)) {
+                    checkedItemIds.push(checkbox.value);
+                } 
+            } else {
+                checkedItemIds = checkedItemIds.filter(id => id !== checkbox.value);
+            }
+
+            savePurchaseChecks();
+        });
+    }
+    // removing the outdated IDs
+    savePurchaseChecks();
+</script>

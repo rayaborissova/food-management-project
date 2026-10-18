@@ -269,3 +269,10 @@ body {
 .shopping-item-checkbox:checked + .shopping-item-label + .shopping-item-amount {
     color: #707070
 }
+
+.shopping-edit-link {
+    flex-shrink:0;
+    padding: 8px;
+    color: #3157a4;
+    text-decoration: underline;
+}
