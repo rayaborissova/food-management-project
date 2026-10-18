@@ -1,0 +1,109 @@
+﻿@model IEnumerable<FoodManagementProject.Models.Ingredient>
+
+@{
+    ViewData["Title"] = "Add to shopping list";
+}
+
+<div class="ingredient-add-page">
+        <h1 class="ingredient-page-title">Add to shopping list </h1>
+        <p class="ingredient-page-description">Search for what you need to buy</p>
+
+        <form asp-controller="ShoppingList" asp-action="Add" method="get" class="ingredient-search-form">
+            <label for="ingredient-search" class="ingredient-search-label">Search ingredients</label>
+
+            <div class="ingredient-search-controls">
+                <input id="ingredient-search" type="search" name="search" value="@ViewData["Search"]" placeholder="Search ingredients" class="ingredient-search-input" />
+                <button type="submit" class="ingredient-search-button">Search</button>
+            </div>
+        </form>
+
+        <p id="selection-count" aria-live="polite">0 ingredients selected</p>
+
+        <button type="button" id="clear-selection" class="ingredient-search-button">Clear selection</button>
+
+    @if(!Model.Any())
+    {
+        <p class="ingredient-empty-message">No matching ingredients found. Try another search</p>
+    } else
+    {
+        <div class="ingredient-table-container">
+            <table class="ingredient-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Select</th>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var ingredient in Model)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" value="@ingredient.IngredientId" class="ingredient-checkbox" />
+                            </td>
+                            <td>
+                                <label for="ingredient-@ingredient.IngredientId" class="ingredient-name-label">@ingredient.IngredientName</label>
+                            </td>
+                            <td>
+                                @ingredient.Category?.CategoryName
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="ShoppingList" asp-action="Index" class="ingredient-back-link">Back to shopping list</a>
+
+</div>
+
+<script>
+
+    const storageKey = "shoppingListSelectedIngredientIds";
+
+    //reading previously selected ids 
+    let selectedIds = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
+
+    const checkboxes = document.querySelectorAll('input[name="selectedIngredientIds"]');
+
+    const selectionCount = document.getElementById("selection-count");
+    const clearButton = document.getElementById("clear-selection");
+
+    function updateSelectionCount() {
+        selectionCount.textContent = selectedIds.length + " ingredients selected";
+    }
+
+    function saveSelection() {
+        sessionStorage.setItem(storageKey, JSON.stringify(selectedIds));
+
+        updateSelectionCount();
+    }
+     for (const checkbox of checkboxes) {
+         checkbox.checked = selectedIds.includes(checkbox.value);
+         checkbox.addEventListener("change", function() { 
+             if (checkbox.checked) {
+                 if(!selectedIds.includes(checkbox.value)) {
+                     selectedIds.push(checkbox.value);
+                 } 
+             } else {
+                 selectedIds = selectedIds.filter(id => id !== checkbox.value);
+             }
+
+             saveSelection();
+        });
+     }
+
+     clearButton.addEventListener("click", function() {
+         selectedIds=[];
+
+         for (const checkbox of checkboxes) {
+             checkbox.checked = false;
+         }
+         saveSelection();
+     });
+
+     updateSelectionCount();
+
+</script>

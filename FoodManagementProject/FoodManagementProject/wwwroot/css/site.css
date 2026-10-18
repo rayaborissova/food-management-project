@@ -209,3 +209,63 @@ body {
 .inventory-delete-button:hover {
     background-color: #531414
 }
+
+.shopping-category {
+    margin-bottom: 28px;
+}
+
+.shopping-category-title {
+    margin: 24px 0 12px;
+    font-size: 20px;
+}
+
+.shopping-list {
+    list-style: none;
+    margin:0;
+    padding:0;
+}
+
+.shopping-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 12px;
+    border-bottom: 1px solid black;
+}
+
+.shopping-list-chexkbox {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.shopping-list-label {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 30px;
+    flex: 1;
+    min-width: 0;
+    cursor: pointer;
+}
+
+.shopping-item-name {
+    overflow-wrap: anywhere;
+}
+
+.shopping-item-amount {
+    color: red;
+}
+
+.shopping-item-checkbox:checked + .shopping-item-label {
+    color: #707070
+}
+
+.shopping-item-checkbox:checked + .shopping-item-label + .shopping-item-name {
+    text-decoration: line-through;
+}
+
+.shopping-item-checkbox:checked + .shopping-item-label + .shopping-item-amount {
+    color: #707070
+}

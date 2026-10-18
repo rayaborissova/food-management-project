@@ -1,0 +1,50 @@
+@model IEnumerable<FoodManagementProject.Models.ShoppingListItem>
+
+@{
+    ViewData["Title"] = "Shopping list";
+}
+
+<div class="ingredient-add-page">
+    <h1 class="ingredient-page-title">Shopping List</h1>
+    <p class="ingredient-page-description">Check off ingredients as you shop</p>
+
+    @if (!Model.Any())
+    {
+        <p class="ingredient-empty-message">Your shopping list is empty</p>
+    } else
+    {
+        @foreach (var categoryGroup in Model.GroupBy(item => item.Ingredient.Category.CategoryName).OrderBy(group => group.Key))
+            {
+                <section class="shopping-category">
+                    <h2 class="shopping-category-title">@categoryGroup.Key</h2>
+                    <ul class="shopping-list">
+                    @foreach (var item in categoryGroup)
+                    {
+                            <li class="shopping-item">
+                                <input type="checkbox" id="shopping-item-@item.ShoppingListItemId" name="purchasedItemIds" value="@item.ShoppingListItemId" class="shopping-item-checkbox" />
+                                <label for="shopping-item-@item.ShoppingListItemId" class="shopping-item-label">
+                                    <span class="shopping-item-name">@item.Ingredient.IngredientName</span>
+                                    <span class="shopping-item-amount">
+                                    @if(item.Quantity.HasValue) 
+                                    {
+                                        @item.Quantity.Value.ToString("0.##")
+                                    }
+                                    @if(item.Unit != null)
+                                    {
+                                        @item.Unit.UnitName
+                                    }
+                                </span>
+                                </label>
+                            </li>
+                    }
+                    </ul>
+                </section>
+            }
+
+    }
+
+    <a asp-controller="Inventory" asp-action="Index" class="ingredient-back-link">
+        Back to Inventory
+    </a>
+
+</div>
