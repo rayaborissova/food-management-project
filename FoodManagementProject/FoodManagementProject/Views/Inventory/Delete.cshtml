@@ -4,10 +4,10 @@
     ViewData["Title"] = "Delete inventory batch";
 }
 
-<div class="ingredient-add-page">
-    <h1 class="ingredient-page-title">Delete inventory batch</h1>
+<div class="page">
+    <h1 class="page__title">Delete inventory batch</h1>
 
-    <p class="ingredient-page-description">Are you sure you want to delete this batch?</p>
+    <p class="page__lead">Are you sure you want to delete this batch?</p>
 
         <!--displaying the batch so the user can see what they are deleting-->
         <dl class="inventory-delete-details">
@@ -26,5 +26,5 @@
             <button type="submit" class="inventory-delete-button">Delete batch</button>
         </form>
         
-        <a asp-controller="Inventory" asp-action="Index" class="ingredient-back-link">Cancel</a>
+        <a asp-controller="Inventory" asp-action="Index" class="back-link">Cancel</a>
 </div>

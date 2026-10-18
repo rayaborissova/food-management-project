@@ -63,16 +63,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XEFkZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XENyZWF0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XERlbGV0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSW52ZW50b3J5XERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/Inventory/Edit.cshtml]
@@ -103,16 +95,8 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvcHBpbmdMaXN0XENvbmZpcm1QdXJjaGFzZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/ShoppingList/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvcHBpbmdMaXN0XENyZWF0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/ShoppingList/Delete.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvcHBpbmdMaXN0XERlbGV0ZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/ShoppingList/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hvcHBpbmdMaXN0XERldGFpbHMuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/RayaBorissova/OneDrive - aubg.edu/Documents/SENIOR PROJECT/FoodManagementProject/FoodManagementProject/Views/ShoppingList/Edit.cshtml]

@@ -4,16 +4,16 @@
     ViewData["Title"] = "Edit purchased items";
 }
 
-<div class="ingredient-add-page">
-    <h1 class="ingredient-page-title">Edit purchased items</h1>
+<div class="page">
+    <h1 class="page__title">Edit purchased items</h1>
 
-    <p class="ingredient-page-description">Confirm the quantities you bought. Enter both quantity and unit, or leave both empty. Expiration dates are optional.</p>
+    <p class="page__lead">Confirm the quantities you bought. Enter both quantity and unit, or leave both empty. Expiration dates are optional.</p>
 
     <form asp-controller="ShoppingList" asp-action="SavePurchase" method="post">
         <div asp-validation-summary="All" class="inventory-validation-errors"></div>
 
-        <div class="ingredient-table-container">
-            <table class="ingredient-table">
+        <div class="table-wrap">
+            <table class="data-table">
                 <thead>
                     <tr>
                         <th scope="col">Ingredients</th>
@@ -31,12 +31,12 @@
                                     <input type="hidden" asp-for="Items[i].ShoppingListItemId" />
                                 </td>
                                 <td>
-                                    <input asp-for="Items[i].Quantity" type="number" min="0.01" step="any" aria-label="Quantity bought for @Model.Items[i].IngredientName" class="ingredient-search-input" />
+                                    <input asp-for="Items[i].Quantity" type="number" min="0.01" step="any" aria-label="Quantity bought for @Model.Items[i].IngredientName" class="input" />
 
                                     <span asp-validation-for="Items[i].Quantity" class="inventory-validation-errors"></span>
                                 </td>
                                 <td>
-                                    <select asp-for="Items[i].UnitId" aria-label="Unit for @Model.Items[i].IngredientName" class="ingredient-search-input">
+                                    <select asp-for="Items[i].UnitId" aria-label="Unit for @Model.Items[i].IngredientName" class="input">
                                         <option value="">Not specified</option>
                                         @foreach (var unit in Model.AvailableUnits) {
                                             <option value="@unit.UnitId">@unit.UnitName</option>
@@ -45,7 +45,7 @@
                                     <span asp-validation-for="Items[i].UnitId" class="inventory-validation-errors"></span>
                                 </td>
                                 <td>
-                                    <input asp-for="Items[i].ExpirationDate" type="date" aria-label="Expiration date for @Model.Items[i].IngredientName" class="ingredient-search-input" />
+                                    <input asp-for="Items[i].ExpirationDate" type="date" aria-label="Expiration date for @Model.Items[i].IngredientName" class="input" />
 
                                     <span asp-validation-for="Items[i].ExpirationDate" class="inventory-validation-errors"></span>
                                 </td>
@@ -55,9 +55,9 @@
             </table>
         </div>
 
-        <button type="submit" class="ingredient-search-button">Add to inventory</button>
+        <button type="submit" class="btn btn--primary">Add to inventory</button>
     </form>
 
-    <a asp-controller="ShoppingList" asp-action="Index" class="ingredient-back-link">Back to shopping list</a>
+    <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Back to shopping list</a>
 
 </div>

@@ -4,9 +4,11 @@
     ViewData["Title"] = "Shopping list";
 }
 
-<div class="ingredient-add-page">
-    <h1 class="ingredient-page-title">Shopping List</h1>
-    <p class="ingredient-page-description">Check off ingredients as you shop</p>
+<div class="page">
+    <h1 class="page__title">Shopping List</h1>
+    <p class="page__lead">Check off ingredients as you shop</p>
+
+    <a asp-controller="ShoppingList" asp-action="Add" class="btn btn--primary">Add ingredients</a>
 
     @if (TempData["ShoppingListSuccess"] is string successMessage)
     {
@@ -22,10 +24,14 @@
         <p role="status">@editMessage</p>
     }
 
+    @if (TempData["ShoppingListDeleteSuccess"] is string deleteMessage)
+    {
+        <p role="status">@deleteMessage</p>
+    }
 
     @if (!Model.Any())
     {
-        <p class="ingredient-empty-message">Your shopping list is empty</p>
+        <p class="empty-state">Your shopping list is empty</p>
     } else
     {
         @foreach (var categoryGroup in Model.GroupBy(item => item.Ingredient.Category.CategoryName).OrderBy(group => group.Key))
@@ -36,7 +42,7 @@
                     @foreach (var item in categoryGroup)
                     {
                             <li class="shopping-item">
-                                <input type="checkbox" id="shopping-item-@item.ShoppingListItemId" name="purchasedItemIds" value="@item.ShoppingListItemId" class="shopping-item-checkbox" />
+                                <input type="checkbox" id="shopping-item-@item.ShoppingListItemId" name="purchasedItemIds" value="@item.ShoppingListItemId" class="checkbox" />
                                 <label for="shopping-item-@item.ShoppingListItemId" class="shopping-item-label">
                                     <span class="shopping-item-name">@item.Ingredient.IngredientName</span>
                                     <span class="shopping-item-amount">
@@ -51,6 +57,7 @@
                                 </span>
                                 </label>
                                 <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="shopping-edit-link">Edit</a>
+                                <a asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@item.ShoppingListItemId" class="shopping-remove-link">Remove</a>
                             </li>
                     }
                     </ul>
@@ -61,11 +68,11 @@
 
     <form asp-controller="ShoppingList" asp-action="ConfirmPurchase" method="post" id="confirm-purchase-form">
         <div id="checked-purchase-inputs"></div>
-        <button type="submit" class="ingredient-search-button">Add to inventory</button>
+        <button type="submit" class="btn btn--sage">Add to inventory</button>
 
     </form>
 
-    <a asp-controller="Inventory" asp-action="Index" class="ingredient-back-link">
+    <a asp-controller="Inventory" asp-action="Index" class="back-link">
         Back to Inventory
     </a>
 

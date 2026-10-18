@@ -4,30 +4,30 @@
     ViewData["Title"] = "Add to shopping list";
 }
 
-<div class="ingredient-add-page">
-        <h1 class="ingredient-page-title">Add to shopping list </h1>
-        <p class="ingredient-page-description">Search for what you need to buy</p>
+<div class="page">
+        <h1 class="page__title">Add to shopping list </h1>
+        <p class="page__lead">Search for what you need to buy</p>
 
-        <form asp-controller="ShoppingList" asp-action="Add" method="get" class="ingredient-search-form">
-            <label for="ingredient-search" class="ingredient-search-label">Search ingredients</label>
+        <form asp-controller="ShoppingList" asp-action="Add" method="get" class="search">
+            <label for="ingredient-search" class="field__label">Search ingredients</label>
 
-            <div class="ingredient-search-controls">
-                <input id="ingredient-search" type="search" name="search" value="@ViewData["Search"]" placeholder="Search ingredients" class="ingredient-search-input" />
-                <button type="submit" class="ingredient-search-button">Search</button>
+            <div class="search__controls">
+                <input id="ingredient-search" type="search" name="search" value="@ViewData["Search"]" placeholder="Search ingredients" class="input" />
+                <button type="submit" class="btn btn--primary">Search</button>
             </div>
         </form>
 
         <p id="selection-count" aria-live="polite">0 ingredients selected</p>
 
-        <button type="button" id="clear-selection" class="ingredient-search-button">Clear selection</button>
+        <button type="button" id="clear-selection" class="btn btn--outline">Clear selection</button>
 
     @if(!Model.Any())
     {
-        <p class="ingredient-empty-message">No matching ingredients found. Try another search</p>
+        <p class="empty-state">No matching ingredients found. Try another search</p>
     } else
     {
-        <div class="ingredient-table-container">
-            <table class="ingredient-table">
+        <div class="table-wrap">
+            <table class="data-table">
                 <thead>
                     <tr>
                         <th scope="col">Select</th>
@@ -40,7 +40,7 @@
                     {
                         <tr>
                             <td>
-                                <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" value="@ingredient.IngredientId" class="ingredient-checkbox" />
+                                <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" value="@ingredient.IngredientId" class="checkbox" />
                             </td>
                             <td>
                                 <label for="ingredient-@ingredient.IngredientId" class="ingredient-name-label">@ingredient.IngredientName</label>
@@ -58,10 +58,10 @@
     <form asp-controller="ShoppingList" asp-action="Review" method="post" id="review-selection-form">
         <div id="selected-ingredient-input"></div>
 
-        <button type="submit" class="ingredient-search-button">Review selected</button>
+        <button type="submit" class="btn btn--primary">Review selected</button>
     </form>
 
-    <a asp-controller="ShoppingList" asp-action="Index" class="ingredient-back-link">Back to shopping list</a>
+    <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Back to shopping list</a>
 
 </div>
 

@@ -1,9 +1,7 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+
 
 public class InventoryController : Controller
 {
@@ -33,7 +31,7 @@ public class InventoryController : Controller
     {
         var ingredients = _context.Ingredients.Include(i => i.Category).AsQueryable(); // we want the category also to be visible
 
-        if (!string.IsNullOrEmpty(search)) // if not search is not empty
+        if (!string.IsNullOrWhiteSpace(search)) // if not search is not empty
         {
             search = search.Trim().ToLower(); // trim and put in lowercase to compare to the normalized names
 
@@ -181,51 +179,6 @@ public class InventoryController : Controller
         return RedirectToAction(nameof(Index));
     }
 
-
-
-    // GET: INVENTORYBATCHS/Details/5
-    public async Task<IActionResult> Details(int? ingredientbatchid)
-    {
-        if (ingredientbatchid == null)
-        {
-            return NotFound();
-        }
-
-        var inventorybatch = await _context.InventoryBatches
-            .FirstOrDefaultAsync(m => m.IngredientBatchId == ingredientbatchid);
-        if (inventorybatch == null)
-        {
-            return NotFound();
-        }
-
-        return View(inventorybatch);
-    }
-
-    // GET: INVENTORYBATCHS/Create
-    public async Task<IActionResult> Create()
-    {
-        var ingredients = await _context.Ingredients.OrderBy(i=>i.IngredientName).ToListAsync();
-
-        ViewBag.IngredientOptions = new SelectList(ingredients, "IngredientId", "IngredientName");
-        return View();
-    }
-
-    // POST: INVENTORYBATCHS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("IngredientBatchId,IngredientId,HouseholdId,UnitId,ExpirationDate,Quantity,DateAdded,Ingredient,Household,Unit")] InventoryBatch inventorybatch)
-    {
-        if (ModelState.IsValid)
-        {
-            _context.Add(inventorybatch);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        return View(inventorybatch);
-    }
-
     // opening the edit form for a batch in the test household
     [HttpGet]
     public async Task<IActionResult> Edit(int? ingredientbatchid)
@@ -368,10 +321,5 @@ public class InventoryController : Controller
         await _context.SaveChangesAsync();
         
         return RedirectToAction(nameof(Index));
-    }
-
-    private bool InventoryBatchExists(int? ingredientbatchid)
-    {
-        return _context.InventoryBatches.Any(e => e.IngredientBatchId == ingredientbatchid);
     }
 }

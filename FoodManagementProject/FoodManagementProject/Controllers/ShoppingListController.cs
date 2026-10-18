@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
@@ -180,51 +179,6 @@ public class ShoppingListController : Controller
 
         return RedirectToAction(nameof(Index));
     }
-
-
-    //maybe remove
-
-    /* // GET: SHOPPINGLISTITEMS/Details/5
-    public async Task<IActionResult> Details(int? shoppinglistitemid)
-    {
-        if (shoppinglistitemid == null)
-        {
-            return NotFound();
-        }
-
-        var shoppinglistitem = await _context.ShoppingListItems
-            .FirstOrDefaultAsync(m => m.ShoppingListItemId == shoppinglistitemid);
-        if (shoppinglistitem == null)
-        {
-            return NotFound();
-        }
-
-        return View(shoppinglistitem);
-    }
-
-     // GET: SHOPPINGLISTITEMS/Create
-    public IActionResult Create()
-    {
-        return View();
-    }
-
-    // POST: SHOPPINGLISTITEMS/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("ShoppingListItemId,HouseholdId,IngredientId,UnitId,Quantity,IsPurchased,ItemSource,DateAdded,Ingredient,Household,Unit")] ShoppingListItem shoppinglistitem)
-    {
-        if (ModelState.IsValid)
-        {
-            _context.Add(shoppinglistitem);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-        return View(shoppinglistitem);
-    }
-    */
-
 
     [HttpGet]
     public async Task<IActionResult> Edit(int? id)
@@ -540,49 +494,51 @@ public class ShoppingListController : Controller
         return RedirectToAction("Index", "Inventory");
     }
 
-
-
-
-
-
     // GET: SHOPPINGLISTITEMS/Delete/5
-    public async Task<IActionResult> Delete(int? shoppinglistitemid)
+    [HttpGet]
+    public async Task<IActionResult> Delete(int? id)
     {
-        if (shoppinglistitemid == null)
+        if (id == null)
         {
             return NotFound();
         }
 
-        var shoppinglistitem = await _context.ShoppingListItems
-            .FirstOrDefaultAsync(m => m.ShoppingListItemId == shoppinglistitemid);
-        if (shoppinglistitem == null)
+        var item = await _context.ShoppingListItems.Include(e => e.Ingredient).Include(e => e.Unit)
+            .FirstOrDefaultAsync(e => e.ShoppingListItemId == id.Value && e.HouseholdId == TestHouseholdId && !e.IsPurchased); // TO BE CHANGED
+        
+        if (item == null)
         {
             return NotFound();
         }
 
-        return View(shoppinglistitem);
+        return View(item);
     }
 
     // POST: SHOPPINGLISTITEMS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int? shoppinglistitemid)
+    public async Task<IActionResult> DeleteConfirmed(int? id)
     {
-        var shoppinglistitem = await _context.ShoppingListItems.FindAsync(shoppinglistitemid);
-        if (shoppinglistitem != null)
+        if(id==null)
         {
-            _context.ShoppingListItems.Remove(shoppinglistitem);
+            return NotFound();
         }
 
+        var item = await _context.ShoppingListItems.
+            FirstOrDefaultAsync(e=>e.ShoppingListItemId == id.Value && e.HouseholdId == TestHouseholdId && !e.IsPurchased); // TO BE CHANGED
+        
+        if (item == null)
+        {
+            return NotFound();
+        }
+
+        _context.ShoppingListItems.Remove(item);
+
         await _context.SaveChangesAsync();
+
+        TempData["ShoppingListDeleteSuccess"] = "Item removed from the shopping list.";
+
         return RedirectToAction(nameof(Index));
     }
 
-
-    //maybe remove
-    /*
-    private bool ShoppingListItemExists(int? shoppinglistitemid)
-    {
-        return _context.ShoppingListItems.Any(e => e.ShoppingListItemId == shoppinglistitemid);
-    }*/
 }

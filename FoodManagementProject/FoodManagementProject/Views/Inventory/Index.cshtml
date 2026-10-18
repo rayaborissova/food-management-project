@@ -5,9 +5,9 @@
 }
 
 
-<div class="ingredient-add-page">
+<div class="page">
 
-    <h1 class="ingredient-page-title">Inventory</h1>
+    <h1 class="page__title">Inventory</h1>
 
     <!--message to be displayed after a sucessful save-->
     @if (TempData["InventorySuccess"] is string successMessage)
@@ -24,17 +24,19 @@
     }
 
     <p>
-        <a asp-controller="Inventory" asp-action="Add" class="ingredient-back-link">Add Ingredients</a>
+        <a asp-controller="Inventory" asp-action="Add" class="back-link">Add Ingredients</a>
+        <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Shopping list</a>
     </p>
+
 
 
     @if (!Model.Any())
     {
-        <p class="ingredient-empty-message">Your inventory is empty. Add ingredients to get started</p>
+        <p class="empty-state">Your inventory is empty. Add ingredients to get started</p>
     } else
     {
-        <div class="ingredient-table-container">
-            <table class="ingredient-table">
+        <div class="table-wrap">
+            <table class="data-table">
                 <thead>
                     <tr>
                         <th scope="col">Ingredient</th>

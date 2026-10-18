@@ -1,130 +1,239 @@
+:root {
+    /*Base styling*/
+    --bg: #F5F5F0;
+    --surface: #FFFFFF;
+    --ink: #232842; /*for text and borders*/
+    --ink-muted: #4A4F66;
+    --primary: #2F3550; /*for navigation*/
+    --sage: #3F5A3A;
+    --sage-tint: #DDE5D0;
+    --danger: #B3261E; /*for errors*/
+    --radius: 8px;
+    --border: 1.5px solid (--var);
+}
+
+/*Layout*/
+.app {
+    display: flex;
+    min-height: 100vh;
+}
+
+.app__main {
+    flex: 1;
+    min-width: 0;
+}
+
+.sidebar {
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    width: 240px;
+    height: 100vh;
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--surface);
+    border-right: var(--border);
+}
+
+.brand {
+    padding: 0 14px 20px;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--sage);
+    text-decoration: none;
+}
+
+.nav-link {
+    min-height: 48px;
+    padding: 0 14px;
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius);
+    font-weight: 700;
+    color: var(--ink);
+    text-decoration: none;
+}
+
+    .nav-link:hover {
+        background: var(--sage-tint);
+    }
+
+.tabbar {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .tabbar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 72px;
+        padding: 6px 10px;
+        display: flex;
+        gap: 6px;
+        background: var(--surface);
+        border-top: var(--border);
+    }
+
+        .tabbar .nav-link {
+            flex: 1;
+            justify-content: center;
+        }
+
+    .app__main {
+        padding-bottom: 80px;
+    }
+}
+
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+@media (min-width: 600px) {
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
-}
-
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
-
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
-}
-
-/*Add ingredients page*/
-.ingredient-add-page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 24px 16px;
-    color: rgb(183, 159, 160);
+    background: var(--bg);
+    color: var(--ink);
+    margin: 0;
     font-family: Arial, Helvetica, sans-serif;
 }
 
-.ingredient-page-title {
+/*Add ingredients page*/
+.page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+    color: var(--ink);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.page__title {
     margin: 0 0 12px;
     font-size: 32px;
 }
 
-.ingredient-page-description {
+.page__lead {
     margin: 0 0 24px;
-    color: rgb(65, 50, 57);
+    color: var(--ink-muted);
     line-height: 1.5;
 }
 
-.ingredient-search-form {
+.search {
     margin-bottom: 20px;
 }
-
 /*For the ingredient search*/
-.ingredient-search-label {
+.field__label {
     display: block;
     margin-bottom: 8px;
     font-weight: bold;
 }
 
-.ingredient-search-controls {
+.search__controls {
     display: flex;
     gap: 12px;
 }
 
-.ingredient-search-input {
+.input {
     flex: 1;
     min-width: 0;
     padding: 12px;
-    border: 1px solid black;
+    border: 1.5px solid var(--ink);
     border-radius: 6px;
     background-color: white;
-    color: rgb(65, 50, 57);
+    color: var(--ink);
     font: inherit;
     box-sizing: border-box;
 }
 
-.ingredient-search-button {
-    padding: 12px;
-    border: 1px solid black;
-    border-radius: 6px;
-    background-color: cornflowerblue;
-    color: whitesmoke;
-    font-weight: bold;
+.btn {
+    min-height: 44px;
+    padding: 0 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    font: inherit;
+    font-weight: 700;
+    text-decoration: none;
     cursor: pointer;
 }
 
-.ingredient-search-button:hover {
-    background-color:aqua;
+.btn--primary {
+    background: var(--primary);
+    color: white;
+    border: none;
 }
 
+    .btn--primary:hover {
+        background: var(--ink);
+    }
+
+.btn--outline {
+    background: transparent;
+    color: var(--ink);
+    border: none;
+}
+
+    .btn--outline:hover {
+        background: var(--sage-tint);
+    }
+
+.btn--sage {
+    background: var(--sage);
+    color: white;
+    border: none;
+}
+
+
 /*For the ingredient result*/
-.ingredient-table-container {
+.table-wrap {
     margin-bottom: 24px;
     overflow-x: auto;
 }
 
-.ingredient-table {
+.data-table {
     width: 100%;
     border-collapse: collapse;
     text-align: left;
 }
 
-.ingredient-table th, .ingredient-table td {
-    padding: 14px 12px;
-    border-bottom: 1px solid black;
-}
+    .data-table th, .data-table td {
+        padding: 14px 12px;
+        border-bottom: 1px solid var(--ink);
+    }
 
-.ingredient-table th {
-    background-color: rebeccapurple;
-    font-weight:bold;
-    color: white;
-}
+    .data-table th {
+        background-color: var(--sage-tint);
+        font-weight: bold;
+        color: var(--ink);
+    }
 
-.ingredient-table tbody tr:hover {
-    background-color: lightpink;
-}
+    .data-table tbody tr:hover {
+        background-color: var(--sage-tint);
+    }
 
-.ingredient-checkbox {
+.checkbox {
     width: 18px;
     height: 18px;
     margin: 0;
     vertical-align: middle;
-    accent-color: blue;
+    accent-color: var(--sage);
     cursor: pointer;
 }
 
@@ -132,59 +241,56 @@ body {
     cursor: pointer;
 }
 
-.ingredient-empty-message {
+.empty-state {
     padding: 16px;
     border: 1px solid black;
     border-radius: 6px;
-    background-color: rgb(202, 106, 106);
+    background-color: var(--surface);
     line-height: 1.5;
 }
-
 /* back link*/
-.ingredient-back-link {
+.back-link {
     display: inline-block;
     padding: 10px 16px;
     border: 1px solid black;
     border-radius: 6px;
-    color: cornflowerblue;
+    color: var(--ink);
     text-decoration: none;
 }
 
-.ingredient-back-link:hover {
-    background-color: hotpink;
-}
-
+    .back-link:hover {
+        background-color: var(--sage-tint);
+    }
 /*visible focus when navigating with a keyboard on a desktop*/
-.ingredient-search-input:focus-visible, .ingredient-search-button:focus-visible, 
-.ingredient-checkbox:focus-visible, .ingredient-back-link:focus-visible {
-    outline: 3px solid blue;
-    outline-offset: 3px;
+:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 2px;
 }
 
 @media (max-width: 600px) {
-    .ingredient-search-controls {
+    .search__controls {
         flex-direction: column;
     }
 
-    .ingredient-page-title {
+    .page__title {
         font-size: 26px;
     }
 }
 
+
 /*styling for errors*/
 .inventory-validation-errors {
     margin-bottom: 16px;
-    color: rgb(144, 39, 39);
+    color: var(--danger);
 }
 
-.inventory-validation-errors ul {
-    padding-left: 12px;
-}
+    .inventory-validation-errors ul {
+        padding-left: 12px;
+    }
 
 .inventory-edit-field {
     margin-bottom: 16px;
 }
-
 /*styling for the delete inventory page and button*/
 .inventory-delete-details dt {
     margin: 4px 0 0;
@@ -202,13 +308,13 @@ body {
     border-radius: 6px;
     padding: 12px 20px;
     margin: 20px 0;
-    font:inherit;
+    font: inherit;
     cursor: pointer;
 }
 
-.inventory-delete-button:hover {
-    background-color: #531414
-}
+    .inventory-delete-button:hover {
+        background-color: #531414
+    }
 
 .shopping-category {
     margin-bottom: 28px;
@@ -221,8 +327,8 @@ body {
 
 .shopping-list {
     list-style: none;
-    margin:0;
-    padding:0;
+    margin: 0;
+    padding: 0;
 }
 
 .shopping-item {
@@ -258,21 +364,28 @@ body {
     color: red;
 }
 
-.shopping-item-checkbox:checked + .shopping-item-label {
+.checkbox:checked + .shopping-item-label {
     color: #707070
 }
 
-.shopping-item-checkbox:checked + .shopping-item-label + .shopping-item-name {
-    text-decoration: line-through;
-}
+    .checkbox:checked + .shopping-item-label + .shopping-item-name {
+        text-decoration: line-through;
+    }
 
-.shopping-item-checkbox:checked + .shopping-item-label + .shopping-item-amount {
-    color: #707070
-}
+    .checkbox:checked + .shopping-item-label + .shopping-item-amount {
+        color: #707070
+    }
 
 .shopping-edit-link {
-    flex-shrink:0;
+    flex-shrink: 0;
     padding: 8px;
     color: #3157a4;
+    text-decoration: underline;
+}
+
+.shopping-remove-link {
+    flex-shrink: 0;
+    padding: 8px;
+    color: hotpink;
     text-decoration: underline;
 }

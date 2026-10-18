@@ -4,10 +4,10 @@
     ViewData["Title"] = "Edit shopping list item";
 }
 
-<div class="ingredient-add-page">
-    <h1 class="ingredient-page-title">Edit shopping list item</h1>
+<div class="page">
+    <h1 class="page__title">Edit shopping list item</h1>
 
-    <p class="ingredient-page-description">Editing: <strong>@Model.IngredientName</strong></p>
+    <p class="page__lead">Editing: <strong>@Model.IngredientName</strong></p>
     <p>Enter both quantity and unit, or leave both empty.</p>
 
     <form asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@Model.ShoppingListItemId" method="post">
@@ -16,14 +16,14 @@
         <input type="hidden" asp-for="ShoppingListItemId" />
 
         <div class="inventory-edit-field">
-            <label asp-for="Quantity" class="ingredient-search-label">Quantity</label>
-            <input asp-for="Quantity" type="number" min="0.01" step="any" class="ingredient-search-input" />
+            <label asp-for="Quantity" class="field__label">Quantity</label>
+            <input asp-for="Quantity" type="number" min="0.01" step="any" class="input" />
             <span asp-validation-for="Quantity" class="inventory-validation-errors"></span>
         </div>
 
         <div class="inventory-edit-field">
-            <label asp-for="UnitId" class="ingredient-search-label">Unit</label>
-            <select asp-for="UnitId" class="ingredient-search-input">
+            <label asp-for="UnitId" class="field__label">Unit</label>
+            <select asp-for="UnitId" class="input">
                 <option value="">Not specified</option>
                 @foreach (var unit in Model.AvailableUnits)
                 {
@@ -33,9 +33,9 @@
             <span asp-validation-for="UnitId" class="inventory-validation-errors"></span>
         </div>
 
-        <button type="submit" class="ingredient-search-button">Save changes</button>
+        <button type="submit" class="btn btn--primary">Save changes</button>
     </form>
 
-    <a asp-controller="ShoppingList" asp-action="Index" class="ingredient-back-link">Cancel</a>
+    <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Cancel</a>
 
 </div>
