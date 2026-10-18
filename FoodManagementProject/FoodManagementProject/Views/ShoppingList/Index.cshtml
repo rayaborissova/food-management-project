@@ -59,6 +59,12 @@
 
     }
 
+    <form asp-controller="ShoppingList" asp-action="ConfirmPurchase" method="post" id="confirm-purchase-form">
+        <div id="checked-purchase-inputs"></div>
+        <button type="submit" class="ingredient-search-button">Add to inventory</button>
+
+    </form>
+
     <a asp-controller="Inventory" asp-action="Index" class="ingredient-back-link">
         Back to Inventory
     </a>
@@ -100,4 +106,28 @@
     }
     // removing the outdated IDs
     savePurchaseChecks();
+
+    const purchaseForm =document.getElementById("confirm-purchase-form");
+    const purchaseInputs = document.getElementById("checked-purchase-inputs");
+
+    purchaseForm.addEventListener("submit", function (event) {
+        if (checkedItemIds.length === 0) {
+            event.preventDefault();
+            alert("Check at least one purchased item");
+            return;
+        }
+
+        purchaseInputs.replaceChildren();
+
+        for(const id of checkedItemIds) {
+            const input = document.createElement("input");
+
+            input.type= "hidden";
+            input.name = "purchasedItemIds";
+            input.value = id;
+
+            purchaseInputs.appendChild(input);
+        }
+    });
+
 </script>

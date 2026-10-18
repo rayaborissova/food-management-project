@@ -18,6 +18,11 @@
         </script>
     }
 
+    @if (TempData["InventoryPurchaseSuccess"] is string purchaseMessage)
+    {
+        <p role="status">@purchaseMessage</p>
+    }
+
     <p>
         <a asp-controller="Inventory" asp-action="Add" class="ingredient-back-link">Add Ingredients</a>
     </p>

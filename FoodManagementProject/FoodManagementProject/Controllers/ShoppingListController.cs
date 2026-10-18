@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
-using Humanizer;
-using Microsoft.DotNet.Scaffolding.Shared.Project;
 
 public class ShoppingListController : Controller
 {
@@ -184,7 +182,9 @@ public class ShoppingListController : Controller
     }
 
 
-    // GET: SHOPPINGLISTITEMS/Details/5
+    //maybe remove
+
+    /* // GET: SHOPPINGLISTITEMS/Details/5
     public async Task<IActionResult> Details(int? shoppinglistitemid)
     {
         if (shoppinglistitemid == null)
@@ -202,7 +202,7 @@ public class ShoppingListController : Controller
         return View(shoppinglistitem);
     }
 
-    // GET: SHOPPINGLISTITEMS/Create
+     // GET: SHOPPINGLISTITEMS/Create
     public IActionResult Create()
     {
         return View();
@@ -223,6 +223,8 @@ public class ShoppingListController : Controller
         }
         return View(shoppinglistitem);
     }
+    */
+
 
     [HttpGet]
     public async Task<IActionResult> Edit(int? id)
@@ -319,6 +321,230 @@ public class ShoppingListController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfirmPurchase(int[] purchasedItemIds)
+    {
+        if (purchasedItemIds == null || purchasedItemIds.Length == 0)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        var itemIds = purchasedItemIds.Distinct().ToArray();
+
+        var items = await _context.ShoppingListItems.Include(item => item.Ingredient).Include(item => item.Unit).Where(item => itemIds.
+        Contains(item.ShoppingListItemId) && item.HouseholdId == TestHouseholdId && !item.IsPurchased).OrderBy(item => item.Ingredient.IngredientName).ToListAsync(); // TO BE CHANGED
+
+        if (items.Count != itemIds.Length)
+        {
+            return BadRequest("One or more selected shopping list entries are no longer available");
+        }
+
+        var model = new ShoppingListPurchaseViewModel
+        {
+            Items = items.Select(item => new ShoppingListPurchaseItemViewModel
+            {
+                ShoppingListItemId = item.ShoppingListItemId,
+                IngredientName = item.Ingredient.IngredientName,
+                Quantity = item.Quantity,
+                UnitId = item.UnitId,
+                UnitName = item.Unit?.UnitName ?? "Not specified"
+            }).ToList()
+        };
+
+        return View(model);
+    }
+
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddAsListed(int[] purchasedItemIds)
+    {
+        if (purchasedItemIds == null || purchasedItemIds.Length == 0)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        var itemIds = purchasedItemIds.Distinct().ToArray();
+
+        var items = await _context.ShoppingListItems.Where(item => itemIds
+        .Contains(item.ShoppingListItemId) && item.HouseholdId == TestHouseholdId && !item.IsPurchased).ToListAsync(); //TO BE CHANGED
+
+        if (items.Count != itemIds.Length)
+        {
+            return BadRequest("One or more selected entries are no longer available. Return to the shopping list and refresh.");
+        }
+
+        var dateAdded = DateTime.UtcNow;
+
+        foreach (var item in items)
+        {
+            var batch = new InventoryBatch
+            {
+                IngredientId = item.IngredientId,
+                HouseholdId = item.HouseholdId,
+                Quantity = item.Quantity,
+                UnitId = item.UnitId,
+                ExpirationDate = null,
+                DateAdded = dateAdded
+            };
+
+            _context.InventoryBatches.Add(batch);
+
+            //marking as completed, no longer to be displaye
+            item.IsPurchased = true;
+        }
+
+        await _context.SaveChangesAsync();
+
+        TempData["InventoryPurchaseSuccess"] = $"{items.Count} purchased items added to inventory.";
+
+        return RedirectToAction("Index", "Inventory");
+    }
+
+    // opening the editable details for the selected purchases
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditPurchase(int[] purchasedItemIds)
+    {
+        if (purchasedItemIds == null || purchasedItemIds.Length == 0)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        var itemIds = purchasedItemIds.Distinct().ToArray();
+
+        var items = await _context.ShoppingListItems.Include(item => item.Ingredient).Include(item => item.Unit).
+            Where(item => itemIds.Contains(item.ShoppingListItemId) && item.HouseholdId == TestHouseholdId && !item.IsPurchased).OrderBy(item => item.Ingredient.IngredientName).ToListAsync(); // TO BE CHANGED
+
+        if (items.Count != itemIds.Length)
+        {
+            return BadRequest("One or more shopping list entries are no longer available.");
+        }
+
+        var model = new ShoppingListPurchaseViewModel
+        {
+            Items = items.Select(item => new ShoppingListPurchaseItemViewModel
+            {
+                ShoppingListItemId = item.ShoppingListItemId,
+                IngredientName = item.Ingredient.IngredientName,
+                Quantity = item.Quantity,
+                UnitId = item.UnitId,
+                UnitName = item.Unit?.UnitName ?? "Not specified"
+            }).ToList(),
+            AvailableUnits = await _context.Units.OrderBy(unit => unit.UnitName).ToListAsync()
+        };
+
+        return View(model);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SavePurchase(ShoppingListPurchaseViewModel model)
+    {
+        if (model.Items.Count == 0)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        var itemIds = model.Items.Select(row => row.ShoppingListItemId).Distinct().ToArray();
+
+        if (itemIds.Length != model.Items.Count)
+        {
+            ModelState.AddModelError("", "A shopping list entry was submitted more than once.");
+        }
+
+        var entries = await _context.ShoppingListItems.Include(e => e.Ingredient).Where(e => itemIds.
+        Contains(e.ShoppingListItemId) && e.HouseholdId == TestHouseholdId && !e.IsPurchased).ToDictionaryAsync(e => e.ShoppingListItemId); // TO BE CHANGED
+
+        if (entries.Count != itemIds.Length)
+        {
+            return BadRequest("One or more selected entries are no longer available. Return to the shopping list and refresh.");
+        }
+
+        model.AvailableUnits = await _context.Units.OrderBy(unit => unit.UnitName).ToListAsync();
+
+        for (int i = 0; i < model.Items.Count; i++)
+        {
+            var row = model.Items[i];
+            var entry = entries[row.ShoppingListItemId];
+
+            row.IngredientName = entry.Ingredient.IngredientName;
+
+            if (row.Quantity.HasValue)
+            {
+                if (row.Quantity.Value <= 0)
+                {
+                    ModelState.AddModelError($"Items[{i}].Quantity", "Quantity must be greater than zero.");
+                }
+                if (row.Quantity.Value > 99999999.99m || decimal.Round(row.Quantity.Value, 2) != row.Quantity.Value)
+                {
+                    ModelState.AddModelError($"Items[{i}].Quantity", "Use at most two decimal places and a quantity no greater than 99999999.99");
+                }
+
+            }
+            if (row.Quantity.HasValue != row.UnitId.HasValue)
+            {
+                ModelState.AddModelError($"Items[{i}].Quantity", "Enter both quantity and unit, or leave both empty.");
+            }
+
+            if (row.UnitId.HasValue)
+            {
+                var unit = model.AvailableUnits.FirstOrDefault(unit => unit.UnitId == row.UnitId.Value);
+
+                if (unit == null)
+                {
+                    ModelState.AddModelError($"Items[{i}].UnitId", "Choose a valid unit.");
+                }
+                else if (unit.Abbreviation == "pc" && row.Quantity.HasValue && row.Quantity.Value % 0.25m != 0) //TO BE CHANGED
+                {
+                    ModelState.AddModelError($"Items[{i}].Quantity", "Use increments of 0.25 pieces");
+                }
+            }
+
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View("EditPurchase", model);
+        }
+
+        var dateAdded = DateTime.UtcNow;
+
+        foreach (var row in model.Items)
+        {
+            var entry = entries[row.ShoppingListItemId];
+            var batch = new InventoryBatch
+            {
+                IngredientId = entry.IngredientId,
+                HouseholdId = entry.HouseholdId,
+
+                // using the ones entered from the form
+                Quantity = row.Quantity,
+                UnitId = row.UnitId,
+                ExpirationDate = row.ExpirationDate,
+                DateAdded = dateAdded
+            };
+
+            _context.InventoryBatches.Add(batch);
+
+            entry.IsPurchased = true;
+        }
+
+        await _context.SaveChangesAsync();
+
+        TempData["InventoryPurchaseSuccess"] = $"{model.Items.Count} purchased items added to inventory.";
+
+        return RedirectToAction("Index", "Inventory");
+    }
+
+
+
+
+
+
     // GET: SHOPPINGLISTITEMS/Delete/5
     public async Task<IActionResult> Delete(int? shoppinglistitemid)
     {
@@ -352,8 +578,11 @@ public class ShoppingListController : Controller
         return RedirectToAction(nameof(Index));
     }
 
+
+    //maybe remove
+    /*
     private bool ShoppingListItemExists(int? shoppinglistitemid)
     {
         return _context.ShoppingListItems.Any(e => e.ShoppingListItemId == shoppinglistitemid);
-    }
+    }*/
 }

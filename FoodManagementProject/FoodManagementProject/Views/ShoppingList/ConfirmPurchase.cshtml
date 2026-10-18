@@ -1,0 +1,51 @@
+﻿@model FoodManagementProject.Models.ShoppingListPurchaseViewModel 
+
+@{
+    ViewData["Title"] = "Confirm purchased items";
+}
+
+<div class="ingredient-add-page">
+    <h1 class="ingredient-page-title">Confirm purchased items</h1>
+
+    <p class="ingredient-page-description"> These items will be added to your inventory. Add them as listed or edit the quantities, units, and expiration dates first.</p>
+
+    <div class="ingredient-table-container">
+        <table class="ingredient-table">
+            <thead>
+                <tr>
+                    <th scope="col">Ingredient</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Unit</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach(var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.IngredientName</td>
+                        <td>@(item.Quantity.HasValue ? item.Quantity.Value.ToString("0.##") : "Not specified") </td>
+                        <td>@item.UnitName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <form asp-controller="ShoppingList" asp-action="AddAsListed" method="post">
+        @foreach(var item in Model.Items)
+            {
+                <input type="hidden" name="purchasedItemIds" value="@item.ShoppingListItemId" />
+            }
+        <button type="submit" class="ingredient-search-button">Add as listed</button>
+    </form>
+
+    <form asp-controller="ShoppingList" asp-action="EditPurchase" method="post">
+            @foreach(var item in Model.Items)
+            {
+                <input type="hidden" name="purchasedItemIds" value="@item.ShoppingListItemId" />
+            }
+        <button type="submit" class="ingredient-search-button">Edit details</button>
+    </form>
+
+    <a asp-controller="ShoppingList" asp-action="Index" class="ingredient-back-link">Back to shopping list</a>
+</div>
