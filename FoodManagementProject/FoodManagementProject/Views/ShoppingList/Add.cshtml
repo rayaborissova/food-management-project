@@ -1,0 +1,125 @@
+﻿@model IEnumerable<FoodManagementProject.Models.Ingredient>
+
+@{
+    ViewData["Title"] = "Add to shopping list";
+}
+
+<div class="page">
+    <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Back to shopping list</a>
+        <h1 class="page__title">Add to shopping list </h1>
+        <p class="page__lead">Search for what you need to buy</p>
+
+        <form asp-controller="ShoppingList" asp-action="Add" method="get" class="search">
+            <label for="ingredient-search" class="field__label">Search ingredients</label>
+
+            <div class="search__controls">
+                <input id="ingredient-search" type="search" name="search" value="@ViewData["Search"]" placeholder="Search ingredients" class="input" />
+                <button type="submit" class="btn btn--primary">Search</button>
+            </div>
+        </form>
+
+        <div class="toolbar">
+            <p id="selection-count" class="selection-count" aria-live="polite">0 ingredients selected</p>
+            <button type="button" id="clear-selection" class="btn btn--outline">Clear selection</button>
+        </div>
+
+    @if(!Model.Any())
+    {
+        <p class="empty-state">No matching ingredients found. Try another search</p>
+    } else
+    {
+        <ul class="pick-list">
+            @foreach (var ingredient in Model)
+            {
+                <li>
+                    <label for="ingredient-@ingredient.IngredientId" class="pick-row">
+                        <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" value="@ingredient.IngredientId" class="checkbox" />
+                        <span class="pick-row__name">@ingredient.IngredientName</span>
+                        <span class="pick-row__meta">@ingredient.Category?.CategoryName</span>
+                    </label>
+                </li>
+            }
+        </ul>
+    }
+
+    <div class="action-bar">
+        <form asp-controller="ShoppingList" asp-action="Review" method="post" id="review-selection-form">
+            <div id="selected-ingredient-input"></div>
+            <button type="submit" class="btn btn--primary">Review selected</button>
+        </form>
+    </div>
+
+</div>
+
+<script>
+
+    const storageKey = "shoppingListSelectedIngredientIds";
+
+    //reading previously selected ids 
+    let selectedIds = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
+
+    const checkboxes = document.querySelectorAll('input[name="selectedIngredientIds"]');
+
+    const selectionCount = document.getElementById("selection-count");
+    const clearButton = document.getElementById("clear-selection");
+
+    function updateSelectionCount() {
+        selectionCount.textContent = selectedIds.length + " ingredients selected";
+    }
+
+    function saveSelection() {
+        sessionStorage.setItem(storageKey, JSON.stringify(selectedIds));
+
+        updateSelectionCount();
+    }
+     for (const checkbox of checkboxes) {
+         checkbox.checked = selectedIds.includes(checkbox.value);
+         checkbox.addEventListener("change", function() { 
+             if (checkbox.checked) {
+                 if(!selectedIds.includes(checkbox.value)) {
+                     selectedIds.push(checkbox.value);
+                 } 
+             } else {
+                 selectedIds = selectedIds.filter(id => id !== checkbox.value);
+             }
+
+             saveSelection();
+        });
+     }
+
+     clearButton.addEventListener("click", function() {
+         selectedIds=[];
+
+         for (const checkbox of checkboxes) {
+             checkbox.checked = false;
+         }
+         saveSelection();
+     });
+
+     updateSelectionCount();
+
+     const reviewForm = document.getElementById("review-selection-form");
+     const selectedInputs = document.getElementById("selected-ingredient-input");
+
+     reviewForm.addEventListener("submit", function(event){
+         if (selectedIds.length == 0) {
+             event.preventDefault();
+             alert("Select at least one ingredient.");
+             return;
+         }
+         selectedInputs.replaceChildren();
+
+         for(const id of selectedIds) {
+             const input = document.createElement("input");
+
+             input.type = "hidden";
+             input.name = "selectedIngredientIds";
+             input.value = id;
+
+             selectedInputs.appendChild(input);
+         }
+
+     });
+
+
+</script>

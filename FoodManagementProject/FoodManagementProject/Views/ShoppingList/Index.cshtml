@@ -1,0 +1,143 @@
+@model IEnumerable<FoodManagementProject.Models.ShoppingListItem>
+
+@{
+    ViewData["Title"] = "Shopping list";
+}
+
+<div class="page">
+    <h1 class="page__title">Shopping List</h1>
+    <p class="page__lead">Check off ingredients as you shop</p>
+
+    <a asp-controller="ShoppingList" asp-action="Add" class="btn btn--primary">Add ingredients</a>
+
+    @if (TempData["ShoppingListSuccess"] is string successMessage)
+    {
+        <p role="status">@successMessage</p>
+
+        <script>
+            sessionStorage.removeItem("shoppingListSelectedIngredientIds");
+        </script>
+    }
+
+    @if (TempData["ShoppingListEditSuccess"] is string editMessage)
+    {
+        <p role="status">@editMessage</p>
+    }
+
+    @if (TempData["ShoppingListDeleteSuccess"] is string deleteMessage)
+    {
+        <p role="status">@deleteMessage</p>
+    }
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">Your shopping list is empty</p>
+    } else
+    {
+        @foreach (var categoryGroup in Model.GroupBy(item => item.Ingredient.Category.CategoryName).OrderBy(group => group.Key))
+            {
+                <section class="category-group">
+                    <h2 class="category-group__title">@categoryGroup.Key</h2>
+                    <ul class="shop-list">
+                    @foreach (var item in categoryGroup)
+                    {
+                            <li class="shop-item">
+                                <input type="checkbox" id="shopping-item-@item.ShoppingListItemId" name="purchasedItemIds" value="@item.ShoppingListItemId" class="checkbox" />
+                                <label for="shopping-item-@item.ShoppingListItemId" class="shop-item__label">
+                                    <span class="shop-item__name">@item.Ingredient.IngredientName</span>
+                                    <span class="shop-item__amount">
+                                    @if(item.Quantity.HasValue) 
+                                    {
+                                        @item.Quantity.Value.ToString("0.##")
+                                    }
+                                    @if(item.Unit != null)
+                                    {
+                                        <text> @item.Unit.UnitName</text>
+                                    }
+                                </span>
+                                </label>
+
+                                <div class="shop-item__actions">
+                                <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="btn btn--outline btn--sm">Edit</a>
+                                <a asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@item.ShoppingListItemId" class="btn btn--danger btn--sm">Remove</a>
+                                </div>
+                            </li>
+                    }
+                    </ul>
+                </section>
+            }
+
+    }
+
+    <form asp-controller="ShoppingList" asp-action="ConfirmPurchase" method="post" id="confirm-purchase-form">
+        <div id="checked-purchase-inputs"></div>
+        <button type="submit" class="btn btn--sage">Add to inventory</button>
+
+    </form>
+
+    <a asp-controller="Inventory" asp-action="Index" class="back-link">
+        Back to Inventory
+    </a>
+
+</div>
+
+
+<script>
+    const purchaseStorageKey = "shoppingListCheckedItemIds";
+
+    let checkedItemIds = JSON.parse(sessionStorage.getItem(purchaseStorageKey) || "[]");
+
+    const purchaseCheckboxes = document.querySelectorAll('input[name="purchasedItemIds"]');
+
+    //keeping only the IDs that still appear as active
+    const activeItemIds = Array.from(purchaseCheckboxes, checkbox => checkbox.value);
+
+    checkedItemIds = checkedItemIds.filter(id => activeItemIds.includes(id));
+
+    function savePurchaseChecks() {
+        sessionStorage.setItem(purchaseStorageKey, JSON.stringify(checkedItemIds));
+    }
+
+    for (const checkbox of purchaseCheckboxes) {
+        //restoring the checkmark
+        checkbox.checked = checkedItemIds.includes(checkbox.value);
+
+        checkbox.addEventListener("change", function() {
+            if(checkbox.checked) {
+                if(!checkedItemIds.includes(checkbox.value)) {
+                    checkedItemIds.push(checkbox.value);
+                } 
+            } else {
+                checkedItemIds = checkedItemIds.filter(id => id !== checkbox.value);
+            }
+
+            savePurchaseChecks();
+        });
+    }
+    // removing the outdated IDs
+    savePurchaseChecks();
+
+    const purchaseForm =document.getElementById("confirm-purchase-form");
+    const purchaseInputs = document.getElementById("checked-purchase-inputs");
+
+    purchaseForm.addEventListener("submit", function (event) {
+        if (checkedItemIds.length === 0) {
+            event.preventDefault();
+            alert("Check at least one purchased item");
+            return;
+        }
+
+        purchaseInputs.replaceChildren();
+
+        for(const id of checkedItemIds) {
+            const input = document.createElement("input");
+
+            input.type= "hidden";
+            input.name = "purchasedItemIds";
+            input.value = id;
+
+            purchaseInputs.appendChild(input);
+        }
+    });
+
+</script>

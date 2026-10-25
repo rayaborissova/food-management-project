@@ -22,4 +22,5 @@ public partial class Ingredient
 
     public ICollection<InventoryBatch> InventoryBatches { get; set; } = new List<InventoryBatch>(); //one ingredient can be in many inventory batches
 
+    public ICollection<ShoppingListItem> ShoppingListItems { get; set; } = new List<ShoppingListItem>();
 }

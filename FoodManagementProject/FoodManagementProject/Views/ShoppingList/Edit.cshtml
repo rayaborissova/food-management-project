@@ -1,0 +1,41 @@
+@model FoodManagementProject.Models.ShoppingListEditViewModel
+
+@{
+    ViewData["Title"] = "Edit shopping list item";
+}
+
+<div class="page">
+    <h1 class="page__title">Edit shopping list item</h1>
+
+    <p class="page__lead">Editing: <strong>@Model.IngredientName</strong></p>
+    <p>Enter both quantity and unit, or leave both empty.</p>
+
+    <form asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@Model.ShoppingListItemId" method="post">
+        <div asp-validation-summary="All" class="form-errors"></div>
+
+        <input type="hidden" asp-for="ShoppingListItemId" />
+
+        <div class="field">
+            <label asp-for="Quantity" class="field__label">Quantity</label>
+            <input asp-for="Quantity" type="number" min="0.01" step="any" class="input" />
+            <span asp-validation-for="Quantity" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="UnitId" class="field__label">Unit</label>
+            <select asp-for="UnitId" class="input">
+                <option value="">Not specified</option>
+                @foreach (var unit in Model.AvailableUnits)
+                {
+                    <option value="@unit.UnitId">@unit.UnitName</option>
+                }
+            </select>
+            <span asp-validation-for="UnitId" class="field__error"></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary">Save changes</button>
+    </form>
+
+    <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Cancel</a>
+
+</div>

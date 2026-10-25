@@ -17,10 +17,9 @@ public partial class FoodManagementDbContext : DbContext
     public virtual DbSet<Unit> Units { get; set; }
     public virtual DbSet<Household> Households { get; set; }
     public virtual DbSet<InventoryBatch> InventoryBatches { get; set; }
-
+    public virtual DbSet<ShoppingListItem> ShoppingListItems { get; set; }
     // to be added
     // public virtual DbSet<HouseholdMember> HouseholdMembers { get; set; }
-    // public virtual DbSet<ShoppingListItem> ShoppingListItems { get; set; }
     // public virtual DbSet<AppUser> AppUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -83,6 +82,23 @@ public partial class FoodManagementDbContext : DbContext
             entity.HasOne(e => e.Ingredient).WithMany(c => c.InventoryBatches).HasForeignKey(e => e.IngredientId); // stating inventory batch relationships
             entity.HasOne(e => e.Household).WithMany(c => c.InventoryBatches).HasForeignKey(e => e.HouseholdId);
             entity.HasOne(e => e.Unit).WithMany(c => c.InventoryBatches).HasForeignKey(e => e.UnitId);
+        });
+
+        modelBuilder.Entity<ShoppingListItem>(entity =>
+        {
+            entity.ToTable("shopping_list_item");
+            entity.HasKey(e => e.ShoppingListItemId);
+            entity.Property(e => e.ShoppingListItemId).HasColumnName("shoppinglist_item_id");
+            entity.Property(e => e.HouseholdId).HasColumnName("household_id");
+            entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.IsPurchased).HasColumnName("is_purchased");
+            entity.Property(e => e.ItemSource).HasColumnName("item_source");
+            entity.Property(e => e.DateAdded).HasColumnName("date_added").HasColumnType("timestamp without time zone");
+            entity.HasOne(e => e.Ingredient).WithMany(c => c.ShoppingListItems).HasForeignKey(e => e.IngredientId);
+            entity.HasOne(e => e.Household).WithMany(c => c.ShoppingListItems).HasForeignKey(e => e.HouseholdId);
+            entity.HasOne(e => e.Unit).WithMany(c => c.ShoppingListItems).HasForeignKey(e => e.UnitId);
         });
 }
 
