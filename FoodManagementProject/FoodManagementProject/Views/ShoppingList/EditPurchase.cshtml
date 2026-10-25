@@ -10,7 +10,7 @@
     <p class="page__lead">Confirm the quantities you bought. Enter both quantity and unit, or leave both empty. Expiration dates are optional.</p>
 
     <form asp-controller="ShoppingList" asp-action="SavePurchase" method="post">
-        <div asp-validation-summary="All" class="inventory-validation-errors"></div>
+        <div asp-validation-summary="All" class="form-errors"></div>
 
         <div class="table-wrap">
             <table class="data-table">
@@ -33,7 +33,7 @@
                                 <td>
                                     <input asp-for="Items[i].Quantity" type="number" min="0.01" step="any" aria-label="Quantity bought for @Model.Items[i].IngredientName" class="input" />
 
-                                    <span asp-validation-for="Items[i].Quantity" class="inventory-validation-errors"></span>
+                                    <span asp-validation-for="Items[i].Quantity" class="field__error"></span>
                                 </td>
                                 <td>
                                     <select asp-for="Items[i].UnitId" aria-label="Unit for @Model.Items[i].IngredientName" class="input">
@@ -42,12 +42,12 @@
                                             <option value="@unit.UnitId">@unit.UnitName</option>
                                         }
                                     </select>
-                                    <span asp-validation-for="Items[i].UnitId" class="inventory-validation-errors"></span>
+                                    <span asp-validation-for="Items[i].UnitId" class="field__error"></span>
                                 </td>
                                 <td>
                                     <input asp-for="Items[i].ExpirationDate" type="date" aria-label="Expiration date for @Model.Items[i].IngredientName" class="input" />
 
-                                    <span asp-validation-for="Items[i].ExpirationDate" class="inventory-validation-errors"></span>
+                                    <span asp-validation-for="Items[i].ExpirationDate" class="field__error"></span>
                                 </td>
                             </tr>
                         }

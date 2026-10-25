@@ -9,7 +9,10 @@
     --sage-tint: #DDE5D0;
     --danger: #B3261E; /*for errors*/
     --radius: 8px;
-    --border: 1.5px solid (--var);
+    --border: 1.5px solid var(--ink);
+    --line: #D5D8CE;
+    --danger-bg: #FBEAE9;
+    --danger-bg-dark: #8F1E18;
 }
 
 /*Layout*/
@@ -64,34 +67,6 @@
     display: none;
 }
 
-@media (max-width: 768px) {
-    .sidebar {
-        display: none;
-    }
-
-    .tabbar {
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 72px;
-        padding: 6px 10px;
-        display: flex;
-        gap: 6px;
-        background: var(--surface);
-        border-top: var(--border);
-    }
-
-        .tabbar .nav-link {
-            flex: 1;
-            justify-content: center;
-        }
-
-    .app__main {
-        padding-bottom: 80px;
-    }
-}
-
 html {
     font-size: 14px;
 }
@@ -114,7 +89,6 @@ body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/*Add ingredients page*/
 .page {
     max-width: 900px;
     margin: 0 auto;
@@ -137,7 +111,8 @@ body {
 .search {
     margin-bottom: 20px;
 }
-/*For the ingredient search*/
+
+/*For the ingredient searches*/
 .field__label {
     display: block;
     margin-bottom: 8px;
@@ -187,7 +162,7 @@ body {
 .btn--outline {
     background: transparent;
     color: var(--ink);
-    border: none;
+    border: var(--border);
 }
 
     .btn--outline:hover {
@@ -198,6 +173,21 @@ body {
     background: var(--sage);
     color: white;
     border: none;
+}
+
+.btn--danger {
+    background: transparent;
+    color: var(--danger);
+    border: 1.5px solid var(--danger);
+}
+
+    .btn--danger:hover {
+        background: var(--danger-bg);
+    }
+
+.btn--sm {
+    padding: 0 16px;
+    font-size: 15px;
 }
 
 
@@ -229,16 +219,13 @@ body {
     }
 
 .checkbox {
-    width: 18px;
-    height: 18px;
+    width: 28px;
+    height: 28px;
     margin: 0;
     vertical-align: middle;
     accent-color: var(--sage);
     cursor: pointer;
-}
-
-.ingredient-name-label {
-    cursor: pointer;
+    flex-shrink: 0;
 }
 
 .empty-state {
@@ -250,21 +237,242 @@ body {
 }
 /* back link*/
 .back-link {
-    display: inline-block;
-    padding: 10px 16px;
-    border: 1px solid black;
-    border-radius: 6px;
+    min-height: 44px;
+    margin-bottom: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
     color: var(--ink);
     text-decoration: none;
 }
 
     .back-link:hover {
-        background-color: var(--sage-tint);
+        text-decoration: underline;
     }
+
+    .back-link::before {
+        content:"\2039";
+        font-size: 28px;
+        line-height: 1;
+    }
+
 /*visible focus when navigating with a keyboard on a desktop*/
 :focus-visible {
     outline: 3px solid var(--ink);
     outline-offset: 2px;
+}
+
+/*styling for errors*/
+.form-errors {
+    margin-bottom: 16px;
+    color: var(--danger);
+}
+
+    .form-errors ul {
+        padding-left: 12px;
+    }
+
+.field__error {
+    color: var(--danger);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.field {
+    margin-bottom: 16px;
+}
+/*styling for the delete inventory page and button*/
+.details-list dt {
+    margin: 4px 0 0;
+}
+
+.details-list dd {
+    font-weight: bold;
+    margin-top: 16px;
+}
+
+.btn--danger-solid {
+    background: var(--danger);
+    color: white;
+    border: none;
+}
+
+    .btn--danger-solid:hover {
+        background-color: var(--danger-bg-dark);
+    }
+
+.category-group {
+    margin-bottom: 28px;
+}
+
+.category-group__title {
+    margin: 24px 0 8px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--sage);
+}
+
+.shop-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background: var(--surface);
+    border: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.shop-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px 14px;
+    min-height: 60px;
+    padding: 8px 16px;
+    border-top: 1.5px solid var(--line);
+}
+
+    .shop-item:first-child {
+        border-top: none;
+    }
+
+.shop-item__label {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.shop-item__name {
+    font-size: 18px;
+    font-weight: 700;
+    overflow-wrap: anywhere;
+}
+
+.shop-item__amount {
+    font-size: 14px;
+    color: var(--ink-muted);
+}
+
+.shop-item__actions {
+    display: flex;
+    gap: 8px;
+}
+
+.shop-item:has(.checkbox:checked) .shop-item__name {
+    text-decoration: line-through;
+    color: var(--ink-muted);
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.selection-count {
+    margin: 0;
+    padding:8px 14px;
+    background: var(--sage-tint);
+    border-radius: var(--radius);
+    font-weight: 700;
+}
+
+.pick-list {
+    list-style: none;
+    margin: 0 0 24px;
+    padding: 0;
+    background: var(--surface);
+    border: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.pick-row {
+    min-height: 60px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    cursor: pointer;
+    border-top: 1.5px solid var(--line);
+}
+
+.pick-list > li:first-child .pick-row {
+    border-top; none;
+}
+
+.pick-row:has(.checkbox:checked) {
+    background: var(--sage-tint);
+}
+
+.pick-row__name {
+    flex: 1;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.pick-row__meta {
+    font-size: 14px;
+    color: var(--ink-muted);
+}
+
+.action-bar {
+    position: sticky;
+    bottom: 0;
+    margin-top: 8px;
+    padding: 12px 0 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: var(--bg);
+    border-top: var(--border);
+}
+
+.action-bar form {
+    display:contents;
+}
+
+.hidden-inputs {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+
+    .tabbar {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 72px;
+        padding: 6px 10px;
+        display: flex;
+        gap: 6px;
+        background: var(--surface);
+        border-top: var(--border);
+    }
+
+        .tabbar .nav-link {
+            flex: 1;
+            justify-content: center;
+        }
+
+    .app__main {
+        padding-bottom: 80px;
+    }
+
+    .action-bar {
+        bottom: 72px;
+    }
 }
 
 @media (max-width: 600px) {
@@ -277,115 +485,12 @@ body {
     }
 }
 
-
-/*styling for errors*/
-.inventory-validation-errors {
-    margin-bottom: 16px;
-    color: var(--danger);
-}
-
-    .inventory-validation-errors ul {
-        padding-left: 12px;
+@media (max-width:520px) {
+    .shop-item__actions {
+        width: 100%;
     }
 
-.inventory-edit-field {
-    margin-bottom: 16px;
-}
-/*styling for the delete inventory page and button*/
-.inventory-delete-details dt {
-    margin: 4px 0 0;
-}
-
-.inventory-delete-details dd {
-    font-weight: bold;
-    margin-top: 16px;
-}
-
-.inventory-delete-button {
-    background-color: rgb(146, 6, 6);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px 20px;
-    margin: 20px 0;
-    font: inherit;
-    cursor: pointer;
-}
-
-    .inventory-delete-button:hover {
-        background-color: #531414
+    .shop-item__actions .btn {
+        flex: 1;
     }
-
-.shopping-category {
-    margin-bottom: 28px;
-}
-
-.shopping-category-title {
-    margin: 24px 0 12px;
-    font-size: 20px;
-}
-
-.shopping-list {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-}
-
-.shopping-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 12px;
-    border-bottom: 1px solid black;
-}
-
-.shopping-list-chexkbox {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-    cursor: pointer;
-}
-
-.shopping-list-label {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 8px 30px;
-    flex: 1;
-    min-width: 0;
-    cursor: pointer;
-}
-
-.shopping-item-name {
-    overflow-wrap: anywhere;
-}
-
-.shopping-item-amount {
-    color: red;
-}
-
-.checkbox:checked + .shopping-item-label {
-    color: #707070
-}
-
-    .checkbox:checked + .shopping-item-label + .shopping-item-name {
-        text-decoration: line-through;
-    }
-
-    .checkbox:checked + .shopping-item-label + .shopping-item-amount {
-        color: #707070
-    }
-
-.shopping-edit-link {
-    flex-shrink: 0;
-    padding: 8px;
-    color: #3157a4;
-    text-decoration: underline;
-}
-
-.shopping-remove-link {
-    flex-shrink: 0;
-    padding: 8px;
-    color: hotpink;
-    text-decoration: underline;
 }

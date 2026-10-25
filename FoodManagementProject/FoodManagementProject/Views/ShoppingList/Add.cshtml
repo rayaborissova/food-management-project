@@ -5,6 +5,7 @@
 }
 
 <div class="page">
+    <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Back to shopping list</a>
         <h1 class="page__title">Add to shopping list </h1>
         <p class="page__lead">Search for what you need to buy</p>
 
@@ -17,51 +18,36 @@
             </div>
         </form>
 
-        <p id="selection-count" aria-live="polite">0 ingredients selected</p>
-
-        <button type="button" id="clear-selection" class="btn btn--outline">Clear selection</button>
+        <div class="toolbar">
+            <p id="selection-count" class="selection-count" aria-live="polite">0 ingredients selected</p>
+            <button type="button" id="clear-selection" class="btn btn--outline">Clear selection</button>
+        </div>
 
     @if(!Model.Any())
     {
         <p class="empty-state">No matching ingredients found. Try another search</p>
     } else
     {
-        <div class="table-wrap">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Select</th>
-                        <th scope="col">Ingredient</th>
-                        <th scope="col">Category</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var ingredient in Model)
-                    {
-                        <tr>
-                            <td>
-                                <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" value="@ingredient.IngredientId" class="checkbox" />
-                            </td>
-                            <td>
-                                <label for="ingredient-@ingredient.IngredientId" class="ingredient-name-label">@ingredient.IngredientName</label>
-                            </td>
-                            <td>
-                                @ingredient.Category?.CategoryName
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+        <ul class="pick-list">
+            @foreach (var ingredient in Model)
+            {
+                <li>
+                    <label for="ingredient-@ingredient.IngredientId" class="pick-row">
+                        <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" value="@ingredient.IngredientId" class="checkbox" />
+                        <span class="pick-row__name">@ingredient.IngredientName</span>
+                        <span class="pick-row__meta">@ingredient.Category?.CategoryName</span>
+                    </label>
+                </li>
+            }
+        </ul>
     }
 
-    <form asp-controller="ShoppingList" asp-action="Review" method="post" id="review-selection-form">
-        <div id="selected-ingredient-input"></div>
-
-        <button type="submit" class="btn btn--primary">Review selected</button>
-    </form>
-
-    <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Back to shopping list</a>
+    <div class="action-bar">
+        <form asp-controller="ShoppingList" asp-action="Review" method="post" id="review-selection-form">
+            <div id="selected-ingredient-input"></div>
+            <button type="submit" class="btn btn--primary">Review selected</button>
+        </form>
+    </div>
 
 </div>
 

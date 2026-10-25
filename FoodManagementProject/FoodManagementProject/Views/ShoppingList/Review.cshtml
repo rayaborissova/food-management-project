@@ -9,7 +9,7 @@
     <p class="page__lead">Quantity and unit are optional. If you enter one, please provide both.</p>
 
     <form asp-controller="ShoppingList" asp-action="Save" method="post">
-        <div asp-validation-summary="All" class="inventory-validation-errors"></div>
+        <div asp-validation-summary="All" class="form-errors"></div>
 
         <div class="table-wrap">
             <table class="data-table">
@@ -30,7 +30,7 @@
                                 </td>
                                 <td>
                                     <input asp-for="Items[i].Quantity" type="number" min="0.01" step="any" aria-label="Quantity for @Model.Items[i].IngredientName" class="input" />
-                                    <span asp-validation-for="Items[i].Quantity" class="inventory-validation-errors"></span>
+                                    <span asp-validation-for="Items[i].Quantity" class="field__error"></span>
                                 </td>
                                 <td>
                                     <select asp-for="Items[i].UnitId" aria-label="Unit for @Model.Items[i].IngredientName" class="input">
@@ -40,7 +40,7 @@
                                                 <option value="@unit.UnitId">@unit.UnitName</option>
                                             }
                                         </select> 
-                                        <span asp-validation-for="Items[i].UnitId" class="inventory-validation-errors"></span>
+                                        <span asp-validation-for="Items[i].UnitId" class="field__error"></span>
                                 </td>
                             </tr>
                         }

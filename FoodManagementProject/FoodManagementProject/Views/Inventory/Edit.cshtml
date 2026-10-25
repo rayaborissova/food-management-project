@@ -11,16 +11,16 @@
     <p>Enter both quantity and unit, or leave both empty. Expiration date is optional.</p>
 
     <form asp-controller="Inventory" asp-action="Edit" asp-route-ingredientbatchid="@Model.IngredientBatchId" method="post">
-        <div asp-validation-summary="All" class="inventory-validation-errors"></div>
+        <div asp-validation-summary="All" class="form-errors"></div>
         <input type="hidden" asp-for="IngredientBatchId" />
 
-        <div class="inventory-edit-field">
+        <div class="field">
             <label asp-for="Quantity" class="field__label">Quantity</label>
 
             <input asp-for="Quantity" type="number" min="0.01" step="any" class="input" />
         </div>
 
-        <div class="inventory-edit-field">
+        <div class="field">
             <label asp-for="UnitId" class="field__label">Unit</label>
 
             <select asp-for="UnitId" class="input">
@@ -33,7 +33,7 @@
             </select>
         </div>
 
-        <div class="inventory-edit-field">
+        <div class="field">
             <label asp-for="ExpirationDate" class="field__label">Expiration date</label>
 
             <input asp-for="ExpirationDate" type="date" class="input" />

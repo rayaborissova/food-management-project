@@ -9,7 +9,7 @@
     <h1 class="page__title">Remove item</h1>
    
     <p class="page__lead">Remove this item from your shopping list? Your inventory would not be changed</p>
-    <dl class="inventory-delete-details">
+    <dl class="details-list">
         <dt>Ingredient</dt>
         <dd>@Model.Ingredient.IngredientName</dd>
 
@@ -21,7 +21,7 @@
     </dl>
 
     <form asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@Model.ShoppingListItemId" method="post">
-        <button type="submit" class="inventory-delete-button">Remove item</button>
+        <button type="submit" class="btn btn--danger-solid">Remove item</button>
     </form>
 
     <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Cancel</a>

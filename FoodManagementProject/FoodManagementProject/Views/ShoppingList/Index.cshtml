@@ -36,16 +36,16 @@
     {
         @foreach (var categoryGroup in Model.GroupBy(item => item.Ingredient.Category.CategoryName).OrderBy(group => group.Key))
             {
-                <section class="shopping-category">
-                    <h2 class="shopping-category-title">@categoryGroup.Key</h2>
-                    <ul class="shopping-items">
+                <section class="category-group">
+                    <h2 class="category-group__title">@categoryGroup.Key</h2>
+                    <ul class="shop-list">
                     @foreach (var item in categoryGroup)
                     {
-                            <li class="shopping-item">
+                            <li class="shop-item">
                                 <input type="checkbox" id="shopping-item-@item.ShoppingListItemId" name="purchasedItemIds" value="@item.ShoppingListItemId" class="checkbox" />
-                                <label for="shopping-item-@item.ShoppingListItemId" class="shopping-item-label">
-                                    <span class="shopping-item-name">@item.Ingredient.IngredientName</span>
-                                    <span class="shopping-item-amount">
+                                <label for="shopping-item-@item.ShoppingListItemId" class="shop-item__label">
+                                    <span class="shop-item__name">@item.Ingredient.IngredientName</span>
+                                    <span class="shop-item__amount">
                                     @if(item.Quantity.HasValue) 
                                     {
                                         @item.Quantity.Value.ToString("0.##")
@@ -56,8 +56,11 @@
                                     }
                                 </span>
                                 </label>
-                                <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="shopping-edit-link">Edit</a>
-                                <a asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@item.ShoppingListItemId" class="shopping-remove-link">Remove</a>
+
+                                <div class="shop-item__actions">
+                                <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="btn btn--outline btn--sm">Edit</a>
+                                <a asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@item.ShoppingListItemId" class="btn btn--danger btn--sm">Remove</a>
+                                </div>
                             </li>
                     }
                     </ul>
