@@ -9,6 +9,8 @@
 
         public DateTime DateCreated { get; set; }
 
+        public int? PersonalUserId { get; set;  }
+
         public ICollection<InventoryBatch> InventoryBatches { get; set; } = new List<InventoryBatch>(); //one household can have many inventoyr batches
 
         public ICollection<ShoppingListItem> ShoppingListItems { get; set; } = new List<ShoppingListItem>();
