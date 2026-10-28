@@ -65,6 +65,7 @@ public partial class FoodManagementDbContext : DbContext
             entity.Property(e => e.HouseholdId).HasColumnName("household_id");
             entity.Property(e => e.HouseholdName).HasColumnName("household_name");
             entity.Property(e => e.DateCreated).HasColumnName("date_created");
+            entity.Property(e=>e.PersonalUserId).HasColumnName("personal_user_id");
         });
 
         //mapping the ingredients batch table columns
