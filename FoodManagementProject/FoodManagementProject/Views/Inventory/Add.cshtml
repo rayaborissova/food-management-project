@@ -19,57 +19,62 @@
         </div>
     </form>
 
-    <p id="selection-count" aria-live="polite">0 ingredients selected</p>
-    <button type="button" id="clear-selection">Clear selection</button>
+    <div class=""> <!--TO ADD CLASS-->
+        <p id="selection-count" role="status">0 ingredients selected</p> 
+        <button type="button" id="clear-selection" class="" hidden>Clear selection</button> <!--TO ADD CLASS-->
+        <button type="button" id="undo-selection" class="" hidden>Undo</button> <!--TO ADD CLASS-->
+    </div>
 
-    @if (!Model.Any())
-    {
-        <p class="empty-state">
-            No matching ingredient found. Please try another search.
-        </p>
-    } else
-    {
-        <div class="table-wrap">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th scope="col">Select</th>
-                        <th scope="col">Ingredient</th>
-                        <th scope="col">Category</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var ingredient in Model) /*creates one table row for each ingredient*/
-                    {
+        @if (!Model.Any())
+        {
+            <p class="empty-state">
+                No matching ingredient found. Please try another search.
+            </p>
+        } else
+        {
+            <div class="table-wrap" tabindex="0" role="region" aria-label="Ingredient results"> <!--TO ADD CLASS-->
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td>
-                                <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" 
-                                    value="@ingredient.IngredientId" class="checkbox" />
-                            </td> <!-- stores id of the ingredient as the value of the checkbox-->
-                            <td>
-                                <label for="ingredient-@ingredient.IngredientId" class="ingredient-name-label">
-                                    @ingredient.IngredientName
-                                </label> <!-- name is connected to the checkbox as well so clicking on name ticks it-->
-                            </td>
-                            <td>
-                                @ingredient.Category?.CategoryName
-                            </td>
+                            <th scope="col">Select</th>
+                            <th scope="col">Ingredient</th>
+                            <th scope="col">Category</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
+                    </thead>
+                    <tbody>
+                        @foreach (var ingredient in Model) /*creates one table row for each ingredient*/
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" 
+                                        value="@ingredient.IngredientId" class="checkbox" />
+                                </td> <!-- stores id of the ingredient as the value of the checkbox-->
+                                <td>
+                                    <label for="ingredient-@ingredient.IngredientId" class="ingredient-name-label">
+                                        @ingredient.IngredientName
+                                    </label> <!-- name is connected to the checkbox as well so clicking on name ticks it-->
+                                </td>
+                                <td>
+                                    @ingredient.Category?.CategoryName
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
 
-    <form asp-controller="Inventory" asp-action="Review" method="post" id="review-selected-form">
-        <div id="selected-ingredient-inputs"></div>
-        <button type="submit" class="btn btn--primary">Review selected</button>
-    </form>
-
-
-    <a asp-controller="Inventory" asp-action="Index" class="back-link">
+    <div class=""> <!--to add footer class-->
+        <a asp-controller="Inventory" asp-action="Index" class="back-link">
         Back to Inventory
-    </a>
+        </a>
+
+        <form asp-controller="Inventory" asp-action="Review" method="post" id="review-selected-form">
+            <div id="selected-ingredient-inputs"></div>
+            <button type="submit" id="review-selected" class="btn btn--primary" disabled>Review selected</button>
+        </form>
+    </div>
+
 </div>
 
 <script>
@@ -87,33 +92,47 @@
     // finding the button that clears the selection
     const clearButton = document.getElementById("clear-selection");
 
+    //undo button
+    const undoButton = document.getElementById("undo-selection");
+
+    //review button
+    const reviewButton = document.getElementById("review-selected");
+
+    let selectionBeforeClear = null;
+
     // updating the displayed number of selected ingredients
-    function updateSelectionCount() {
-        selectionCount.textContent = selectedIds.length + " ingredients selected";
+    function updateSelectionDisplay() {
+        const count = selectedIds.length;
+        const label = count === 1 ? "ingredient" : "ingredients";
+        
+        selectionCount.textContent = selectionBeforeClear === null ? `${count} ${label} selected` : "Selection cleared.";
+
+        clearButton.hidden = count === 0;
+        undoButton.hidden = selectionBeforeClear === null;
+        reviewButton.disabled = count === 0;
+
+        for (const checkbox of checkboxes) {
+            checkbox.checked = selectedIds.includes(checkbox.value);
+        }
     }
 
     // storing the current selections and updating their count
     function saveSelection() {
         sessionStorage.setItem(storageKey, JSON.stringify(selectedIds));
 
-        updateSelectionCount();
+        updateSelectionDisplay();
     }
 
     for(const checkbox of checkboxes) {
 
-        //for every box, ticking if the id is already in the remembered selection
-        checkbox.checked = selectedIds.includes(checkbox.value);
-
         // whenever the user ticks or unticks
         checkbox.addEventListener("change", function(){
-            if (checkbox.checked) {
-
-                // adding the id if not in selection
-                if (!selectedIds.includes(checkbox.value)) {
-                    selectedIds.push(checkbox.value);
-                }
-            } else {
-
+            selectionBeforeClear = null;
+            
+            // adding the id if not in selection
+            if (checkbox.checked && !selectedIds.includes(checkbox.value)) {
+                    selectedIds.push(checkbox.value);     
+            } else if (!checkbox.checked){
                 // keeping every id except the unticked one
                 selectedIds = selectedIds.filter(id => id !== checkbox.value);
             }
@@ -126,20 +145,30 @@
     // when the clear button ic clicked
     clearButton.addEventListener("click", function() {
 
+        selectionBeforeClear = [...selectedIds];
+
         // the remembered selection list is emptied
         selectedIds = [];
 
-        // all currently displayed boxes are unticked
-        for (const checkbox of checkboxes) {
-            checkbox.checked = false;
-        }
-
         //storing the empty list and updating count to 0
         saveSelection();
+        undoButton.focus();
+    });
+
+    undoButton.addEventListener("click", function() {
+        if (selectionBeforeClear === null) {
+            return;
+        }
+
+        selectedIds = selectionBeforeClear;
+        selectionBeforeClear = null;
+
+        saveSelection();
+        clearButton.focus();
     });
 
     //displaying the count after loading
-    updateSelectionCount();
+    updateSelectionDisplay();
 
 
     const reviewForm = document.getElementById("review-selected-form");
@@ -149,7 +178,7 @@
         if (selectedIds.length === 0) {
             event.preventDefault();
             alert("Select at least one ingredient.");
-            return
+            return;
         }
         
         // removing inputs from earlier submission attempts

@@ -112,7 +112,6 @@ C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodMa
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\scopedcss\Views\Shared\_Layout.cshtml.rz.scp.css
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\scopedcss\bundle\FoodManagementProject.styles.css
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\scopedcss\projectbundle\FoodManagementProject.bundle.scp.css
-C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-b9sayid5wm-b9sayid5wm.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\2n4wmih7cm-{0}-61n19gt1b8-61n19gt1b8.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\gir60ykr19-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\1gked3iguz-{0}-t1cqhe9u97-t1cqhe9u97.gz
@@ -610,3 +609,4 @@ C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManageme
 C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\FoodManagementProject.genruntimeconfig.cache
 C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\ref\FoodManagementProject.dll
 C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-cpf4v6qx7w-cpf4v6qx7w.gz
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-cpf4v6qx7w-cpf4v6qx7w.gz
