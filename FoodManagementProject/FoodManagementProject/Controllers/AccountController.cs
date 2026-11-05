@@ -24,7 +24,76 @@ namespace FoodManagementProject.Controllers
 
         private static DateTime Now => DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
 
+        // for registration 
+        [HttpGet]
+        public IActionResult Register()
+        {
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                return RedirectToAction("Index", "Inventory");
+            }
+            return View(new RegisterViewModel());
+        }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var email = model.Email.Trim().ToLowerInvariant();
+
+            if (await _context.AppUsers.AnyAsync(u => u.Email == email))
+            {
+                ModelState.AddModelError(nameof(model.Email), "An account with this email already exists.");
+                return View(model);
+            }
+
+            var user = new AppUser
+            {
+                Email = email,
+                DisplayName = model.DisplayName.Trim(),
+                UserRole = "regular",
+                DateCreated = Now
+            };
+
+            user.PasswordHash = _hasher.HashPassword(user, model.Password);
+
+            // user, personal household and membership are created together 
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            _context.AppUsers.Add(user);
+            await _context.SaveChangesAsync(); // generating user.UserId 
+
+            var household = new Household
+            {
+                HouseholdName = $"{user.DisplayName}'s fridge",
+                DateCreated = Now,
+                PersonalUserId = user.UserId
+            };
+            _context.Households.Add(household);
+            await _context.SaveChangesAsync();
+
+            _context.HouseholdMembers.Add(new HouseholdMember
+            {
+                UserId = user.UserId,
+                HouseholdId = household.HouseholdId,
+                HouseholdRole = "owner",
+                DateJoined = Now
+            });
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            await SignInUserAsync(user, isPersistent: false);
+            return RedirectToAction("Index", "Inventory");
+        }
+
+
+        // for login
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
@@ -73,6 +142,7 @@ namespace FoodManagementProject.Controllers
             return RedirectToAction("Index", "Inventory");
         }
 
+        // for logout
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
@@ -81,6 +151,11 @@ namespace FoodManagementProject.Controllers
             return RedirectToAction(nameof(Login));
         }
 
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
 
         private async Task SignInUserAsync(AppUser user, bool isPersistent)
         {

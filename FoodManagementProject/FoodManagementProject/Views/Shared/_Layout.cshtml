@@ -10,23 +10,36 @@
 </head>
 <body>
     <div class="app">
+        @if (User.Identity?.IsAuthenticated == true) //display it only if the user logged in
+        { 
         <nav class="sidebar" aria-label="Main">
             <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
             <a class="nav-link" asp-controller="Inventory" asp-action="Index">Fridge</a>
             <a class="nav-link" asp-controller="ShoppingList" asp-action="Index">Shopping List</a>
-        </nav>
 
+            <form asp-controller="Account" asp-action="Logout" method="post" class="sidebar__logout">
+                <p class="sidebar__user">@User.Identity.Name</p>
+                <button type="submit" class="nav-link nav-link--button">Log out</button>
+            </form>
+        </nav>
+        }
         <main role="main" class="app__main">
             @RenderBody()
         </main>
     </div>
 
-    <nav class="tabbar" aria-label="Main (mobile)">
-        <a class="nav-link" asp-controller="Inventory" asp-action="Index">Fridge</a>
-        <a class="nav-link" asp-controller="ShoppingList" asp-action="Index">Shopping List</a>
-    </nav>
-    
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        @if (User.Identity?.IsAuthenticated == true) //display it only if the user logged in
+        { 
+            <nav class="tabbar" aria-label="Main (mobile)">
+                <a class="nav-link" asp-controller="Inventory" asp-action="Index">Fridge</a>
+                <a class="nav-link" asp-controller="ShoppingList" asp-action="Index">Shopping List</a>
+
+                <form asp-controller="Account" asp-action="Logout" method="post">
+                    <button type="submit" class="nav-link nav-link--button">Log out</button>
+                </form>
+            </nav>
+        }
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

@@ -1,0 +1,43 @@
+﻿@model FoodManagementProject.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<div class="page page--narrow">
+    <h1 class="page__title">Create an account</h1>
+    <p class="page__lead">Use at least 8 characters for your password.</p>
+
+    <form asp-controller="Account" asp-action="Register" method="post">
+        <div asp-validation-summary="ModelOnly" class="form-errors"></div>
+
+        <div class="field">
+            <label asp-for="DisplayName" class="field__label"></label>
+            <input asp-for="DisplayName" class="input" autocomplete="name" />
+            <span asp-validation-for="DisplayName" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Email" class="field__label"></label>
+            <input asp-for="Email" class="input" autocomplete="username" />
+            <span asp-validation-for="Email" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Password" class="field__label"></label>
+            <input asp-for="Password" class="input" autocomplete="new-password" />
+            <span asp-validation-for="Password" class="field__error"></span>
+        </div>
+
+
+        <div class="field">
+            <label asp-for="ConfirmPassword" class="field__label"></label>
+            <input asp-for="ConfirmPassword" class="input" autocomplete="new-password" />
+            <span asp-validation-for="ConfirmPassword" class="field__error"></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary">Register</button>
+    </form>
+
+    <p class="auth-switch">Already registered? <a asp-controller="Account" asp-action="Login">Log in</a></p>
+</div>

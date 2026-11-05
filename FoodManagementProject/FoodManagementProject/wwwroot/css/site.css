@@ -517,6 +517,44 @@ body {
     display: none !important; 
 }
 
+.page--narrow {
+    max-width: 440px;
+}
+
+.auth-switch {
+    margin-top: 16px;
+}
+
+.nav-link--button {
+    width: 100%;
+    background: none;
+    border: 0;
+    font: inherit;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+}
+
+.nav-link--button:hover {
+    background: var(--sage-tint);
+}
+
+.sidebar__logout {
+    margin-top: auto;
+}
+
+.sidebar__logout {
+    margin-top: auto;
+}
+
+.sidebar__user {
+    margin: 0 0 8px;
+    padding: 0 14px;
+    font-size: 14px;
+    color: var(--ink-muted);
+    overflow-wrap: anywhere;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         display: none;
@@ -555,6 +593,15 @@ body {
     .page--picker {
         height: calc(100vh-72px); /*size of the fixed tabbar at the bottom is 72px*/
         height: calc(100dvh-72px);
+    }
+
+    .tabbar form {
+        display: contents; 
+    }
+
+    .tabbar .nav-link--button {
+        width: auto;
+        text-align: center;
     }
 }
 
