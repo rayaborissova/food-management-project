@@ -443,6 +443,80 @@ body {
     display: none;
 }
 
+.page--picker {
+    height: 100vh;
+    height: 100dvh; /*for mobile browser*/
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.page--picker > * {
+    flex-shrink: 0;
+}
+
+.page--picker > .table-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+    margin-bottom: 0;
+    overflow-y: auto;
+    background: var(--surface);
+    border: var(--border);
+    border-radius: var(--radius);
+}
+
+.page--picker .data-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-botton: none;
+    box-shadow: inset 0 -1.5px 0 var(--ink);
+}
+
+.page--picker .search {
+    margin-bottom: 12px;
+}
+
+.page--picker .page__lead {
+    margin-bottom: 12px;
+}
+
+.selection-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.selection-bar #selection-count {
+    margin: 0;
+    padding: 8px 14px;
+    background: var(--sage-tint);
+    border-radius: var(--radius);
+    font-weight: 700;
+}
+
+.picker-footer {
+    margin-top: auto;
+    padding-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-top: var(--border);
+}
+
+.picker-footer .back-link {
+    margin-bottom: 0;
+}
+
+.selection-bar button[hidden] {
+    display: none !important; 
+}
+
 @media (max-width: 768px) {
     .sidebar {
         display: none;
@@ -473,15 +547,28 @@ body {
     .action-bar {
         bottom: 72px;
     }
+
+    .app__main:has(.page--picker) {
+        padding-bottom: 0; /*calnceling the padding so that the page doesn't scroll*/
+    }
+
+    .page--picker {
+        height: calc(100vh-72px); /*size of the fixed tabbar at the bottom is 72px*/
+        height: calc(100dvh-72px);
+    }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px) { /*short screen, e.g. phone in landscape*/
     .search__controls {
         flex-direction: column;
     }
 
     .page__title {
         font-size: 26px;
+    }
+
+    .page--picker .page__lead {
+        display: none;
     }
 }
 

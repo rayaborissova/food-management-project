@@ -4,8 +4,8 @@
     ViewData["Title"] = "Add to shopping list";
 }
 
-<div class="page">
-    <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Back to shopping list</a>
+<div class="page page--picker">
+
         <h1 class="page__title">Add to shopping list </h1>
         <p class="page__lead">Search for what you need to buy</p>
 
@@ -18,16 +18,49 @@
             </div>
         </form>
 
-        <div class="toolbar">
-            <p id="selection-count" class="selection-count" aria-live="polite">0 ingredients selected</p>
-            <button type="button" id="clear-selection" class="btn btn--outline">Clear selection</button>
+        <div class="selection-bar"> <!--removed class toolbar-->
+            <p id="selection-count" role="status">0 ingredients selected</p> <!--removed class selection-count-->
+            <button type="button" id="clear-selection" class="btn btn--outline btn--sm">Clear selection</button>
+            <button type="button" id="undo-selection" class="btn btn--outline btn--sm" hidden>Undo clear</button> 
         </div>
-
+        
     @if(!Model.Any())
     {
         <p class="empty-state">No matching ingredients found. Try another search</p>
     } else
-    {
+    { //from add to inventroy page
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Ingredient results">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Select</th>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Category</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        @foreach (var ingredient in Model) /*creates one table row for each ingredient*/
+                        {
+                            <tr>
+                                <td>
+                                    <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds" 
+                                        value="@ingredient.IngredientId" class="checkbox" />
+                                </td> <!-- stores id of the ingredient as the value of the checkbox-->
+                                <td>
+                                    <label for="ingredient-@ingredient.IngredientId" class="ingredient-name-label">
+                                        @ingredient.IngredientName
+                                    </label> <!-- name is connected to the checkbox as well so clicking on name ticks it-->
+                                </td>
+                                <td>
+                                    @ingredient.Category?.CategoryName
+                                </td>
+                            </tr>
+                        }
+               </tbody>
+            </table>
+        </div>
+        
+        /* old 
         <ul class="pick-list">
             @foreach (var ingredient in Model)
             {
@@ -39,18 +72,142 @@
                     </label>
                 </li>
             }
-        </ul>
+        </ul>*/
+        
     }
 
-    <div class="action-bar">
+    <div class="picker-footer"> <!--removed class action-bar -->
+        <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Back to shopping list</a> 
+
         <form asp-controller="ShoppingList" asp-action="Review" method="post" id="review-selection-form">
             <div id="selected-ingredient-input"></div>
-            <button type="submit" class="btn btn--primary">Review selected</button>
+            <button type="submit" id="review-selected" class="btn btn--primary" disabled>Review selected</button>
         </form>
     </div>
 
 </div>
 
+<script>
+    const storageKey = "shoppingListSelectedIngredientIds";
+
+    // reading the stored ingredient ids, and if nothing is selected, it returns empty
+    let selectedIds = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
+
+    // finding all ingredient checkboxes displayed on the page
+    const checkboxes = document.querySelectorAll('input[name="selectedIngredientIds"]');
+
+    // finding the paragraph that displays the number selected
+    const selectionCount = document.getElementById("selection-count");
+
+    // finding the button that clears the selection
+    const clearButton = document.getElementById("clear-selection");
+
+    //undo button
+    const undoButton = document.getElementById("undo-selection");
+
+    //review button
+    const reviewButton = document.getElementById("review-selected");
+
+    let selectionBeforeClear = null;
+
+    // updating the displayed number of selected ingredients
+    function updateSelectionDisplay() {
+        const count = selectedIds.length;
+        const label = count === 1 ? "ingredient" : "ingredients";
+
+        selectionCount.textContent = selectionBeforeClear === null ? `${count} ${label} selected` : "Selection cleared.";
+
+        clearButton.hidden = count === 0;
+        undoButton.hidden = selectionBeforeClear === null;
+        reviewButton.disabled = count === 0;
+
+        for (const checkbox of checkboxes) {
+            checkbox.checked = selectedIds.includes(checkbox.value);
+        }
+    }
+
+    // storing the current selections and updating their count
+    function saveSelection() {
+        sessionStorage.setItem(storageKey, JSON.stringify(selectedIds));
+
+        updateSelectionDisplay();
+    }
+
+    for(const checkbox of checkboxes) {
+
+        // whenever the user ticks or unticks
+        checkbox.addEventListener("change", function(){
+            selectionBeforeClear = null;
+
+            // adding the id if not in selection
+            if (checkbox.checked && !selectedIds.includes(checkbox.value)) {
+                    selectedIds.push(checkbox.value);
+            } else if (!checkbox.checked){
+                // keeping every id except the unticked one
+                selectedIds = selectedIds.filter(id => id !== checkbox.value);
+            }
+
+            // remember and refresh the count
+            saveSelection();
+        });
+    }
+
+    // when the clear button ic clicked
+    clearButton.addEventListener("click", function() {
+
+        selectionBeforeClear = [...selectedIds];
+
+        // the remembered selection list is emptied
+        selectedIds = [];
+
+        //storing the empty list and updating count to 0
+        saveSelection();
+        undoButton.focus();
+    });
+
+    undoButton.addEventListener("click", function() {
+        if (selectionBeforeClear === null) {
+            return;
+        }
+
+        selectedIds = selectionBeforeClear;
+        selectionBeforeClear = null;
+
+        saveSelection();
+        clearButton.focus();
+    });
+
+    //displaying the count after loading
+    updateSelectionDisplay();
+
+
+    const reviewForm = document.getElementById("review-selection-form");
+    const selectedInputs = document.getElementById("selected-ingredient-input");
+
+    reviewForm.addEventListener("submit", function (event) {
+        if (selectedIds.length === 0) {
+            event.preventDefault();
+            alert("Select at least one ingredient.");
+            return;
+        }
+
+        // removing inputs from earlier submission attempts
+        selectedInputs.replaceChildren();
+
+        // sending the ids of every selected ingredient, those hidden from the search as well
+        for (const id of selectedIds) {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = "selectedIngredientIds";
+            input.value = id;
+
+            selectedInputs.appendChild(input);
+        }
+
+    });
+</script>
+
+<!--
 <script>
 
     const storageKey = "shoppingListSelectedIngredientIds";
@@ -122,4 +279,4 @@
      });
 
 
-</script>
+</script>-->

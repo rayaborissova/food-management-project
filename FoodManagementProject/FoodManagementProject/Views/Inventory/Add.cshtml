@@ -4,7 +4,7 @@
     ViewData["Title"] = "Add Ingredients";
 }
 
-<div class="page">
+<div class="page page--picker">
     <h1 class="page__title">Add Ingredients</h1>
     <p class="page__lead"> Search for ingredients and select the ones you have.</p>
 
@@ -19,10 +19,10 @@
         </div>
     </form>
 
-    <div class=""> <!--TO ADD CLASS-->
+    <div class="selection-bar"> 
         <p id="selection-count" role="status">0 ingredients selected</p> 
-        <button type="button" id="clear-selection" class="" hidden>Clear selection</button> <!--TO ADD CLASS-->
-        <button type="button" id="undo-selection" class="" hidden>Undo</button> <!--TO ADD CLASS-->
+        <button type="button" id="clear-selection" class="btn btn--outline btn--sm" hidden>Clear selection</button> 
+        <button type="button" id="undo-selection" class="btn btn--outline btn--sm" hidden>Undo clear</button> 
     </div>
 
         @if (!Model.Any())
@@ -32,7 +32,7 @@
             </p>
         } else
         {
-            <div class="table-wrap" tabindex="0" role="region" aria-label="Ingredient results"> <!--TO ADD CLASS-->
+            <div class="table-wrap" tabindex="0" role="region" aria-label="Ingredient results"> 
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -64,10 +64,8 @@
             </div>
         }
 
-    <div class=""> <!--to add footer class-->
-        <a asp-controller="Inventory" asp-action="Index" class="back-link">
-        Back to Inventory
-        </a>
+    <div class="picker-footer"> 
+        <a asp-controller="Inventory" asp-action="Index" class="back-link">Back to Inventory</a>
 
         <form asp-controller="Inventory" asp-action="Review" method="post" id="review-selected-form">
             <div id="selected-ingredient-inputs"></div>
