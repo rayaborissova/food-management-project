@@ -1,5 +1,7 @@
 using FoodManagementProject.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.Cookies; 
+using Microsoft.AspNetCore.Identity;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,20 @@ var connectionString = builder.Configuration.GetConnectionString("FoodDbConnecti
 
 builder.Services.AddDbContext<FoodManagementDbContext>(options => options.UseNpgsql(connectionString));
 
+builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{ // behaviour for cookie handler
+    options.LoginPath = "/Account/Login";
+    options.LogoutPath = "/Account/Logout";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+    options.Cookie.Name = "FoodApp.Auth"; // setting a recognisable name in browser
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    options.Cookie.SameSite = SameSiteMode.Lax; // protection against cross-site requests
+    options.ExpireTimeSpan = TimeSpan.FromHours(8); // authenitcation ticket valid for eigth hours
+    options.SlidingExpiration = true; // allowing to extend the login period
+});
 
 var app = builder.Build();
 
@@ -27,6 +43,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
