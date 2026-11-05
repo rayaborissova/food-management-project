@@ -13,5 +13,6 @@
         public ICollection<InventoryBatch> InventoryBatches { get; set; } = new List<InventoryBatch>(); //one household can have many inventoyr batches
 
         public ICollection<ShoppingListItem> ShoppingListItems { get; set; } = new List<ShoppingListItem>();
+        public ICollection<HouseholdMember> Members { get; set; } = new List<HouseholdMember>();
     }
 }

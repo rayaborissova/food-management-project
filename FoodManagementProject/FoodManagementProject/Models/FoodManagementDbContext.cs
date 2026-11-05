@@ -18,9 +18,8 @@ public partial class FoodManagementDbContext : DbContext
     public virtual DbSet<Household> Households { get; set; }
     public virtual DbSet<InventoryBatch> InventoryBatches { get; set; }
     public virtual DbSet<ShoppingListItem> ShoppingListItems { get; set; }
-    // to be added
-    // public virtual DbSet<HouseholdMember> HouseholdMembers { get; set; }
-    // public virtual DbSet<AppUser> AppUsers { get; set; }
+    public virtual DbSet<HouseholdMember> HouseholdMembers { get; set; }
+    public virtual DbSet<AppUser> AppUsers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -64,8 +63,8 @@ public partial class FoodManagementDbContext : DbContext
             entity.HasKey(e => e.HouseholdId);
             entity.Property(e => e.HouseholdId).HasColumnName("household_id");
             entity.Property(e => e.HouseholdName).HasColumnName("household_name");
-            entity.Property(e => e.DateCreated).HasColumnName("date_created");
-            entity.Property(e=>e.PersonalUserId).HasColumnName("personal_user_id");
+            entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.PersonalUserId).HasColumnName("personal_user_id");
         });
 
         //mapping the ingredients batch table columns
@@ -84,7 +83,7 @@ public partial class FoodManagementDbContext : DbContext
             entity.HasOne(e => e.Household).WithMany(c => c.InventoryBatches).HasForeignKey(e => e.HouseholdId);
             entity.HasOne(e => e.Unit).WithMany(c => c.InventoryBatches).HasForeignKey(e => e.UnitId);
         });
-
+        //mapping the shopping list item table columns
         modelBuilder.Entity<ShoppingListItem>(entity =>
         {
             entity.ToTable("shopping_list_item");
@@ -101,7 +100,35 @@ public partial class FoodManagementDbContext : DbContext
             entity.HasOne(e => e.Household).WithMany(c => c.ShoppingListItems).HasForeignKey(e => e.HouseholdId);
             entity.HasOne(e => e.Unit).WithMany(c => c.ShoppingListItems).HasForeignKey(e => e.UnitId);
         });
-}
+
+        //mapping the app user table columns
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.ToTable("appUser");
+            entity.HasKey(e => e.UserId);
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Email).HasColumnName("email");
+            entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
+            entity.Property(e => e.DisplayName).HasColumnName("display_name");
+            entity.Property(e => e.UserRole).HasColumnName("user_role");
+            entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
+            entity.HasIndex(e => e.Email).IsUnique();
+        });
+
+        //mapping the household member table columns
+        modelBuilder.Entity<HouseholdMember>(entity =>
+        {
+            entity.ToTable("household_member");
+            entity.HasKey(e => e.UserId);
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.HouseholdId).HasColumnName("household_id");
+            entity.Property(e => e.HouseholdRole).HasColumnName("household_role");
+            entity.Property(e => e.DateJoined).HasColumnName("date_joined").HasColumnType("timestamp without time zone");
+            entity.HasOne(e => e.User).WithOne(u => u.Membership).HasForeignKey<HouseholdMember>(e => e.UserId);
+            entity.HasOne(e => e.Household).WithMany(h => h.Members).HasForeignKey(e => e.HouseholdId);
+        });
+
+    }
 
 
 }
