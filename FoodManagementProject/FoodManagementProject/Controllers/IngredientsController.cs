@@ -2,8 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
+using Microsoft.AspNetCore.Authorization;
 
-namespace FoodManagementProject.Controllers { 
+namespace FoodManagementProject.Controllers {
+
+    [Authorize (Roles = "admin,moderator")]
     public class IngredientsController : Controller
     {
         private readonly FoodManagementDbContext _context;

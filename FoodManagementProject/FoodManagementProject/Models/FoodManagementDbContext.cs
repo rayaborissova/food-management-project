@@ -104,7 +104,7 @@ public partial class FoodManagementDbContext : DbContext
         //mapping the app user table columns
         modelBuilder.Entity<AppUser>(entity =>
         {
-            entity.ToTable("appUser");
+            entity.ToTable("app_user");
             entity.HasKey(e => e.UserId);
             entity.Property(e => e.UserId).HasColumnName("user_id");
             entity.Property(e => e.Email).HasColumnName("email");

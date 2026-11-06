@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
+using FoodManagementProject.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
-public class ShoppingListController : Controller
+[Authorize]
+public class ShoppingListController : HouseholdControllerBase
 {
     private readonly FoodManagementDbContext _context;
 
-    private const int TestHouseholdId = 1; // TO BE CHANGED
     public ShoppingListController(FoodManagementDbContext context)
     {
         _context = context;
@@ -16,7 +18,7 @@ public class ShoppingListController : Controller
     [HttpGet]
     public async Task<IActionResult> Index()
     {
-        var items = await _context.ShoppingListItems.Where(item => item.HouseholdId == TestHouseholdId && !item.IsPurchased).
+        var items = await _context.ShoppingListItems.Where(item => item.HouseholdId == HouseholdId && !item.IsPurchased).
             Include(item => item.Ingredient).ThenInclude(ingredient => ingredient.Category). // to make shopping more effective
             Include(item => item.Unit).OrderBy(item => item.Ingredient.Category.CategoryName).ThenBy(item => item.Ingredient.IngredientName).ToListAsync();
 
@@ -149,19 +151,13 @@ public class ShoppingListController : Controller
             return View("Review", model);
         }
 
-        if (!await _context.Households.AnyAsync(household => household.HouseholdId == TestHouseholdId)) // TO BE CHANGED
-        {
-            ModelState.AddModelError("", "The test household can't be found");
-            return View("Review", model);
-        }
-
-        var existingIngredientIds = await _context.ShoppingListItems.Where(item => item.HouseholdId == TestHouseholdId && !item.IsPurchased && ingredientIds.Contains(item.IngredientId)).Select(item => item.IngredientId).ToListAsync(); // TO BE CHANGED
+        var existingIngredientIds = await _context.ShoppingListItems.Where(item => item.HouseholdId == HouseholdId && !item.IsPurchased && ingredientIds.Contains(item.IngredientId)).Select(item => item.IngredientId).ToListAsync(); 
 
         var dateAdded = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
 
         var newItems = model.Items.Where(item => !existingIngredientIds.Contains(item.IngredientId)).Select(item => new ShoppingListItem
         {
-            HouseholdId = TestHouseholdId, // TO BE CHANGED
+            HouseholdId = HouseholdId, 
             IngredientId = item.IngredientId,
             Quantity = item.Quantity,
             UnitId = item.UnitId,
@@ -189,7 +185,7 @@ public class ShoppingListController : Controller
         }
 
         var item = await _context.ShoppingListItems.Include(item => item.Ingredient).
-            FirstOrDefaultAsync(item => item.ShoppingListItemId == id.Value && item.HouseholdId == TestHouseholdId && !item.IsPurchased); // TO BE CHANGED
+            FirstOrDefaultAsync(item => item.ShoppingListItemId == id.Value && item.HouseholdId == HouseholdId && !item.IsPurchased); 
 
         if (item == null)
         {
@@ -218,7 +214,7 @@ public class ShoppingListController : Controller
             return NotFound();
         }
 
-        var item = await _context.ShoppingListItems.Include(entry => entry.Ingredient).FirstOrDefaultAsync(entry => entry.ShoppingListItemId == id.Value && entry.HouseholdId == TestHouseholdId && !entry.IsPurchased); // TO BE CHANGED
+        var item = await _context.ShoppingListItems.Include(entry => entry.Ingredient).FirstOrDefaultAsync(entry => entry.ShoppingListItemId == id.Value && entry.HouseholdId == HouseholdId && !entry.IsPurchased);
 
         if (item == null)
         {
@@ -287,7 +283,7 @@ public class ShoppingListController : Controller
         var itemIds = purchasedItemIds.Distinct().ToArray();
 
         var items = await _context.ShoppingListItems.Include(item => item.Ingredient).Include(item => item.Unit).Where(item => itemIds.
-        Contains(item.ShoppingListItemId) && item.HouseholdId == TestHouseholdId && !item.IsPurchased).OrderBy(item => item.Ingredient.IngredientName).ToListAsync(); // TO BE CHANGED
+        Contains(item.ShoppingListItemId) && item.HouseholdId == HouseholdId && !item.IsPurchased).OrderBy(item => item.Ingredient.IngredientName).ToListAsync(); 
 
         if (items.Count != itemIds.Length)
         {
@@ -323,7 +319,7 @@ public class ShoppingListController : Controller
         var itemIds = purchasedItemIds.Distinct().ToArray();
 
         var items = await _context.ShoppingListItems.Where(item => itemIds
-        .Contains(item.ShoppingListItemId) && item.HouseholdId == TestHouseholdId && !item.IsPurchased).ToListAsync(); //TO BE CHANGED
+        .Contains(item.ShoppingListItemId) && item.HouseholdId == HouseholdId && !item.IsPurchased).ToListAsync(); //TO BE CHANGED
 
         if (items.Count != itemIds.Length)
         {
@@ -371,7 +367,7 @@ public class ShoppingListController : Controller
         var itemIds = purchasedItemIds.Distinct().ToArray();
 
         var items = await _context.ShoppingListItems.Include(item => item.Ingredient).Include(item => item.Unit).
-            Where(item => itemIds.Contains(item.ShoppingListItemId) && item.HouseholdId == TestHouseholdId && !item.IsPurchased).OrderBy(item => item.Ingredient.IngredientName).ToListAsync(); // TO BE CHANGED
+            Where(item => itemIds.Contains(item.ShoppingListItemId) && item.HouseholdId == HouseholdId && !item.IsPurchased).OrderBy(item => item.Ingredient.IngredientName).ToListAsync(); 
 
         if (items.Count != itemIds.Length)
         {
@@ -411,7 +407,7 @@ public class ShoppingListController : Controller
         }
 
         var entries = await _context.ShoppingListItems.Include(e => e.Ingredient).Where(e => itemIds.
-        Contains(e.ShoppingListItemId) && e.HouseholdId == TestHouseholdId && !e.IsPurchased).ToDictionaryAsync(e => e.ShoppingListItemId); // TO BE CHANGED
+        Contains(e.ShoppingListItemId) && e.HouseholdId == HouseholdId && !e.IsPurchased).ToDictionaryAsync(e => e.ShoppingListItemId);
 
         if (entries.Count != itemIds.Length)
         {
@@ -504,7 +500,7 @@ public class ShoppingListController : Controller
         }
 
         var item = await _context.ShoppingListItems.Include(e => e.Ingredient).Include(e => e.Unit)
-            .FirstOrDefaultAsync(e => e.ShoppingListItemId == id.Value && e.HouseholdId == TestHouseholdId && !e.IsPurchased); // TO BE CHANGED
+            .FirstOrDefaultAsync(e => e.ShoppingListItemId == id.Value && e.HouseholdId == HouseholdId && !e.IsPurchased); 
         
         if (item == null)
         {
@@ -525,7 +521,7 @@ public class ShoppingListController : Controller
         }
 
         var item = await _context.ShoppingListItems.
-            FirstOrDefaultAsync(e=>e.ShoppingListItemId == id.Value && e.HouseholdId == TestHouseholdId && !e.IsPurchased); // TO BE CHANGED
+            FirstOrDefaultAsync(e=>e.ShoppingListItemId == id.Value && e.HouseholdId == HouseholdId && !e.IsPurchased);
         
         if (item == null)
         {

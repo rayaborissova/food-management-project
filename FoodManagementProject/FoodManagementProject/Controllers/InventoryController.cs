@@ -1,14 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
+using FoodManagementProject.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
-
-public class InventoryController : Controller
+[Authorize]
+public class InventoryController : HouseholdControllerBase
 {
     private readonly FoodManagementDbContext _context;
-
-
-    private const int TestHouseholdId = 1; // creating a temporary household for testing
 
     public InventoryController(FoodManagementDbContext context)
     {
@@ -19,7 +18,7 @@ public class InventoryController : Controller
     public async Task<IActionResult> Index()
     { 
         // retrieving the inventory batches, including the ingredient name, units; later quantity
-        var inventory = await _context.InventoryBatches.Where(b => b.HouseholdId == TestHouseholdId).Include(b => b.Ingredient).Include(b => b.Unit)
+        var inventory = await _context.InventoryBatches.Where(b => b.HouseholdId == HouseholdId).Include(b => b.Ingredient).Include(b => b.Unit)
             .OrderBy(b => b.Ingredient.IngredientName).ToListAsync();
         
         
@@ -154,18 +153,11 @@ public class InventoryController : Controller
             return View("Review", model);
         }
 
-        // making sure the household exists
-        if (!await _context.Households.AnyAsync(h => h.HouseholdId == TestHouseholdId))
-        {
-            ModelState.AddModelError("", "The test houshold can't be found");
-            return View("Review", model);
-        }
-
         var dateAdded = DateTime.UtcNow;
 
         // creating a new entry per submitted review item; assigning householdid to be the test one; later to be changed
         var batches = model.Items.Select(item => new InventoryBatch { 
-            IngredientId = item.IngredientId, HouseholdId = TestHouseholdId, Quantity = item.Quantity, 
+            IngredientId = item.IngredientId, HouseholdId = HouseholdId, Quantity = item.Quantity, 
             UnitId = item.UnitId, ExpirationDate = item.ExpirationDate, DateAdded = dateAdded 
         }).ToList();
 
@@ -189,7 +181,7 @@ public class InventoryController : Controller
         }
 
         // finding the batchin the test household
-        var batch = await _context.InventoryBatches.Include(b => b.Ingredient).FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid && b.HouseholdId == TestHouseholdId);
+        var batch = await _context.InventoryBatches.Include(b => b.Ingredient).FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid && b.HouseholdId == HouseholdId);
 
         // if no batch exists, return not found
         if (batch == null)
@@ -220,7 +212,7 @@ public class InventoryController : Controller
         }
 
         // retrieving the existing information from the test household
-        var batch = await _context.InventoryBatches.Include(b => b.Ingredient).FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid && b.HouseholdId == TestHouseholdId);
+        var batch = await _context.InventoryBatches.Include(b => b.Ingredient).FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid && b.HouseholdId == HouseholdId);
         
         if(batch == null)
         {
@@ -287,7 +279,7 @@ public class InventoryController : Controller
 
         // finding the batch in the test household and loading the ingredient and unit info
         var batch = await _context.InventoryBatches.Include(b=>b.Ingredient).Include(b=>b.Unit)
-            .FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid.Value && b.HouseholdId == TestHouseholdId);
+            .FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid.Value && b.HouseholdId == HouseholdId);
         
         if (batch == null)
         {
@@ -311,7 +303,7 @@ public class InventoryController : Controller
         }
 
         // checking the batch and household again
-        var batch = await _context.InventoryBatches.FirstOrDefaultAsync(b=>b.IngredientBatchId == ingredientbatchid.Value && b.HouseholdId == TestHouseholdId);
+        var batch = await _context.InventoryBatches.FirstOrDefaultAsync(b=>b.IngredientBatchId == ingredientbatchid.Value && b.HouseholdId == HouseholdId);
         if (batch == null) { 
             return NotFound(); 
         }

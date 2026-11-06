@@ -470,7 +470,7 @@ body {
     position: sticky;
     top: 0;
     z-index: 1;
-    border-botton: none;
+    border-bottom: none;
     box-shadow: inset 0 -1.5px 0 var(--ink);
 }
 
@@ -543,10 +543,6 @@ body {
     margin-top: auto;
 }
 
-.sidebar__logout {
-    margin-top: auto;
-}
-
 .sidebar__user {
     margin: 0 0 8px;
     padding: 0 14px;
@@ -591,8 +587,8 @@ body {
     }
 
     .page--picker {
-        height: calc(100vh-72px); /*size of the fixed tabbar at the bottom is 72px*/
-        height: calc(100dvh-72px);
+        height: calc(100vh - 72px); /*size of the fixed tabbar at the bottom is 72px*/
+        height: calc(100dvh - 72px);
     }
 
     .tabbar form {

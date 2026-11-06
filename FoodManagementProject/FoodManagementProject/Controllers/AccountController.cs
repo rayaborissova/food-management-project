@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Win32.SafeHandles;
 
 namespace FoodManagementProject.Controllers
 {
@@ -121,7 +120,7 @@ namespace FoodManagementProject.Controllers
 
             var verification = user == null ? PasswordVerificationResult.Failed : _hasher.VerifyHashedPassword(user, user.PasswordHash, model.Password);
 
-            if (user == null)
+            if (user == null || verification == PasswordVerificationResult.Failed)
             {
                 ModelState.AddModelError("", "Invalid email or password.");
                 return View(model);

@@ -2,6 +2,7 @@ using FoodManagementProject.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FoodManagementProject.Controllers
 {
@@ -16,9 +17,13 @@ namespace FoodManagementProject.Controllers
             _context = context;
         }
         
-        public IActionResult Index()
+        public IActionResult Index() 
         {
-            return View();
+            if (User.Identity?.IsAuthenticated == true) // to prevent a dead-end landing page
+            {
+                return RedirectToAction("Index", "Inventory");
+            }
+            return RedirectToAction("Login", "Account");
         }
 
         public IActionResult Privacy()
@@ -30,13 +35,6 @@ namespace FoodManagementProject.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        //testing if db connection is established - yes
-        public async Task<IActionResult> TestDb()
-        {
-            int count = await _context.Ingredients.CountAsync();
-            return Content($"Ingredients in db {count}");
         }
 
     }
