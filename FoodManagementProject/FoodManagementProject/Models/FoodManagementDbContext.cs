@@ -20,6 +20,7 @@ public partial class FoodManagementDbContext : DbContext
     public virtual DbSet<ShoppingListItem> ShoppingListItems { get; set; }
     public virtual DbSet<HouseholdMember> HouseholdMembers { get; set; }
     public virtual DbSet<AppUser> AppUsers { get; set; }
+    public virtual DbSet<HouseholdInvite> HouseholdInvites { get; set; } //for household invitations
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -126,6 +127,22 @@ public partial class FoodManagementDbContext : DbContext
             entity.Property(e => e.DateJoined).HasColumnName("date_joined").HasColumnType("timestamp without time zone");
             entity.HasOne(e => e.User).WithOne(u => u.Membership).HasForeignKey<HouseholdMember>(e => e.UserId);
             entity.HasOne(e => e.Household).WithMany(h => h.Members).HasForeignKey(e => e.HouseholdId);
+        });
+
+        //mapping the household invite table columns
+        modelBuilder.Entity<HouseholdInvite>(entity =>
+        {
+            entity.ToTable("household_invite");
+            entity.HasKey(e => e.InviteId);
+            entity.Property(e => e.InviteId).HasColumnName("invite_id");
+            entity.Property(e => e.HouseholdId).HasColumnName("household_id");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.Code).HasColumnName("code");
+            entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ExpireAt).HasColumnName("expires_at").HasColumnType("timestamp without time zone");
+            entity.HasIndex(e => e.Code).IsUnique();
+            entity.HasOne(e => e.Household).WithMany().HasForeignKey(e => e.HouseholdId);
+            entity.HasOne<AppUser>().WithMany().HasForeignKey(e => e.CreatedBy);
         });
 
     }
