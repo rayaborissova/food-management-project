@@ -18,13 +18,14 @@
         <p class="form-errors" role="status">@error</p>
     }
 
-    @if(!Model.IsShared) //if not in a shared household
+    <!--if not in a shared household-->
+    @if(!Model.IsShared) 
     {
         <p class="page__lead">You are using your personal fridge. Create a shared household, or join one with an invite code.</p>
         
-        // TO ADD JOIN FORM
+        <!--TO ADD JOIN FORM-->
         
-        //create household
+        <!--create household-->
         <h2>Create a shared household</h2>
         <form asp-controller="Household" asp-action="Create" method="post">
             <div class="field">
@@ -35,7 +36,7 @@
         </form>
     } else
     {
-        //existing household details
+        <!--existing household details-->
         <p class="page__lead">Shared household: <strong>@Model.HouseholdName</strong></p>
 
         <div class="table-wrap">
@@ -59,6 +60,28 @@
                 </tbody>
             </table>
         </div>
+
+        <!--button to leave household-->
+        <h2>Leave household</h2>
+        <p class="page__lead">You will return to your personal inventory and shopping lis.</p>
+        <form asp-controller="Household" asp-action="Leave" method="post" onsubmit="return confirm('Leave this household?');"> <!--adding a confirm-->
+            <button type="submit" class="btn btn--danger">Leave household</button>
+        </form>
+
+        <!--invite creation-->
+        <h2>Invite people</h2>
+        <!--if a code has already been generated, display it-->
+        @if (Model.ActiveCode != null) 
+        {
+            <p class="invite-code">@Model.ActiveCode</p>
+            <p class="page__lead">Valid until @Model.CodeExpiresAt?.ToString("dd/MM/yyyy HH:mm") (UTC). Anyone with the code can join.</p>
+        }
+        <!--if not generated, form to generate it-->
+        <form asp-controller="Household" asp-action="GenerateInvite" method="post">
+            <button type="submit" class="btn btn--primary">
+                @(Model.ActiveCode == null ? "Generate invite code" : "Generate a new code")
+            </button>
+        </form>
 
 
     }

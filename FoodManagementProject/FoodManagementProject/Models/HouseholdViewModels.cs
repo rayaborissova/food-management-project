@@ -16,6 +16,11 @@ namespace FoodManagementProject.Models
         public string HouseholdName { get; set; } = string.Empty;
         public bool IsShared { get; set; }
         public List<HouseholdMember> Members { get; set; } = new();
+        
+        // for code invitations to household
+        public string? ActiveCode { get; set; }
+        public DateTime? CodeExpiresAt { get; set; }
+
         public CreateHouseholdViewModel Create { get; set; } = new();
     }
 

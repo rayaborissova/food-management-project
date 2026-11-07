@@ -139,7 +139,7 @@ public partial class FoodManagementDbContext : DbContext
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
             entity.Property(e => e.Code).HasColumnName("code");
             entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
-            entity.Property(e => e.ExpireAt).HasColumnName("expires_at").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ExpiresAt).HasColumnName("expires_at").HasColumnType("timestamp without time zone");
             entity.HasIndex(e => e.Code).IsUnique();
             entity.HasOne(e => e.Household).WithMany().HasForeignKey(e => e.HouseholdId);
             entity.HasOne<AppUser>().WithMany().HasForeignKey(e => e.CreatedBy);
