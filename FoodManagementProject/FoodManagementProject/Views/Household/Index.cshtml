@@ -1,0 +1,66 @@
+﻿@model FoodManagementProject.Models.HouseholdIndexViewModel;
+
+@{
+    ViewData["Title"] = "Household";
+}
+
+<div class="page">
+    <h1 class="page__title">Household</h1>
+
+    <!--errors-->
+    @if (TempData["HouseholdMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+
+    @if (TempData["HouseholdError"] is string error)
+    {
+        <p class="form-errors" role="status">@error</p>
+    }
+
+    @if(!Model.IsShared) //if not in a shared household
+    {
+        <p class="page__lead">You are using your personal fridge. Create a shared household, or join one with an invite code.</p>
+        
+        // TO ADD JOIN FORM
+        
+        //create household
+        <h2>Create a shared household</h2>
+        <form asp-controller="Household" asp-action="Create" method="post">
+            <div class="field">
+                <label asp-for="Create.Name" class="field__label"></label>
+                <input asp-for="Create.Name" class="input" maxlength="100" />
+            </div>
+            <button type="submit" class="btn btn--primary">Create Household</button>
+        </form>
+    } else
+    {
+        //existing household details
+        <p class="page__lead">Shared household: <strong>@Model.HouseholdName</strong></p>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Member</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Joined</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var member in Model.Members)
+                    {
+                        <tr>
+                            <td>@member.User.DisplayName</td>
+                            <td>@member.HouseholdRole</td>
+                            <td>@member.DateJoined.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+
+    }
+
+</div>

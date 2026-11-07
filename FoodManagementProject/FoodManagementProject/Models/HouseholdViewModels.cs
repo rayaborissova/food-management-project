@@ -3,7 +3,7 @@
 namespace FoodManagementProject.Models
 {
     // the form for creating a shared household
-    public class CreateHouseholdViewModels
+    public class CreateHouseholdViewModel
     {
         [Required, StringLength(100)]
         [Display(Name = "Household name")]
@@ -16,7 +16,7 @@ namespace FoodManagementProject.Models
         public string HouseholdName { get; set; } = string.Empty;
         public bool IsShared { get; set; }
         public List<HouseholdMember> Members { get; set; } = new();
-        public CreateHouseholdViewModels Create { get; set; } = new();
+        public CreateHouseholdViewModel Create { get; set; } = new();
     }
 
 
