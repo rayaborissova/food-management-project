@@ -13,7 +13,7 @@ namespace FoodManagementProject.Controllers
     public class HouseholdController : HouseholdControllerBase
     {
         private readonly FoodManagementDbContext _context;
-        private const string CodeAlphabet = "ABCDEFGHIJKMNOPQRSTUVWXYZ0123456789";
+        private const string CodeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
         public HouseholdController(FoodManagementDbContext context)
         {
             _context = context;
@@ -37,13 +37,16 @@ namespace FoodManagementProject.Controllers
 
             var invite = isShared ? await _context.HouseholdInvites.Where(i => i.HouseholdId == HouseholdId && i.ExpiresAt > now).OrderByDescending(i => i.DateCreated).FirstOrDefaultAsync() : null;
 
+            var personalInventoryCount = household.PersonalUserId != null ? await _context.InventoryBatches.CountAsync(b => b.HouseholdId == HouseholdId) : 0;
+
             return new HouseholdIndexViewModel
             {
                 HouseholdName = household.HouseholdName,
                 IsShared = isShared,
                 Members = members,
                 ActiveCode = invite?.Code,
-                CodeExpiresAt = invite?.ExpiresAt
+                CodeExpiresAt = invite?.ExpiresAt,
+                PersonalInventoryCount = personalInventoryCount
             };
         }
 
@@ -67,7 +70,10 @@ namespace FoodManagementProject.Controllers
             if (!ModelState.IsValid)
             {
                 TempData["HouseholdError"] = "Enter a household name (up to 100 characters)";
+                return RedirectToAction(nameof(Index));
             }
+
+            var personalHouseholdId = HouseholdId;
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -88,16 +94,37 @@ namespace FoodManagementProject.Controllers
             membership.DateJoined = Now;
             await _context.SaveChangesAsync();
 
+            var copiedCount = 0;
+
+            if (model.CopyInventory)
+            {
+                var personalBatches = await _context.InventoryBatches.AsNoTracking().Where(b => b.HouseholdId == personalHouseholdId).ToListAsync();
+
+                var copies = personalBatches.Select(b => new InventoryBatch
+                {
+                    IngredientId = b.IngredientId,
+                    HouseholdId = household.HouseholdId,
+                    UnitId = b.UnitId,
+                    Quantity = b.Quantity,
+                    ExpirationDate = b.ExpirationDate,
+                    DateAdded = DateTime.UtcNow
+                }).ToList();
+
+                _context.InventoryBatches.AddRange(copies);
+                await _context.SaveChangesAsync();
+                copiedCount = copies.Count();
+            }
+
             await transaction.CommitAsync();
 
-            TempData["HousheoldMessage"] = "Household created."; //success message
+            TempData["HouseholdMessage"] = copiedCount > 0 ? $"Household created with {copiedCount} ingredient batches copied from your personal inventory." : "Household created"; //success messages
             return RedirectToAction(nameof(Index));
         }
 
         // when leaving a shared household, the user returns to the personal one
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Leave()
+        public async Task<IActionResult> Leave(bool confirmDelete)
         {
             //the user can't leave their personal household
             if (!await InSharedHouseholdAsync()) 
@@ -115,6 +142,12 @@ namespace FoodManagementProject.Controllers
             //locating the "oldest" member, if there is one
             var successor = await _context.HouseholdMembers.Where(m => m.HouseholdId == leftHouseholdId && m.UserId != UserId).OrderBy(m => m.DateJoined).FirstOrDefaultAsync();
 
+            //when last member is leaving, application needs an explicit confirmation
+            if (successor == null && !confirmDelete)
+            {
+                TempData["HouseholdError"] = "You are the last member, so leaving would delete this household. Try again and confirm the warning.";
+            }
+
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
             //returning to personal household
@@ -131,7 +164,6 @@ namespace FoodManagementProject.Controllers
             await _context.SaveChangesAsync();
 
             //if last member left, household gets deleted
-            //ADD POPUP WARNING BEFORE DELETING
             if (successor == null)
             {
                 await _context.Households.Where(h => h.HouseholdId == leftHouseholdId).ExecuteDeleteAsync();
@@ -144,6 +176,7 @@ namespace FoodManagementProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // generating the invite code
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> GenerateInvite()
@@ -167,7 +200,41 @@ namespace FoodManagementProject.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
 
+        // joining a household using the invite code
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Join([Bind(Prefix = "Join")] JoinHouseholdViewModel model)
+        {
+            // allowing only one household per user, member of a shared one should leave their current one to join a new one
+            if (await InSharedHouseholdAsync())
+            {
+                TempData["HouseholdError"] = "Leave your current household before joining another one.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var code = (model.Code ?? string.Empty).Trim().ToUpperInvariant();
+            var now = Now;
+
+            var invite = await _context.HouseholdInvites.FirstOrDefaultAsync(i => i.Code == code && i.ExpiresAt > now);
+
+            // error message for unknown or expired codes
+            if (!ModelState.IsValid || invite == null)
+            {
+                TempData["HouseholdError"] = "Invalid or expired invite code.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // transfering membership to the shared household
+            var membership = await _context.HouseholdMembers.FirstAsync(m => m.UserId == UserId);
+            membership.HouseholdId = invite.HouseholdId;
+            membership.HouseholdRole = "member";
+            membership.DateJoined = now;
+            await _context.SaveChangesAsync();
+
+            TempData["HouseholdMessage"] = "You joined the household. You now see its shared inventory and shopping list";
+            return RedirectToAction(nameof(Index));
         }
 
     }

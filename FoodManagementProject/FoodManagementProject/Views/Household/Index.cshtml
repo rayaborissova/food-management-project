@@ -1,4 +1,4 @@
-﻿@model FoodManagementProject.Models.HouseholdIndexViewModel;
+﻿@model FoodManagementProject.Models.HouseholdIndexViewModel
 
 @{
     ViewData["Title"] = "Household";
@@ -7,7 +7,7 @@
 <div class="page">
     <h1 class="page__title">Household</h1>
 
-    <!--errors-->
+    <!--messages and errors-->
     @if (TempData["HouseholdMessage"] is string message)
     {
         <p role="status">@message</p>
@@ -15,7 +15,7 @@
 
     @if (TempData["HouseholdError"] is string error)
     {
-        <p class="form-errors" role="status">@error</p>
+        <p class="form-errors" role="alert">@error</p>
     }
 
     <!--if not in a shared household-->
@@ -23,8 +23,17 @@
     {
         <p class="page__lead">You are using your personal fridge. Create a shared household, or join one with an invite code.</p>
         
-        <!--TO ADD JOIN FORM-->
-        
+        <!--join form-->
+        <h2>Join with an invite code</h2>
+        <form asp-controller="Household" asp-action="Join" method="post">
+            <div class="field">
+                <label asp-for="Join.Code" class="field__label"></label>
+                <input asp-for="Join.Code" class="input" autocomplete="off" maxlength="12" />
+            </div>
+            <button type="submit" class="btn btn--primary">Join household</button>
+        </form>
+
+
         <!--create household-->
         <h2>Create a shared household</h2>
         <form asp-controller="Household" asp-action="Create" method="post">
@@ -32,6 +41,20 @@
                 <label asp-for="Create.Name" class="field__label"></label>
                 <input asp-for="Create.Name" class="input" maxlength="100" />
             </div>
+            <fieldset class="field-group">
+                <legend class="field__label">Ingredients</legend>
+                <label class="radio-option">
+                    <input type="radio" name="Create.CopyInventory" value="false" class="checkbox" checked />
+                    Start with an empty household
+                </label>
+                <label class="radio-option">
+                    <input type="radio" name="Create.CopyInventory" value="true" class="checkbox" disabled="@(Model.PersonalInventoryCount == 0)" />
+                    Copy my current ingredients (@Model.PersonalInventoryCount @(Model.PersonalInventoryCount ==  1 ? "batch" : "batches"))
+                </label>
+
+                <p class="page__lead">Your personal inventory stays unchanged, The copy is a separate list that belongs to the new household.</p>
+            </fieldset>
+
             <button type="submit" class="btn btn--primary">Create Household</button>
         </form>
     } else
@@ -63,8 +86,9 @@
 
         <!--button to leave household-->
         <h2>Leave household</h2>
-        <p class="page__lead">You will return to your personal inventory and shopping lis.</p>
-        <form asp-controller="Household" asp-action="Leave" method="post" onsubmit="return confirm('Leave this household?');"> <!--adding a confirm-->
+        <p class="page__lead">You will return to your personal inventory and shopping list.</p>
+        <form id="leave-form" asp-controller="Household" asp-action="Leave" method="post" data-last-member="@(Model.Members.Count == 1 ? "true" : "false")"> 
+            <input type="hidden" id="confirm-delete" name="confirmDelete" value="false" />
             <button type="submit" class="btn btn--danger">Leave household</button>
         </form>
 
@@ -82,8 +106,36 @@
                 @(Model.ActiveCode == null ? "Generate invite code" : "Generate a new code")
             </button>
         </form>
-
-
     }
 
 </div>
+
+<script>
+    const leaveForm = document.getElementById("leave-form");
+
+    if (leaveForm) {
+        const confirmDelete = document.getElementById("confirm-delete");
+
+        leaveForm.addEventListener("submit", function (event) {
+            
+            // first confirmation, always shown
+            if (!confirm("Leave this household?")) {
+                event.preventDefault();
+                return;
+            }
+
+            // second confirmation, only shown to the last member of the household
+            if (leaveForm.dataset.lastMember === "true") {
+                const confirmed = confirm("You are the last member. Leaving will permanently delete this household, its inventory and its shopping list. Continue?");
+            
+                if (!confirmed) {
+                    event.preventDefault();
+                    return;
+                }
+
+                //deletion warning was accepted
+                confirmDelete.value = "true";
+            }
+        });
+    }
+</script>

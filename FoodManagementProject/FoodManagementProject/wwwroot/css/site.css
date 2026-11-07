@@ -560,6 +560,20 @@ body {
     color: var(--sage);
 }
 
+.field-group {
+    margin: 0 0 16px;
+    padding: 0;
+    border: 0;
+}
+
+.radio-option {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         display: none;
