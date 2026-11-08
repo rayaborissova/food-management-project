@@ -69,6 +69,10 @@
                         <th scope="col">Member</th>
                         <th scope="col">Role</th>
                         <th scope="col">Joined</th>
+                        @if (Model.IsOwner)
+                        {
+                            <th scope="col">Actions</th>
+                        }
                     </tr>
                 </thead>
                 <tbody>
@@ -78,6 +82,21 @@
                             <td>@member.User.DisplayName</td>
                             <td>@member.HouseholdRole</td>
                             <td>@member.DateJoined.ToString("dd/MM/yyyy")</td>
+                            @if (Model.IsOwner)
+                            {
+                                <td>
+                                    @if (member.UserId == Model.CurrentUserId)
+                                    {
+                                        <span>(you)</span> <!--owner cannot remove themselves the same way they would a member-->
+                                    } else
+                                    {
+                                        <form asp-controller="Household" asp-action="RemoveMember" method="post" class="inline-form" data-confirm="Remove @member.User.DisplayName from this household?.">
+                                            <input type="hidden" name="memberUserId" value="@member.UserId" />
+                                            <button type="submit" class="btn btn--danger btn--sm">Remove</button> 
+                                        </form>
+                                    }
+                                </td>
+                            }
                         </tr>
                     }
                 </tbody>
@@ -111,6 +130,8 @@
 </div>
 
 <script>
+
+    // confirmation for members leaving on their own
     const leaveForm = document.getElementById("leave-form");
 
     if (leaveForm) {
@@ -135,6 +156,15 @@
 
                 //deletion warning was accepted
                 confirmDelete.value = "true";
+            }
+        });
+    }
+
+    // confirmation of the member removal by the owner
+    for (const form of document.querySelectorAll("form[data-confirm]")) {
+        form.addEventListener("submit", function(event) {
+            if (!confirm(form.dataset.confirm)) {
+                event.preventDefault();
             }
         });
     }

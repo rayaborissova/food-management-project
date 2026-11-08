@@ -46,7 +46,9 @@ namespace FoodManagementProject.Controllers
                 Members = members,
                 ActiveCode = invite?.Code,
                 CodeExpiresAt = invite?.ExpiresAt,
-                PersonalInventoryCount = personalInventoryCount
+                PersonalInventoryCount = personalInventoryCount,
+                CurrentUserId = UserId,
+                IsOwner = isShared && members.Any(m => m.UserId  == UserId && m.HouseholdRole == "owner") // checking if the user is the owner
             };
         }
 
@@ -173,6 +175,66 @@ namespace FoodManagementProject.Controllers
 
             TempData["HouseholdMessage"] = "You left the household and returned to your personal inventory.";
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveMember(int memberUserId)
+        {
+            // only the owner can remove members
+            var isOwner = await _context.HouseholdMembers.AnyAsync(m => m.UserId == UserId && m.HouseholdId == HouseholdId && m.HouseholdRole == "owner");
+
+            if (!isOwner || !await InSharedHouseholdAsync())
+            {
+                TempData["HouseholdError"] = "Only the owner of a shared household can remove members.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // owner cannot remove themselves the same way they would remove a member, they have to use the leave button
+            if (memberUserId == UserId)
+            {
+                TempData["HouseholdError"] = "Use \"Leave household\" to remove yourself from the household.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // the member they wish to remove should be part of the household
+            var member = await _context.HouseholdMembers.Include(m => m.User).FirstOrDefaultAsync(m => m.UserId == memberUserId && m.HouseholdId == HouseholdId);
+
+            if (member == null) 
+            {
+                TempData["HouseholdError"] = "This person is not a member of this household.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            if (member.HouseholdRole == "owner")
+            {
+                TempData["HouseholdError"] = "The owner can't be removed.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            // after removal, the user is returned to their personal inventory
+            var personalHouseholdId = await _context.Households.Where(h => h.PersonalUserId == memberUserId).Select(h => h.HouseholdId).FirstOrDefaultAsync();
+
+            if (personalHouseholdId == 0)
+            {
+                TempData["HouseholdError"] = "The member's personal household could not be found.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            // transfering the user to their personal inventory
+            member.HouseholdId = personalHouseholdId;
+            member.HouseholdRole = "owner";
+            member.DateJoined = Now;
+            await _context.SaveChangesAsync();
+
+            // deleting the current invite code if one exists
+            await _context.HouseholdInvites.Where(i => i.HouseholdId == HouseholdId).ExecuteDeleteAsync();
+            await transaction.CommitAsync();
+
+            TempData["HouseholdMessage"] = $"{member.User.DisplayName} was removed from the household. Create a new invite code if one is needed.";
             return RedirectToAction(nameof(Index));
         }
 

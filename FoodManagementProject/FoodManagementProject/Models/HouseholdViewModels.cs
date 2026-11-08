@@ -35,6 +35,10 @@ namespace FoodManagementProject.Models
         public DateTime? CodeExpiresAt { get; set; }
         public int PersonalInventoryCount { get; set; } 
 
+        // for owner additional permissions
+        public int CurrentUserId { get; set; }
+        public bool IsOwner { get; set; }
+
         public CreateHouseholdViewModel Create { get; set; } = new();
         public JoinHouseholdViewModel Join { get; set; } = new();
     }

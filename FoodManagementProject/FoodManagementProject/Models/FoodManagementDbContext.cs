@@ -21,6 +21,7 @@ public partial class FoodManagementDbContext : DbContext
     public virtual DbSet<HouseholdMember> HouseholdMembers { get; set; }
     public virtual DbSet<AppUser> AppUsers { get; set; }
     public virtual DbSet<HouseholdInvite> HouseholdInvites { get; set; } //for household invitations
+    public virtual DbSet<IngredientRequest> IngredientRequests { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -143,6 +144,28 @@ public partial class FoodManagementDbContext : DbContext
             entity.HasIndex(e => e.Code).IsUnique();
             entity.HasOne(e => e.Household).WithMany().HasForeignKey(e => e.HouseholdId);
             entity.HasOne<AppUser>().WithMany().HasForeignKey(e => e.CreatedBy);
+        });
+
+        //mapping the ingredient request table columns
+        modelBuilder.Entity<IngredientRequest>(entity =>
+        {
+            entity.ToTable("ingredient_request");
+            entity.HasKey(e => e.RequestId);
+            entity.Property(e => e.RequestId).HasColumnName("request_id");
+            entity.Property(e => e.RequestedBy).HasColumnName("requested_by");
+            entity.Property(e => e.RequestedName).HasColumnName("requested_name");
+            entity.Property(e => e.SuggestedCategoryId).HasColumnName("suggested_category_id");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.RequestStatus).HasColumnName("request_status");
+            entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ReviewedBy).HasColumnName("reviewed_by");
+            entity.Property(e => e.DateReviewed).HasColumnName("date_reviewed").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ReviewNote).HasColumnName("review_note");
+            entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+            entity.HasOne(e => e.Requester).WithMany().HasForeignKey(e => e.RequestedBy);
+            entity.HasOne(e => e.Reviewer).WithMany().HasForeignKey(e => e.ReviewedBy);
+            entity.HasOne(e => e.SuggestedCategory).WithMany().HasForeignKey(e => e.SuggestedCategoryId);
+            entity.HasOne(e => e.Ingredient).WithMany().HasForeignKey(e => e.IngredientId);
         });
 
     }
