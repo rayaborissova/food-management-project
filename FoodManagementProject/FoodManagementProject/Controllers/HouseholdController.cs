@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using System.Reflection.Metadata;
 using System.Security.Cryptography;
+using FoodManagementProject.Services;
+using System.Runtime.InteropServices;
 
 namespace FoodManagementProject.Controllers
 {
@@ -13,10 +15,12 @@ namespace FoodManagementProject.Controllers
     public class HouseholdController : HouseholdControllerBase
     {
         private readonly FoodManagementDbContext _context;
+        private readonly HouseholdService _households;
         private const string CodeAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        public HouseholdController(FoodManagementDbContext context)
+        public HouseholdController(FoodManagementDbContext context, HouseholdService households)
         {
             _context = context;
+            _households = households;
         }
 
         private static DateTime Now => DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
@@ -135,42 +139,15 @@ namespace FoodManagementProject.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            var membership = await _context.HouseholdMembers.FirstAsync(m => m.UserId == UserId);
-            var leftHouseholdId = membership.HouseholdId;
-            var wasOwner = membership.HouseholdRole == "owner";
-
-            var personalHouseholdId = await _context.Households.Where(h => h.PersonalUserId == UserId).Select(h => h.HouseholdId).FirstAsync();
-
-            //locating the "oldest" member, if there is one
-            var successor = await _context.HouseholdMembers.Where(m => m.HouseholdId == leftHouseholdId && m.UserId != UserId).OrderBy(m => m.DateJoined).FirstOrDefaultAsync();
-
-            //when last member is leaving, application needs an explicit confirmation
-            if (successor == null && !confirmDelete)
+            var isLastMember = !await _context.HouseholdMembers.AnyAsync(m => m.HouseholdId == HouseholdId && m.UserId != UserId);
+            if (isLastMember && !confirmDelete)
             {
                 TempData["HouseholdError"] = "You are the last member, so leaving would delete this household. Try again and confirm the warning.";
             }
 
             await using var transaction = await _context.Database.BeginTransactionAsync();
 
-            //returning to personal household
-            membership.HouseholdId = personalHouseholdId;
-            membership.HouseholdRole = "owner";
-            membership.DateJoined = Now;
-
-            //ownership passes to the "oldest" member when the owner leaves
-            if (successor != null && wasOwner)
-            {
-                successor.HouseholdRole = "owner";
-            }
-
-            await _context.SaveChangesAsync();
-
-            //if last member left, household gets deleted
-            if (successor == null)
-            {
-                await _context.Households.Where(h => h.HouseholdId == leftHouseholdId).ExecuteDeleteAsync();
-            }
-
+            await _households.LeaveSharedHouseholdAsync(UserId);
             await transaction.CommitAsync();
 
             TempData["HouseholdMessage"] = "You left the household and returned to your personal inventory.";

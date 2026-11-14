@@ -19,11 +19,24 @@ namespace FoodManagementProject.Controllers
         
         public IActionResult Index() 
         {
-            if (User.Identity?.IsAuthenticated == true) // to prevent a dead-end landing page
+            if (User.Identity?.IsAuthenticated != true) // to prevent a dead-end landing page
             {
-                return RedirectToAction("Index", "Inventory");
+                return RedirectToAction("Login", "Account");
             }
-            return RedirectToAction("Login", "Account");
+            
+            // land page for admin
+            if(User.IsInRole(AppRoles.Admin))
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
+            // land page for moderator
+            if (User.IsInRole(AppRoles.Moderator))
+            {
+                return RedirectToAction("Index", "Moderator");
+            }
+
+            return RedirectToAction("Index", "Inventory");
         }
 
         public IActionResult Privacy()

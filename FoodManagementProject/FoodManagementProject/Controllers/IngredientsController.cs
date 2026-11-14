@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace FoodManagementProject.Controllers {
 
-    [Authorize (Roles = "admin,moderator")]
+    [Authorize (Roles = AppRoles.Admin)]
     public class IngredientsController : Controller
     {
         private readonly FoodManagementDbContext _context;

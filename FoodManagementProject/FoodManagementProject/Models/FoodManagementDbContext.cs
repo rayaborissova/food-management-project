@@ -113,6 +113,7 @@ public partial class FoodManagementDbContext : DbContext
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
             entity.Property(e => e.DisplayName).HasColumnName("display_name");
             entity.Property(e => e.UserRole).HasColumnName("user_role");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
             entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
             entity.HasIndex(e => e.Email).IsUnique();
         });

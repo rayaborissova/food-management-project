@@ -7,6 +7,7 @@
         public string PasswordHash { get; set; } = null!;
         public string DisplayName { get; set; } = null!;
         public string UserRole { get; set; } = "regular";
+        public bool IsActive { get; set; } = true;
         public DateTime DateCreated { get; set; }
         public HouseholdMember? Membership { get; set; }
     }

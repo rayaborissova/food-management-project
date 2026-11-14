@@ -29,7 +29,7 @@ namespace FoodManagementProject.Controllers
         {
             if (User.Identity?.IsAuthenticated == true)
             {
-                return RedirectToAction("Index", "Inventory");
+                return RedirectToAction("Index", "Home");
             }
             return View(new RegisterViewModel());
         }
@@ -88,7 +88,7 @@ namespace FoodManagementProject.Controllers
             await transaction.CommitAsync();
 
             await SignInUserAsync(user, isPersistent: false);
-            return RedirectToAction("Index", "Inventory");
+            return RedirectToAction("Index", "Home");
         }
 
 
@@ -98,7 +98,7 @@ namespace FoodManagementProject.Controllers
         {
             if (User.Identity?.IsAuthenticated == true)
             {
-                return RedirectToAction("Index", "Inventory");
+                return RedirectToAction("Index", "Home");
             }
             ViewData["ReturnUrl"] = returnUrl;
             return View(new LoginViewModel());
@@ -126,6 +126,12 @@ namespace FoodManagementProject.Controllers
                 return View(model);
             }
 
+            if (!user.IsActive)
+            {
+                ModelState.AddModelError("", "This account has been deactivated.");
+                return View(model);
+            }
+
             if (verification == PasswordVerificationResult.SuccessRehashNeeded)
             {
                 user.PasswordHash = _hasher.HashPassword(user, model.Password);
@@ -138,7 +144,7 @@ namespace FoodManagementProject.Controllers
             {
                 return LocalRedirect(returnUrl);
             }
-            return RedirectToAction("Index", "Inventory");
+            return RedirectToAction("Index", "Home");
         }
 
         // for logout

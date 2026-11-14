@@ -4,7 +4,7 @@ using FoodManagementProject.Models;
 using FoodManagementProject.Controllers;
 using Microsoft.AspNetCore.Authorization;
 
-[Authorize]
+[Authorize(Roles = AppRoles.Regular)]
 public class InventoryController : HouseholdControllerBase
 {
     private readonly FoodManagementDbContext _context;

@@ -610,3 +610,15 @@ C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManageme
 C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\ref\FoodManagementProject.dll
 C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-cpf4v6qx7w-cpf4v6qx7w.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-3vra3nl2jj-3vra3nl2jj.gz
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\bin\Debug\net10.0\FoodManagementProject.runtimeconfig.dev.json
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\HotReload\Microsoft.NET.Sdk.BlazorWeb.HotReload.lib.module.js
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\HotReload\Microsoft.NET.Sdk.BlazorWeb.HotReload.BrowserTools.js
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\HotReload\Microsoft.NET.Sdk.BlazorWeb.HotReload.BrowserTools.Config.js
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\HotReload\browser-tools-key.public.json
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\HotReload\browser-tools-key.private.json
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\jsmodules\jsmodules.build.manifest.json
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\scopedcss\scopedcss.cache
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\u0sispcgwk-{0}-tchfgznwy8-tchfgznwy8.gz
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\h26sam7jz4-{0}-nb3aqe03i4-nb3aqe03i4.gz
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\ohc47plyl7-{0}-v1vy2to33n-v1vy2to33n.gz
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\2wlpaqpzx6-{0}-ysew0n4kjn-ysew0n4kjn.gz

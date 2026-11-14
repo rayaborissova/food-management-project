@@ -2,6 +2,7 @@ using FoodManagementProject.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies; 
 using Microsoft.AspNetCore.Identity;
+using FoodManagementProject.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +15,8 @@ var connectionString = builder.Configuration.GetConnectionString("FoodDbConnecti
     ?? throw new InvalidOperationException("FoodDb connection not found."); // implementing an exception for possible error
 
 builder.Services.AddDbContext<FoodManagementDbContext>(options => options.UseNpgsql(connectionString));
+
+builder.Services.AddScoped<HouseholdService>();
 
 builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 
@@ -28,6 +31,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.Cookie.SameSite = SameSiteMode.Lax; // protection against cross-site requests
     options.ExpireTimeSpan = TimeSpan.FromHours(8); // authenitcation ticket valid for eigth hours
     options.SlidingExpiration = true; // allowing to extend the login period
+    options.Events.OnValidatePrincipal = AuthCookieEvents.ValidateAsync;
 });
 
 var app = builder.Build();
