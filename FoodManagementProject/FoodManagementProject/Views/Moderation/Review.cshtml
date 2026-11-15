@@ -1,0 +1,72 @@
+﻿@model FoodManagementProject.Models.ModerationReviewViewModel
+
+@{
+    ViewData["Title"] = "Review suggestion";
+}
+
+<div class="page">
+    <h1 class="page__title">Review suggestion</h1>
+
+    <dl class="details-list">
+        <dt>Suggested ingredient</dt>
+        <dd>@Model.Request.RequestedName</dd>
+
+        <dt>Suggested by</dt>
+        <dd>@Model.Request.RequestedName</dd>
+
+        <dt>Suggested category</dt>
+        <dd>@(Model.Request.SuggestedCategory?.CategoryName ?? "Not specified")</dd>
+
+        <dt>Note from the user</dt>
+        <dd>@(string.IsNullOrWhiteSpace(Model.Request.Note) ? "None" : Model.Request.Note)</dd>
+    </dl>
+
+    @if (Model.Similar.Any())
+    {
+        <h2> Similar existing ingredients</h2>
+        <p class="page__lead">Check these before approving, so the catalogue doesn't get duplicates.</p>
+        <ul>
+            @foreach (var ingredient in Model.Similar)
+            {
+                <li>@ingredient.IngredientName (@ingredient.Category?.CategoryName)</li>
+            }
+        </ul> 
+    }
+
+    <form asp-controller="Moderation" asp-action="Approve" method="post">
+        <div asp-validation-summary="ModelOnly" class="form-errors"></div>
+        <input type="hidden" asp-for="RequestId" />
+
+        <div class="field">
+            <label asp-for="FinalName" class="field__label">Ingredient name (you can correct it)</label>
+            <input asp-for="FinalName" class="input" maxlength="150" />
+            <span asp-validation-for="FinalName" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="CategoryId" class="field__label">Category (required to approve)</label>
+            <select asp-for="CategoryId" class="input">
+                <option value="">Choose a category</option>
+                @foreach (var category in Model.Categories)
+                {
+                     <option value="@category.CategoryId">@category.CategoryName</option>
+                }
+            </select>
+            <span asp-validation-for="CategoryId" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="ReviewNote" class="field__label">Note to the user (required to reject)</label>
+            <textarea asp-for="ReviewNote" class="input" rows="3" maxlength="300" />
+            <span asp-validation-for="ReviewNote" class="field__error"></span>
+        </div>
+
+        <div class="toolbar">
+            <button type="submit" class="btn btn--sage">Approve and add to catalogue</button>
+            <button type="submit" asp-controller="Moderation" asp-action="Reject" class="btn btn--danger">Reject</button>
+        </div>
+    </form>
+
+    <a asp-controller="Moderation" asp-action="Index" class="back-link">Back to the queue</a>
+
+</div>

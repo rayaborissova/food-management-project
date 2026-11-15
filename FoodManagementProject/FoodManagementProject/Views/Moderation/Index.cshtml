@@ -1,8 +1,57 @@
-﻿@{
+﻿@model List<FoodManagementProject.Models.IngredientRequest>
+
+@{
     ViewData["Title"] = "Moderation";
 }
 
-<div class="page">
-    <h1 class="page__title">Moderation</h1>
-    <!--list of review reports and ingredient suggestions-->
+<div class="page page--wide">
+    <h1 class="page__title">Ingredient suggestions</h1>
+    
+    @if (TempData["ModerationMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+    @if (TempData["ModerationError"] is string error)
+    {
+        <p class="form-errors" role="alert">@error</p>
+    }
+
+    <p>
+        <a asp-controller="Moderation" asp-action="History">View past decisions</a>
+
+    </p>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">No suggestions are waiting for review.</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Suggested by</th>
+                        <th scope="col">Suggested category</th>
+                        <th scope="col">Note</th>
+                        <th scope="col">Sent</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var request in Model)
+                    {
+                        <tr>
+                            <td>@request.RequestedName</td>
+                            <td>@request.Requester.DisplayName</td>
+                            <td>@(request.SuggestedCategory?.CategoryName ?? "Not specified")</td>
+                            <td>@request.Note</td>
+                            <td>@request.DateCreated.ToString("dd/MM/yyyy")</td>
+                            <td><a asp-controller="Moderation" asp-action="Review" asp-route-id="@request.RequestId" class="btn btn--primary btn--sm">Review</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>

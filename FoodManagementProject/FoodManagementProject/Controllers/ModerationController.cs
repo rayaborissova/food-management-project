@@ -134,10 +134,50 @@ namespace FoodManagementProject.Controllers
             };
             _context.Ingredients.Add(ingredient);
 
-        await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 
+            await _context.IngredientRequests.Where(r => r.RequestId == form.RequestId).ExecuteUpdateAsync(s => s.SetProperty(r => r.IngredientId, (int?)ingredient.IngredientId));
+
+            await transaction.CommitAsync();
+
+            TempData["ModerationMessage"] = $"\"{finalName}\" was aded to the catalogue.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Reject(ModerationReviewViewModel form)
+        {
+            var note = (form.ReviewNote ?? string.Empty).Trim();
+
+            if (note.Length == 0 || note.Length > 300)
+            {
+                ModelState.AddModelError(nameof(form.ReviewNote), "Give a short reason (up to 300 characters). The user will see it.");
+
+                var invalid = await LoadReviewAsync(form.RequestId, form.FinalName, form.CategoryId, form.ReviewNote);
+                if (invalid == null)
+                {
+                    TempData["ModerationError"] = "This suggestion was not found or has already been reviewed.";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                return View("Review", invalid);
+            }
+
+            var reviewerId = CurrentUserId;
+            var now = Now;
+
+            var claimed = await _context.IngredientRequests.Where(r => r.RequestId == form.RequestId && r.RequestStatus == RequestStatuses.Pending).ExecuteUpdateAsync(s => s.SetProperty(r => r.RequestStatus, RequestStatuses.Rejected).SetProperty(r => r.ReviewedBy, (int?)reviewerId).SetProperty(r => r.DateReviewed, (DateTime?)now).SetProperty(r => r.ReviewNote, note));
+
+            TempData[claimed > 0 ? "ModerationMessage" : "ModerationError"] = claimed > 0 ? "Suggestion rejected." : "This suggestion was already reviewed by someone else.";
+
+            return RedirectToAction(nameof(Index));
         
         }
+
+
+
+
 
     }
 
