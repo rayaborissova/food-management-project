@@ -1,0 +1,28 @@
+﻿@model FoodManagementProject.Models.AppUser
+
+@{
+    ViewData["Title"] = "Delete user";
+}
+
+<div class="page">
+    <h1 class="page__title">Delete user</h1>
+
+    <p class="page__lead">This permanently deletes the account, its personal inventory and its personal shopping list. If the user is in a shared household, they are removed from it and the household keeps its own data. This cannot be undone.</p>
+
+    <dl class="details-list">
+        <dt>Name</dt>
+        <dt>@Model.DisplayName</dt>
+
+        <dt>Email</dt>
+        <dt>@Model.Email</dt>
+
+        <dt>Role</dt>
+        <dt>@Model.UserRole</dt>
+    </dl>
+
+    <form asp-controller="Admin" asp-action="Delete" asp-route-id="@Model.UserId" method="post">
+        <button type="submit" class="btn btn--danger--solid">Delete permanently</button>
+    </form>
+
+    <a asp-controller="Admin" asp-action="Index" class="back-link">Cancel</a>
+</div>

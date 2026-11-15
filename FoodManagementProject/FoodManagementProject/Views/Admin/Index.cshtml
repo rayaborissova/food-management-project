@@ -1,0 +1,90 @@
+﻿@model FoodManagementProject.Models.AdminUserViewListModel
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="page page--wide">
+    <h1 class="page__title">Users</h1>
+
+    @if (TempData["AdminMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+    @if (TempData["AdminError"] is string error)
+    {
+        <p class="form-errors" role="alert">@error</p>
+    }
+
+    <form asp-controller="Admin" asp-action="Index" method="get" class="search">
+        <label for="user-search" class="field__label">Search by name or email</label>
+        <div class="search__controls">
+            <input id="user-search" type="search" name="search" value="@Model.Search" class="input" />
+            <button type="submit" class="btn btn--primary">Search</button>
+        </div>
+    </form>
+
+    @if (!Model.Users.Any())
+    {
+        <p class="empty-state">No users found.</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Registered</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        var isSelf = user.UserId == Model.CurrentUserId;
+                        <tr>
+                            <td>@user.DisplayName@(isSelf ? " (you)" : "")</td>
+                            <td>@user.Email</td>
+                            <td>
+                                @if (isSelf)
+                                {
+                                    @user.UserRole
+                                } else
+                                {
+                                    <form asp-controller="Admin" asp-action="ChangeRole" method="post" class="inline-form">
+                                        <input type="hidden" name="id" value="@user.UserId"/>
+                                        <select name="role" class="input" aria-label="Role for @user.Email">
+                                            @foreach (var role in new[] { AppRoles.Regular, AppRoles.Moderator, AppRoles.Admin })
+                                                {
+                                                    <option value = "@role" selected = "@(role == user.UserRole)">@role</option>                
+                                                }
+                                            </select>
+                                            <button type="submit" class="btn btn--outline btn--sm">Save</button>
+                                    </form>
+                                }
+                            </td>
+                            <td>@(user.IsActive ? "Active" : "Deactivated")</td>
+                            <td>@user.DateCreated.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (!isSelf)
+                                {
+                                    <div class="inline-form">
+                                        <form asp-controller="Admin" asp-action="SetActive" method="post" class="inline-form">
+                                            <input type="hidden" name="id" value="@user.UserId" />
+                                            <input type="hidden" name="active" value="@(user.IsActive ? "false" : "true")"/>
+                                            <button type="submit" class="btn btn--outline btn--sm">@(user.IsActive ? "Deactivate" : "Reactivate")</button>
+                                        </form>
+                                        <a asp-controller="Admin" asp-action="Delete" asp-route-id="@user.UserId" class="btn btn--danger btn-sm">Delete</a>
+                                    </div>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+</div> 
