@@ -19,6 +19,8 @@
         </div>
     </form>
 
+    <p class="request-link">Can't find what you are looking for? <a asp-controller="IngredientRequests" asp-action="Index" asp-route-name="@ViewData["Search"]">Suggest a new ingredient</a></p>
+
     <div class="selection-bar"> 
         <p id="selection-count" role="status">0 ingredients selected</p> 
         <button type="button" id="clear-selection" class="btn btn--outline btn--sm" hidden>Clear selection</button> 

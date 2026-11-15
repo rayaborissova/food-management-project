@@ -1,0 +1,91 @@
+﻿@model FoodManagementProject.Models.IngredientRequestPageViewModel
+
+@{
+    ViewData["Title"] = "Suggest an ingredient";
+}
+
+<div class="page">
+    <h1 class="page__title">Suggest an ingredient</h1>
+    <p class="page__lead">Can't find an ingredient? Send a suggestion, and we will review it. Approved ingredients become available to everyone. To correct an existing ingredient, use the Report option on it instead.</p>
+
+    @if (TempData["RequestMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+
+    <form asp-controller="IngredientRequests" asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="form-errors"></div>
+
+        <div class="field">
+            <label asp-for="Form.Name" class="field__label"></label>
+            <input asp-for="Form.Name" class="input" maxlength="150" />
+            <span asp-validation-for="Form.Name" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Form.SuggestedCategoryId" class="field__label"></label>
+            <select asp-for="Form.SuggestedCategoryId" class="input">
+                <option value="">No suggestion</option>
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.CategoryId">@category.CategoryName</option>
+                }
+            </select>
+            <span asp-validation-for="Form.SuggestedCategoryId" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Form.Note" class="field__label"></label>
+            <textarea asp-for="Form.Note" class="input" rows="3" maxlength="300"></textarea>
+            <span asp-validation-for="Form.Note" class="field__error"></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary">Send suggestion</button> 
+    </form>
+
+    <h2>My suggestions</h2>
+
+     @if (!Model.Requests.Any())
+    {
+        <p class="empty-state">You haven't suggested any ingredients yet.</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Moderator's Note</th>
+                        <th scope="col">Sent</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var request in Model.Requests)
+                    {
+                        <tr>
+                            <td>@request.RequestedName</td>
+                            <td>@(request.SuggestedCategory?.CategoryName ?? "Not specified")</td>
+                            <td><span class="status status--@request.RequestStatus">@request.RequestStatus</span></td>
+                            <td>@(request.ReviewNote ?? "")</td>
+                            <td>@request.DateCreated.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (request.RequestStatus == RequestStatuses.Pending)
+                                {
+                                    <form asp-controller="IngredientRequests" asp-action="Cancel" asp-route-id="@request.RequestId" method="post" class="inline-form">
+                                        <button type="submit" class="btn btn--outline btn--sm">Withdraw</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="Inventory" asp-action="Index" class="back-link">Back to Inventory</a>
+
+</div>

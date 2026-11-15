@@ -586,6 +586,26 @@ body {
     gap: 8px;
 }
 
+.request-link {
+    margin: 0 0 12px;
+}
+
+textarea.input {
+    resize: vertical;
+}
+
+.status {
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.status--pending 
+{
+    color: var(--ink-muted);
+    color: var(--sage);
+    color: var(--danger);
+}
+
 @media (max-width: 768px) {
     .sidebar {
         display: none;
