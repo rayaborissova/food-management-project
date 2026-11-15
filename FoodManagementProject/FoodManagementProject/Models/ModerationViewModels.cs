@@ -4,7 +4,7 @@
 namespace FoodManagementProject.Models
 
 {
-    public class ModerationViewModel
+    public class ModerationReviewViewModel
     {
         public int RequestId { get; set; }
         public string? FinalName { get; set; }
