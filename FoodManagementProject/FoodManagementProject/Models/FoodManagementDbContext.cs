@@ -22,6 +22,7 @@ public partial class FoodManagementDbContext : DbContext
     public virtual DbSet<AppUser> AppUsers { get; set; }
     public virtual DbSet<HouseholdInvite> HouseholdInvites { get; set; } //for household invitations
     public virtual DbSet<IngredientRequest> IngredientRequests { get; set; }
+    public virtual DbSet<IngredientReport> IngredientReports { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -167,6 +168,33 @@ public partial class FoodManagementDbContext : DbContext
             entity.HasOne(e => e.Reviewer).WithMany().HasForeignKey(e => e.ReviewedBy);
             entity.HasOne(e => e.SuggestedCategory).WithMany().HasForeignKey(e => e.SuggestedCategoryId);
             entity.HasOne(e => e.Ingredient).WithMany().HasForeignKey(e => e.IngredientId);
+        });
+
+        //mapping to the ingredient reports
+        modelBuilder.Entity<IngredientReport>(entity =>
+        {
+            entity.ToTable("ingredient_report");
+            entity.HasKey(e => e.ReportId);
+            entity.Property(e => e.ReportId).HasColumnName("report_id");
+            entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+            entity.Property(e => e.ReportedBy).HasColumnName("reported_by");
+            entity.Property(e => e.Reason).HasColumnName("reason");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.Property(e => e.SuggestedCategoryId).HasColumnName("suggested_category_id");
+            entity.Property(e => e.ReportStatus).HasColumnName("report_status");
+            entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ReviewedBy).HasColumnName("reviewed_by");
+            entity.Property(e => e.DateReviewed).HasColumnName("date_reviewed").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ReviewNote).HasColumnName("review_note");
+            entity.Property(e => e.ResolvedBy).HasColumnName("resolved_by");
+            entity.Property(e => e.DateResolved).HasColumnName("date_resolved").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.Resolution).HasColumnName("resolution");
+            entity.Property(e => e.ResolutionNote).HasColumnName("resolution_note");
+            entity.HasOne(e => e.Ingredient).WithMany().HasForeignKey(e => e.IngredientId);
+            entity.HasOne(e => e.Reporter).WithMany().HasForeignKey(e => e.ReportedBy);
+            entity.HasOne(e => e.Reviewer).WithMany().HasForeignKey(e => e.ReviewedBy);
+            entity.HasOne(e => e.Resolver).WithMany().HasForeignKey(e => e.ResolvedBy);
+            entity.HasOne(e => e.SuggestedCategory).WithMany().HasForeignKey(e => e.SuggestedCategoryId);
         });
 
     }

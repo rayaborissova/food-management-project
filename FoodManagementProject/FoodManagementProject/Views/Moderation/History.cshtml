@@ -4,3 +4,44 @@
     ViewData["Title"] = "Past decisions";
 
 }
+
+<div class="page page--wide">
+    <h1 class="page__title">Past decisions</h1>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">Nothing has been reviewed yet</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Suggested by</th>
+                        <th scope="col">Decision</th>
+                        <th scope="col">Reviewed</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var request in Model)
+                    {
+                        <tr>
+                            <td>@request.RequestedName</td>
+                            <td>@request.Requester.DisplayName</td>
+                            <td><span class="status--@request.RequestStatus">@request.RequestStatus</span></td>
+                            <td>@(request.Reviewer?.DisplayName ?? "Removed account")</td>
+                            <td>@request.DateReviewed?.ToString("dd/MM/yyyy")</td>
+                            <td>@request.ReviewNote</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="Moderation" asp-action="Index" class="back-link">Back to the queue</a>
+
+</div>

@@ -62,7 +62,7 @@ namespace FoodManagementProject.Controllers
                 ModelState.AddModelError("Form.Name", "This ingredient has already been requested and is waiting for a review.");
             }
 
-            if (form.SuggestedCategoryId != null && await _context.Categories.AnyAsync(c => c.CategoryId == form.SuggestedCategoryId))
+            if (form.SuggestedCategoryId != null && !await _context.Categories.AnyAsync(c => c.CategoryId == form.SuggestedCategoryId))
             {
                 ModelState.AddModelError("Form.SuggestedCategoryId", "Choose a valid category.");
             }

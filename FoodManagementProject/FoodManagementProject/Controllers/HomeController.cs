@@ -33,7 +33,7 @@ namespace FoodManagementProject.Controllers
             // land page for moderator
             if (User.IsInRole(AppRoles.Moderator))
             {
-                return RedirectToAction("Index", "Moderator");
+                return RedirectToAction("Index", "Moderation");
             }
 
             return RedirectToAction("Index", "Inventory");

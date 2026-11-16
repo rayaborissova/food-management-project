@@ -4,8 +4,6 @@ using FoodManagementProject.Models;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Services;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Transactions;
 
 namespace FoodManagementProject.Controllers
 {
@@ -33,6 +31,7 @@ namespace FoodManagementProject.Controllers
         }
 
         //viewing most recent decisions
+        [HttpGet]
         public async Task<IActionResult> History()
         {
             var reviewed = await _context.IngredientRequests.AsNoTracking().Include(r => r.Requester).Include(r => r.Reviewer).Where(r => r.RequestStatus != RequestStatuses.Pending).OrderByDescending(r => r.DateReviewed).Take(100).ToListAsync();
@@ -40,7 +39,7 @@ namespace FoodManagementProject.Controllers
             return View(reviewed);
         }
 
-        private async Task<ModerationReviewViewModel?> LoadReviewAsync(int id, string finalName = null, int? categoryId = null, string? reviewNote = null)
+        private async Task<ModerationReviewViewModel?> LoadReviewAsync(int id, string? finalName = null, int? categoryId = null, string? reviewNote = null)
         {
             var request = await _context.IngredientRequests.AsNoTracking().Include(r => r.Requester).Include(r => r.SuggestedCategory).FirstOrDefaultAsync(r => r.RequestId == id && r.RequestStatus == RequestStatuses.Pending);
 
@@ -59,7 +58,7 @@ namespace FoodManagementProject.Controllers
                 CategoryId = categoryId ?? request.SuggestedCategoryId,
                 ReviewNote = reviewNote,
                 Categories = await _context.Categories.AsNoTracking().OrderBy(c => c.CategoryName).ToListAsync(),
-                Similar = await _context.Ingredients.AsNoTracking().Include(i => i.Category).Where(i => EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, normalized) >= 0.3).OrderByDescending(i => EF.Functions.TrigramsWordSimilarity(i.IngredientNameNormalized, normalized)).Take(5).ToListAsync()
+                Similar = await _context.Ingredients.AsNoTracking().Include(i => i.Category).Where(i => EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, normalized) >= 0.3).OrderByDescending(i => EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, normalized)).Take(5).ToListAsync()
             };
 
         }
@@ -71,7 +70,7 @@ namespace FoodManagementProject.Controllers
 
             if(model == null)
             {
-                TempData["ModeratorError"] = "This suggestion was not found or has already been reviewed.";
+                TempData["ModerationError"] = "This suggestion was not found or has already been reviewed.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -91,7 +90,7 @@ namespace FoodManagementProject.Controllers
                 ModelState.AddModelError(nameof(form.FinalName), "Enter an ingredient name (up to 150 characters).");
             } else if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == normalized))
             {
-                ModelState.AddModelError(nameof(form.FinalName), "An ingredientwith this name already exists. Reject the suggestion as a duplicate instead.");
+                ModelState.AddModelError(nameof(form.FinalName), "An ingredient with this name already exists. Reject the suggestion as a duplicate instead.");
             }
 
             if (form.CategoryId == null || !await _context.Categories.AnyAsync(c=> c.CategoryId == form.CategoryId))
@@ -121,7 +120,7 @@ namespace FoodManagementProject.Controllers
             if (claimed == 0)
             {
                 await transaction.RollbackAsync();
-                TempData["ModerationError"] = "This suggestion was already reviewd by someone else.";
+                TempData["ModerationError"] = "This suggestion was already reviewed by someone else.";
                 return RedirectToAction(nameof(Index));
             }
 
@@ -140,7 +139,7 @@ namespace FoodManagementProject.Controllers
 
             await transaction.CommitAsync();
 
-            TempData["ModerationMessage"] = $"\"{finalName}\" was aded to the catalogue.";
+            TempData["ModerationMessage"] = $"\"{finalName}\" was added to the catalogue.";
             return RedirectToAction(nameof(Index));
         }
 

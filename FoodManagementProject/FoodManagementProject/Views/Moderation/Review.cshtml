@@ -12,7 +12,7 @@
         <dd>@Model.Request.RequestedName</dd>
 
         <dt>Suggested by</dt>
-        <dd>@Model.Request.RequestedName</dd>
+        <dd>@Model.Request.Requester.DisplayName</dd>
 
         <dt>Suggested category</dt>
         <dd>@(Model.Request.SuggestedCategory?.CategoryName ?? "Not specified")</dd>
@@ -23,7 +23,7 @@
 
     @if (Model.Similar.Any())
     {
-        <h2> Similar existing ingredients</h2>
+        <h2>Similar existing ingredients</h2>
         <p class="page__lead">Check these before approving, so the catalogue doesn't get duplicates.</p>
         <ul>
             @foreach (var ingredient in Model.Similar)
@@ -57,7 +57,7 @@
 
         <div class="field">
             <label asp-for="ReviewNote" class="field__label">Note to the user (required to reject)</label>
-            <textarea asp-for="ReviewNote" class="input" rows="3" maxlength="300" />
+            <textarea asp-for="ReviewNote" class="input" rows="3" maxlength="300"></textarea>
             <span asp-validation-for="ReviewNote" class="field__error"></span>
         </div>
 
