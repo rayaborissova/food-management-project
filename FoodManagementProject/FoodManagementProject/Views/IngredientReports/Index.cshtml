@@ -1,0 +1,19 @@
+﻿@model List<FoodManagementProject.Models.IngredientReport>
+
+@functions {
+    //what the reporter sees for each status
+    string StatusText(IngredientReport report) => report.ReportStatus switch
+    {
+        ReportStatuses.Open => "Waiting for a moderator",
+        ReportStatuses.Dismissed => "Dismissed",
+        ReportStatuses.Forwarded => "Confirmed, with the admin",
+        ReportStatuses.Resolved => report.Resolution == ReportResolutions.Fixed ? "Resolved: fixed" : "Resolved: no change needed",
+        _ => report.ReportStatus
+    };
+}
+
+@{
+    ViewData["Title"] = "My reports";
+}
+
+<!-- empty or table with details of reports-->

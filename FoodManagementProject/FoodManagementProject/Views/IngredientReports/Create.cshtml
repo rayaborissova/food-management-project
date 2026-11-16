@@ -1,0 +1,24 @@
+﻿@model FoodManagementProject.Models.ReportFormViewModel
+
+@{
+    ViewData["Title"] = "Report an ingredient";
+}
+
+<div class="page">
+    <h1 class="page__title">Report an ingredient</h1>
+
+    <dl class="details-list">
+        <dt>Ingredient</dt>
+        <dd>@Model.IngredientName</dd>
+
+        <dt>Current category</dt>
+        <dd>@Model.CurrentCategoryName</dd>
+    </dl>
+
+    <form asp-controller="IngredientReports" asp-action="Create" method="post">
+        <!--need fields for reason, suggested category, note; and a submit button-->
+
+    </form>
+
+
+</div>
