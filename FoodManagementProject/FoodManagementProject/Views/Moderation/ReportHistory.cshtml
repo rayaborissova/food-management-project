@@ -1,0 +1,47 @@
+﻿@model List<FoodManagementProject.Models.IngredientReport>
+
+@{
+    ViewData["Title"] = "Report history";
+}
+
+<div class="page page--wide">
+    <h1 class="page page--wide"></h1>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">No reports have been handled yet.</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Reason</th>
+                        <th scope="col">Reported by</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Handled by</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var report in Model)
+                    {
+                        <tr>
+                            <td>@report.Ingredient.IngredientName</td>
+                            <td>@ReportReasons.Label(report.Reason)</td>
+                            <td>@report.Reporter.DisplayName</td>
+                            <td><span class="status status--@report.ReportStatus"></span></td>
+                            <td>@(report.Reviewer?.DisplayName ?? "Removed account")</td>
+                            <td>@report.DateReviewed?.ToString("dd/MM/yyyy")</td>
+                            <td>@report.ReviewNote</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="Moderation" asp-action="Index" class="back-link">Back to the queue</a>
+</div>

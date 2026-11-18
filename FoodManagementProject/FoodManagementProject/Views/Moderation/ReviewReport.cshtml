@@ -1,0 +1,57 @@
+﻿@model FoodManagementProject.Models.ReportDecisionViewModel
+
+@{
+    ViewData["Title"] = "Review report";
+    var report = Model.Report;
+}
+
+<div class="page">
+    <h1 class="page__title">Review report</h1>
+
+    <dl class="details-list">
+        <dt>Ingredient</dt>
+        <dd>@report.Ingredient.IngredientName</dd>
+
+        <dt>Current category</dt>
+        <dd>@report.Ingredient.Category?.CategoryName</dd>
+
+        <dt>Source</dt>
+        <dd>@(report.Ingredient.IngredientSource ?? "Not recorded")</dd>
+
+        <dt>Reason</dt>
+        <dd>@ReportReasons.Label(report.Reason)</dd>
+
+        <dt>Suggested category</dt>
+        <dd>@(report.SuggestedCategory?.CategoryName ?? "None")</dd>
+
+        <dt>Note from reporter</dt>
+        <dd>@(string.IsNullOrWhiteSpace(report.Note) ? "None" : report.Note)</dd>
+
+        <dt>Reported by</dt>
+        <dd>@report.Reporter.DisplayName on @report.DateCreated.ToString("dd/MM/yyyy")</dd>
+    </dl>
+
+    @if (Model.OtherActiveReports > 0)
+    {
+        <p class="page__lead">@Model.OtherActiveReports other active @(Model.OtherActiveReports == 1 ? "report exists" : "report exist") for this ingredient, which makes this one more likely to be justified.</p>
+    }
+
+    <form asp-controller="Moderation" asp-action="DismissReport" method="post">
+        <div asp-validation-summary="ModelOnly" class="form-errors"></div>
+        <input type="hidden" asp-for="ReportId" />
+
+        <div class="field">
+            <label asp-for="Note" class="field__label">Your note (required)</label>
+            <textarea asp-for="Note" class="input" rows="3" maxlength="300"></textarea>
+            <span asp-validation-for="Note" class="field__error"></span>
+            <p class="page__lead">To dismiss: explain why nothing changes, and the reporter will see it. To forward: tell amdin what to fix.</p>
+        </div>
+
+        <div class="toolbar">
+            <button type="submit" class="btn btn--outline">Dismiss, no problem found</button>
+            <button type="submit" asp-controller="Moderation" asp-action="ForwardReport" class="btn btn--primary">Confirm and forward to admin</button>
+        </div>
+    </form>
+
+    <a asp-controller="Moderation" asp-action="Reports" class="back-link">Back to reports</a>
+</div>

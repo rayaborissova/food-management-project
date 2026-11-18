@@ -32,7 +32,7 @@ namespace FoodManagementProject.Models
     // the decision page, used by moderators
     public class ReportDecisionViewModel
     {
-        public int ReportedId { get; set; }
+        public int ReportId { get; set; }
         public string? Note { get; set; }
         public string? Resolution { get; set; }
 

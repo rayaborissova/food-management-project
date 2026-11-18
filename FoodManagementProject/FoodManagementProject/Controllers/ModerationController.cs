@@ -219,7 +219,7 @@ namespace FoodManagementProject.Controllers
             {
                 ModelState.AddModelError(nameof(form.Note), noteError);
 
-                var invalid = await IngredientReportLoader.LoadDecisionAsync(_context, form.ReportedId, ReportStatuses.Open, form.Note);
+                var invalid = await IngredientReportLoader.LoadDecisionAsync(_context, form.ReportId, ReportStatuses.Open, form.Note);
 
                 if (invalid == null)
                 {

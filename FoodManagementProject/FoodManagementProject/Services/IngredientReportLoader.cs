@@ -21,7 +21,7 @@ namespace FoodManagementProject.Services
 
             return new ReportDecisionViewModel
             {
-                ReportedId = id,
+                ReportId = id,
                 Note = note,
                 Resolution = resolution,
                 Report = report,
