@@ -3,7 +3,6 @@ using FoodManagementProject.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic;
 
 namespace FoodManagementProject.Controllers
 {
@@ -102,7 +101,7 @@ namespace FoodManagementProject.Controllers
                 return NotFound();
             }
 
-            if (!await _context.IngredientReports.AnyAsync(r => r.IngredientId == form.IngredientId && r.ReportedBy == userId && (r.ReportStatus == ReportStatuses.Open || r.ReportStatus == ReportStatuses.Forwarded)))
+            if (await _context.IngredientReports.AnyAsync(r => r.IngredientId == form.IngredientId && r.ReportedBy == userId && (r.ReportStatus == ReportStatuses.Open || r.ReportStatus == ReportStatuses.Forwarded)))
             {
                 ModelState.AddModelError("", "You already have an active report on this ingredient.");
             }
@@ -125,7 +124,7 @@ namespace FoodManagementProject.Controllers
                 IngredientId = form.IngredientId, 
                 ReportedBy = userId, 
                 Reason = form.Reason,
-                Note = form.Note,
+                Note = note,
                 SuggestedCategoryId = form.Reason == ReportReasons.WrongCategory ? form.SuggestedCategoryId : null, //only makes sense for a category report
                 ReportStatus = ReportStatuses.Open,
                 DateCreated = Now

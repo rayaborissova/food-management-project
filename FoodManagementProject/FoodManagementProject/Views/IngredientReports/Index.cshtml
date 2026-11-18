@@ -16,4 +16,56 @@
     ViewData["Title"] = "My reports";
 }
 
-<!-- empty or table with details of reports-->
+<div class="page page--wide">
+    <h1 class="page__title">My reports</h1>
+
+    @if (TempData["ReportMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+
+    <p class="page__lead">To report an ingredient, use the Report link next to it when you add ingredients. To ask for a new inredient, use <a asp-controller="IngredoentRequest" asp-action="Index">Suggest an ingredient</a></p>
+
+    @if (!Model.Any())
+    {
+        <p class="empty-state">You haven't sent any reports yet.</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Reason</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Note from the team</th>
+                        <th scope="col">Sent</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var report in Model)
+                    {
+                        <tr>
+                            <td>@report.Ingredient.IngredientName</td>
+                            <td>@ReportReasons.Label(report.Reason)</td>
+                            <td><span class="status status--@report.ReportStatus">@StatusText(report)</span></td>
+                            <td>@(report.ResolutionNote ?? report.ReviewNote)</td>
+                            <td>@report.DateCreated.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @if (report.ReportStatus == ReportStatuses.Open)
+                                {
+                                    <form asp-controller="IngredientReports" asp-action="Cancel" asp-route-id="@report.ReportId" method="post" class="inline-form">
+                                        <button type="submit" class="btn btn--outline btn--sm">Withdraw</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-controller="Inventory" asp-action="Index" class="back-link">Back to Inventory</a>
+</div>

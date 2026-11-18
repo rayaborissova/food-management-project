@@ -27,6 +27,7 @@ namespace FoodManagementProject.Controllers
         public async Task<IActionResult> Index()
         {
             var pending = await _context.IngredientRequests.AsNoTracking().Include(r => r.Requester).Include(r => r.SuggestedCategory).Where(r => r.RequestStatus == RequestStatuses.Pending).OrderBy(r => r.DateCreated).ToListAsync();
+            ViewData["OpenReports"] = await _context.IngredientReports.CountAsync(r => r.ReportStatus == ReportStatuses.Open);
             return View(pending);
         }
 
@@ -174,10 +175,78 @@ namespace FoodManagementProject.Controllers
         
         }
 
+        // opening reports, oldest first
+        [HttpGet]
+        public async Task<IActionResult> Reports()
+        {
+            var open = await _context.IngredientReports.AsNoTracking().Include(r => r.Ingredient).ThenInclude(i => i.Category).Include(r => r.Reporter).Where(r => r.ReportStatus == ReportStatuses.Open).OrderBy(r => r.DateCreated).ToListAsync();
 
+            return View(open);
+        }
 
+        public async Task<IActionResult> ReviewReport(int id)
+        {
+            var model = await IngredientReportLoader.LoadDecisionAsync(_context, id, ReportStatuses.Open);
 
+            if (model == null)
+            {
+                TempData["ModerationError"] = "This report was not found or has already been handled.";
+                return RedirectToAction(nameof(Reports));
+            }
 
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public Task<IActionResult> DismissReport(ReportDecisionViewModel form)
+        {
+            return DecideReportAsync(form, ReportStatuses.Dismissed, "Explain briefly why npthing needs to change. The reporter will see it.", "Report dismissed.");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public Task<IActionResult> ForwardReport(ReportDecisionViewModel form)
+        {
+            return DecideReportAsync(form, ReportStatuses.Forwarded, "Tell the admin what is wrong and what the fix should be.", "Report forwarded to the admin.");
+        } 
+
+        private async Task<IActionResult> DecideReportAsync(ReportDecisionViewModel form, string newStatus, string noteError, string successMessage)
+        {
+            var note = (form.Note ?? string.Empty).Trim();
+
+            if (note.Length == 0 || note.Length > 300)
+            {
+                ModelState.AddModelError(nameof(form.Note), noteError);
+
+                var invalid = await IngredientReportLoader.LoadDecisionAsync(_context, form.ReportedId, ReportStatuses.Open, form.Note);
+
+                if (invalid == null)
+                {
+                    TempData["ModerationError"] = "This report was not found or has already been handled.";
+                    return RedirectToAction(nameof(Reports));
+                }
+
+                return View("ReviewReport", invalid);
+            }
+
+            var reviewerId = CurrentUserId;
+            var now = Now;
+
+            // the update only matches while the report is still open, so two moderators can't both decide it
+            var claimed = await _context.IngredientReports.Where(r => r.ReportId == form.Report.ReportId && r.ReportStatus == ReportStatuses.Open).ExecuteUpdateAsync(s => s.SetProperty(r => r.ReportStatus, newStatus).SetProperty(r => r.ReviewedBy, (int?)reviewerId).SetProperty(r => r.DateReviewed, (DateTime?)now).SetProperty(r => r.ReviewNote, note));
+
+            TempData[claimed > 0 ? "ModerationMessage" : "ModerationError"] = claimed > 0 ? successMessage : "This report was already handled by someone else.";
+
+            return RedirectToAction(nameof(Reports));
+        }
+
+        public async Task<IActionResult> ReportHistory()
+        {
+            var handled = await _context.IngredientReports.AsNoTracking().Include(r => r.Ingredient).Include(r => r.Reporter).Include(r => r.Reviewer).Where(r => r.ReportStatus != ReportStatuses.Open).OrderByDescending(r => r.DateReviewed).Take(100).ToListAsync();
+
+            return View(handled);
+        }
     }
 
 

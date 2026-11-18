@@ -36,6 +36,7 @@
                         <th scope="col">Select</th>
                         <th scope="col">Ingredient</th>
                         <th scope="col">Category</th>
+                        <th scope="col"><span class="visually-hidden">Report</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -53,6 +54,9 @@
                                 </td>
                                 <td>
                                     @ingredient.Category?.CategoryName
+                                </td>
+                                <td>
+                                    <a asp-controller="IngredientReports" asp-action="Create" asp-route-ingredientId="@ingredient.IngredientId" class="report-link">Report</a>
                                 </td>
                             </tr>
                         }

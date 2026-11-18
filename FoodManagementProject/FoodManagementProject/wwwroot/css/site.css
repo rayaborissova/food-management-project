@@ -606,6 +606,14 @@ textarea.input {
     color: var(--danger);
 }
 
+.status--dismissed {
+
+}
+
+.status--forwarded {
+
+}
+
 @media (max-width: 768px) {
     .sidebar {
         display: none;

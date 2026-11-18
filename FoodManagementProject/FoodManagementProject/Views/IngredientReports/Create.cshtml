@@ -16,9 +16,42 @@
     </dl>
 
     <form asp-controller="IngredientReports" asp-action="Create" method="post">
-        <!--need fields for reason, suggested category, note; and a submit button-->
+        <div asp-validation-summary="ModelOnly" class="form-errors"></div>
+        <input type="hidden" asp-for="IngredientId" />
 
+        <div class="field">
+            <label asp-for="Reason" class="field__label"></label>
+            <select asp-for="Reason" class="input">
+                <option value="">Choose a reason</option>
+                @foreach (var reason in ReportReasons.All)
+                        {
+                            <option value="@reason.Value">@reason.Label</option>
+                        }
+            </select>
+            <span asp-validation-for="Reason" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="SuggestedCategoryId" class="field__label"></label>
+            <select asp-for="SuggestedCategoryId" class="input">
+                <option value="">No suggestion</option>
+                @foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.CategoryId">@category.CategoryName</option>
+                        }
+            </select>
+            <span asp-validation-for="SuggestedCategoryId" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Note" class="field__label">
+                <textarea asp-for="Note" class="input" rows="3" maxlength="300" placeholder="For example: the correct spelling, or which ingredient this duplicates"></textarea>
+                <span asp-validation-for="Note" class="field__error"></span>
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn--primary">Send report</button>
     </form>
 
-
+    <a asp-controller="IngredientReports" asp-action="Index" class="back-link">My reports</a>
 </div>
