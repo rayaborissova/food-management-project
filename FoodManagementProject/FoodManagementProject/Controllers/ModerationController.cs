@@ -234,7 +234,13 @@ namespace FoodManagementProject.Controllers
             var now = Now;
 
             // the update only matches while the report is still open, so two moderators can't both decide it
-            var claimed = await _context.IngredientReports.Where(r => r.ReportId == form.Report.ReportId && r.ReportStatus == ReportStatuses.Open).ExecuteUpdateAsync(s => s.SetProperty(r => r.ReportStatus, newStatus).SetProperty(r => r.ReviewedBy, (int?)reviewerId).SetProperty(r => r.DateReviewed, (DateTime?)now).SetProperty(r => r.ReviewNote, note));
+            var claimed = await _context.IngredientReports.
+                Where(r => r.ReportId == form.ReportId && r.ReportStatus == ReportStatuses.Open).
+                ExecuteUpdateAsync(s => s.
+                SetProperty(r => r.ReportStatus, newStatus).
+                SetProperty(r => r.ReviewedBy, (int?)reviewerId).
+                SetProperty(r => r.DateReviewed, (DateTime?)now).
+                SetProperty(r => r.ReviewNote, note));
 
             TempData[claimed > 0 ? "ModerationMessage" : "ModerationError"] = claimed > 0 ? successMessage : "This report was already handled by someone else.";
 

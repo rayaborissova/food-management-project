@@ -23,6 +23,7 @@ public partial class FoodManagementDbContext : DbContext
     public virtual DbSet<HouseholdInvite> HouseholdInvites { get; set; } //for household invitations
     public virtual DbSet<IngredientRequest> IngredientRequests { get; set; }
     public virtual DbSet<IngredientReport> IngredientReports { get; set; }
+    public virtual DbSet<PasswordReset> PasswordResets { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -115,6 +116,7 @@ public partial class FoodManagementDbContext : DbContext
             entity.Property(e => e.DisplayName).HasColumnName("display_name");
             entity.Property(e => e.UserRole).HasColumnName("user_role");
             entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.SecurityStamp).HasColumnName("security_stamp");
             entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
             entity.HasIndex(e => e.Email).IsUnique();
         });
@@ -195,6 +197,21 @@ public partial class FoodManagementDbContext : DbContext
             entity.HasOne(e => e.Reviewer).WithMany().HasForeignKey(e => e.ReviewedBy);
             entity.HasOne(e => e.Resolver).WithMany().HasForeignKey(e => e.ResolvedBy);
             entity.HasOne(e => e.SuggestedCategory).WithMany().HasForeignKey(e => e.SuggestedCategoryId);
+        });
+
+        //mapping to the password reset table
+        modelBuilder.Entity<PasswordReset>(entity =>
+        {
+            entity.ToTable("password_reset");
+            entity.HasKey(e => e.ResetId);
+            entity.Property(e => e.ResetId).HasColumnName("reset_id");
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.TokenHash).HasColumnName("token_hash");
+            entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.ExpiresAt).HasColumnName("expires_at").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.UsedAt).HasColumnName("used_at").HasColumnType("timestamp without time zone");
+            entity.HasIndex(e => e.TokenHash).IsUnique();
+            entity.HasOne(e => e.User).WithMany().HasForeignKey(e => e.UserId);
         });
 
     }

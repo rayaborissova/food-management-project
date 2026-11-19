@@ -10,5 +10,6 @@
         public bool IsActive { get; set; } = true;
         public DateTime DateCreated { get; set; }
         public HouseholdMember? Membership { get; set; }
+        public Guid SecurityStamp { get; set; } = Guid.NewGuid(); // for password resets
     }
 }
