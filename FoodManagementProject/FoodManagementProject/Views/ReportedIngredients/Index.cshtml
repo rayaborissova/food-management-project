@@ -1,0 +1,89 @@
+﻿@model FoodManagementProject.Models.ReportedIngredientsViewModel
+
+@{
+    ViewData["Title"] = "Reported ingredients";
+}
+
+<div class="page page--wide">
+    <h1 class="page__title">Reported ingredients</h1>
+
+    @if (TempData["ReportAdminMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+
+    @if (TempData["ReportAdminError"] is string error)
+    {
+        <p class="form-errors" role="alert">@error</p>
+    }
+
+    <h2>Waiting for you (@Model.Forwarded.Count)</h2>
+
+    @if (!Model.Forwarded.Any())
+    {
+        <p class="empty-state">No confirmed reports are waiting.</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Category</th>
+                        <th scope="col">Reason</th>
+                        <th scope="col">Moderator's note</th>
+                        <th scope="col">Waiting</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var report in Model.Forwarded)
+                    {
+                        <tr>
+                            <td>@report.Ingredient.IngredientName</td>
+                            <td>@report.Ingredient.Category?.CategoryName</td>
+                            <td>@ReportReasons.Label(report.Reason)</td>
+                            <td>@report.ReviewNote</td>
+                            <td>@((int)(DateTime.UtcNow - (report.DateReviewed ?? report.DateCreated)).TotalDays) days</td>
+                            <td><a asp-controller="ReportedIngredients" asp-action="Resolve" asp-route-id="@report.ReportId" class="btn btn--promary btn--sm">Open</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h2>Recently closed</h2>
+
+    @if (!Model.Resolved.Any())
+    {
+        <p class="empty-state">Nothing has been closed yet.</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Outcome</th>
+                        <th scope="col">Closed by</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Note</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var report in Model.Resolved)
+                    {
+                        <tr>
+                            <td>@report.Ingredient.IngredientName</td>
+                            <td>@(report.Resolution == ReportResolutions.Fixed ? "Fixed" : "No change needed")</td>
+                            <td>@(report.Resolver?.DisplayName ?? "Removed account")</td>
+                            <td>@report.DateResolved?.ToString("dd/MM/yyyy")</td>
+                            <td>@report.ResolutionNote</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

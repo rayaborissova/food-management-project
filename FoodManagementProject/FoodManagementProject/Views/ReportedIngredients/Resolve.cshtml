@@ -1,0 +1,65 @@
+﻿@model FoodManagementProject.Models.ReportDecisionViewModel
+
+@{
+    ViewData["Title"] = "Close report";
+    var report = Model.Report;
+}
+
+<div class="page">
+    <h1 class="page__title">Reported ingredient</h1>
+
+    <dl class="details-list">
+        <dt>Ingredient</dt>
+        <dd>@report.Ingredient.IngredientName</dd>
+
+        <dt>Current category</dt>
+        <dd>@report.Ingredient.Category?.CategoryName</dd>
+
+        <dt>Reason</dt>
+        <dd>@ReportReasons.Label(report.Reason)</dd>
+        
+        <dt>Suggested category</dt>
+        <dd>@(report.SuggestedCategory?.CategoryName ?? "None")</dd>
+        
+        <dt>Note from the reporter</dt>
+        <dd>@(string.IsNullOrWhiteSpace(report.Note) ? "None" : report.Note)</dd>
+        
+        <dt>Moderator's note</dt>
+        <dd>@report.ReviewNote</dd>
+    </dl>
+
+    @if (Model.OtherActiveReports > 0)
+    {
+        <p class="page__lead">@Model.OtherActiveReports other active @(Model.OtherActiveReports == 1 ? "report exists" : "reports exist") for this ingredient. Closing this one doesn't close those.</p>
+    }
+
+    <p>
+        <a asp-controller="Ingredients" asp-action="Edit" asp-route-id="@report.IngredientId" class="btn btn--outline">Open ingredient to edit it</a>
+    </p>
+
+    <form asp-controller="ReportedIngredients" asp-action="Resolve" method="post">
+        <div asp-validation-summary="ModelOnly" class="form-errors"></div>
+        <input type="hidden" asp-for="ReportId" />
+
+        <div class="field">
+            <label asp-for="Resolution" class="field__label">Outcome</label>
+            <select asp-for="Resolution" class="input">
+                <option value="">Choose an outcome</option>
+                <option value="@ReportResolutions.Fixed">Fixed</option>
+                <option value="@ReportResolutions.NoChange">No change needed</option>
+            </select>
+            <span asp-validation-for="Resolution" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Note" class="field__label">Note (required)</label>
+            <textarea asp-for="Note" class="input" rows="3" maxlength="300"></textarea>
+            <span asp-validation-for="Note" class="field__error"></span>
+        </div>
+
+        <button type="submit" class="btn btn--sage">Close report</button>
+    </form>
+
+    <a asp-controller="ReportIngredients" asp-action="Index" class="back-link">Back to the list</a>
+
+</div>
