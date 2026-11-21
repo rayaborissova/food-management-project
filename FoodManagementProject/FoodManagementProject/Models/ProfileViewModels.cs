@@ -13,7 +13,7 @@ namespace FoodManagementProject.Models
         public string Email { get ; set; } = string.Empty;
 
         [DataType(DataType.Password)]
-        [Display(Name = "Current password (only needed tp change your email)")]
+        [Display(Name = "Current password (only needed to change your email)")]
         public string? CurrentPassword {  get; set; }
     }
 

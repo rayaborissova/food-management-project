@@ -32,7 +32,7 @@
             }
 
             <form asp-controller="Account" asp-action="Logout" method="post" class="sidebar__logout">
-                <p class="sidebar__user">@User.Identity.Name</p>
+                <a asp-controller="Profile" asp-action="Index" class="sidebar__user">@User.Identity.Name</a>
                 <button type="submit" class="nav-link nav-link--button">Log out</button>
             </form>
         </nav>
@@ -62,6 +62,7 @@
                     <a class="nav-link" asp-controller="Moderation" asp-action="Index">Moderation @await Component.InvokeAsync("StaffBadge", new { kind = "moderation" })</a>
                 }
 
+                <a class="nav-link" asp-controller="Profile" asp-action="Index">Profile</a>
                 <form asp-controller="Account" asp-action="Logout" method="post">
                     <button type="submit" class="nav-link nav-link--button">Log out</button>
                 </form>

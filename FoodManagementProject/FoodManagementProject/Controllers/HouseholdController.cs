@@ -1,13 +1,9 @@
 ﻿using FoodManagementProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using System.Reflection.Metadata;
 using System.Security.Cryptography;
 using FoodManagementProject.Services;
-using System.Runtime.InteropServices;
 
 namespace FoodManagementProject.Controllers
 {
@@ -276,5 +272,46 @@ namespace FoodManagementProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        //the owner can transfer ownership; in doing so they become a regular member
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TransferOwnership(int memberUserId)
+        {
+            var ownerMembership = await _context.HouseholdMembers.FirstOrDefaultAsync(m => m.UserId == UserId && m.HouseholdId == HouseholdId && m.HouseholdRole == "owner");
+
+            if (ownerMembership == null || !await InSharedHouseholdAsync())
+            {
+                TempData["HouseholdError"] = "Only the owner of this household can transfer the ownership.";
+                return RedirectToAction(nameof(Index));
+            } 
+
+            if (memberUserId == UserId)
+            {
+                TempData["HouseholdError"] = "You already own this household.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var newOwner = await _context.HouseholdMembers.Include(m => m.User).FirstOrDefaultAsync(m => m.UserId == memberUserId && m.HouseholdId == HouseholdId);
+
+            if (newOwner == null)
+            {
+                TempData["HouseholdError"] = "That person is not a member of this household.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            await using var transaction = await _context.Database.BeginTransactionAsync();
+
+            //two separate saves, so the household never has two owners at the same time
+            ownerMembership.HouseholdRole = "member";
+            await _context.SaveChangesAsync();
+
+            newOwner.HouseholdRole = "owner";
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+            TempData["HouseholdMessage"] = $"{newOwner.User.DisplayName} is now the owner of this household. You are a regular member.";
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

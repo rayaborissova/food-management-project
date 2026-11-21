@@ -556,6 +556,17 @@ body {
     overflow-wrap: anywhere;
 }
 
+a.sidebar__user {
+    display: block;
+    text-decoration: none;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+a.sidebar__user:hover {
+    text-decoration: underline;
+}
+
 .invite-code {
     margin: 8px;
     font-family: Consolas, "Courier New", monospace;

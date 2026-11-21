@@ -90,6 +90,11 @@
                                         <span>(you)</span> <!--owner cannot remove themselves the same way they would a member-->
                                     } else
                                     {
+                                        <!--manual ownership transfer-->
+                                        <form asp-controller="Household" asp-action="TransferOwnership" method="post" class="inline-form" data-confirm="Make @member.User.DisplayName the owner of this household? You will become a regular member and lose all your permissions.">
+                                            <input type="hidden" name="memberUserId" value="@member.UserId" />
+                                            <button type="submit" class="btn btn--danger btn--sm">Make owner</button> 
+                                        </form>
                                         <form asp-controller="Household" asp-action="RemoveMember" method="post" class="inline-form" data-confirm="Remove @member.User.DisplayName from this household?.">
                                             <input type="hidden" name="memberUserId" value="@member.UserId" />
                                             <button type="submit" class="btn btn--danger btn--sm">Remove</button> 
@@ -133,21 +138,22 @@
 
     // confirmation for members leaving on their own
     const leaveForm = document.getElementById("leave-form");
+    const confirmDelete = document.getElementById("confirm-delete");
 
-    if (leaveForm) {
-        const confirmDelete = document.getElementById("confirm-delete");
+    if (leaveForm instanceof HTMLFormElement && confirmDelete instanceof HTMLInputElement) {
 
         leaveForm.addEventListener("submit", function (event) {
+            confirmDelete.value = "false";
             
             // first confirmation, always shown
-            if (!confirm("Leave this household?")) {
+            if (!window.confirm("Leave this household?")) {
                 event.preventDefault();
                 return;
             }
 
             // second confirmation, only shown to the last member of the household
             if (leaveForm.dataset.lastMember === "true") {
-                const confirmed = confirm("You are the last member. Leaving will permanently delete this household, its inventory and its shopping list. Continue?");
+                const confirmed = window.confirm("You are the last member. Leaving will permanently delete this household, its inventory and its shopping list. Continue?");
             
                 if (!confirmed) {
                     event.preventDefault();
@@ -162,10 +168,14 @@
 
     // confirmation of the member removal by the owner
     for (const form of document.querySelectorAll("form[data-confirm]")) {
-        form.addEventListener("submit", function(event) {
-            if (!confirm(form.dataset.confirm)) {
-                event.preventDefault();
-            }
-        });
+        if (form instanceof HTMLFormElement) {
+            form.addEventListener("submit", function(event) {
+                const message = form.dataset.confirm;
+
+                if (message && !window.confirm(message)) {
+                    event.preventDefault();
+                }
+            });
+        }
     }
 </script>

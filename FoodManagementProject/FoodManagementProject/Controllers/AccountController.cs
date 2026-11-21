@@ -208,12 +208,14 @@ namespace FoodManagementProject.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
+            // short password or passwords do not match
             if (!ModelState.IsValid)
             {
                 model.TokenIsValid = await _passwordResets.IsValidAsync(model.Token);
-                return View();
+                return View(model);
             }
 
+            // link is expired, used, or was not sent
             if (!await _passwordResets.ResetAsync(model.Token, model.Password))
             {
                 model.TokenIsValid = false;
