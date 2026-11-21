@@ -7,68 +7,94 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FoodManagementProject.styles.css" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/@@tabler/icons-webfont@3.52.0/dist/tabler-icons.min.css" />
 </head>
 <body>
+    @{
+        var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    }
     <div class="app">
         @if (User.Identity?.IsAuthenticated == true) //display it only if the user logged in
-        { 
-        <nav class="sidebar" aria-label="Main">
-            <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-            @if (User.IsInRole(AppRoles.Regular))
-            {
-                <a class="nav-link" asp-controller="Inventory" asp-action="Index">Fridge</a>
-                <a class="nav-link" asp-controller="ShoppingList" asp-action="Index">Shopping List</a>
-                <a class="nav-link" asp-controller="Household" asp-action="Index">Household</a>
-            }
-            @if (User.IsInRole(AppRoles.Admin))
-            {
-                 <a class="nav-link" asp-controller="Admin" asp-action="Index">Users</a>
-                 <a class="nav-link" asp-controller="Ingredients" asp-action="Index">Ingredients</a>
-                 <a class="nav-link" asp-controller="ReportedIngredients" asp-action="Index">Report @await Component.InvokeAsync("StaffBadge", new {kind = "reports"})</a>
-            }
-            @if (User.IsInRole(AppRoles.Moderator))
-            {
-                 <a class="nav-link" asp-controller="Moderation" asp-action="Index">Moderation @await Component.InvokeAsync("StaffBadge", new { kind = "moderation" })</a>
-            }
+        {
+            <nav class="sidebar" aria-label="Main">
+                <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
 
-            <form asp-controller="Account" asp-action="Logout" method="post" class="sidebar__logout">
-                <a asp-controller="Profile" asp-action="Index" class="sidebar__user">@User.Identity.Name</a>
-                <button type="submit" class="nav-link nav-link--button">Log out</button>
-            </form>
-        </nav>
-        }
-        <main role="main" class="app__main">
-            @RenderBody()
-        </main>
-    </div>
-
-        @if (User.Identity?.IsAuthenticated == true) //display it only if the user logged in
-        { 
-            <nav class="tabbar" aria-label="Main (mobile)">
                 @if (User.IsInRole(AppRoles.Regular))
                 {
-                    <a class="nav-link" asp-controller="Inventory" asp-action="Index">Fridge</a>
-                    <a class="nav-link" asp-controller="ShoppingList" asp-action="Index">Shopping List</a>
-                    <a class="nav-link" asp-controller="Household" asp-action="Index">Household</a>
+                    <button type="button" class="btn btn--primary add-trigger" aria-haspopup="menu" aria-expanded="false" aria-controls="add-menu">
+                        <i class="ti ti-plus" aria-hidden="true"></i>Add
+                    </button>
+                    <a class="nav-link @(controller == "Inventory" ? "is-active" : "")" asp-controller="Inventory" asp-action="Index"><i class="ti ti-fridge" aria-hidden="true"></i>Fridge</a>
+                    <a class="nav-link @(controller == "ShoppingList" ? "is-active" : "")" asp-controller="ShoppingList" asp-action="Index"><i class="ti ti-shopping-cart" aria-hidden="true"></i>Shopping List</a>
+                    <a class="nav-link @(controller == "Household" ? "is-active" : "")" asp-controller="Household" asp-action="Index"><i class="ti ti-home" aria-hidden="true"></i>Household</a>
                 }
                 @if (User.IsInRole(AppRoles.Admin))
                 {
-                    <a class="nav-link" asp-controller="Admin" asp-action="Index">Users</a>
-                    <a class="nav-link" asp-controller="Ingredients" asp-action="Index">Ingredients</a>
-                    <a class="nav-link" asp-controller="ReportedIngredients" asp-action="Index">Report @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
+                    <a class="nav-link @(controller == "Admin" ? "is-active" : "")" asp-controller="Admin" asp-action="Index"><i class="ti ti-users" aria-hidden="true"></i>Users</a>
+                    <a class="nav-link @(controller == "Ingredients" ? "is-active" : "")" asp-controller="Ingredients" asp-action="Index"><i class="ti ti-carrot" aria-hidden="true"></i>Ingredients</a>
+                    <a class="nav-link @(controller == "ReportedIngredients" ? "is-active" : "")" asp-controller="ReportedIngredients" asp-action="Index"><i class="ti ti-..." aria-hidden="true"></i>Report @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
+                    //TO ADD ICON
                 }
                 @if (User.IsInRole(AppRoles.Moderator))
                 {
-                    <a class="nav-link" asp-controller="Moderation" asp-action="Index">Moderation @await Component.InvokeAsync("StaffBadge", new { kind = "moderation" })</a>
+                    <a class="nav-link @(controller == "Moderation" ? "is-active" : "")" asp-controller="Moderation" asp-action="Index"><i class="ti ti-shield-check" aria-hidden="true"></i>Moderation @await Component.InvokeAsync("StaffBadge", new { kind = "moderation" })</a>
                 }
 
-                <a class="nav-link" asp-controller="Profile" asp-action="Index">Profile</a>
-                <form asp-controller="Account" asp-action="Logout" method="post">
+                <form asp-controller="Account" asp-action="Logout" method="post" class="sidebar__logout">
+                    <a asp-controller="Profile" asp-action="Index" class="sidebar__user">@User.Identity.Name</a>
                     <button type="submit" class="nav-link nav-link--button">Log out</button>
                 </form>
             </nav>
         }
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <main role="main" class="app__main">
+            <header class="topbar">
+                <a class="topbar__brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+            </header>
+            <div class="app__body">
+                @RenderBody()
+            </div>
+        </main>
+    </div>
+
+    @if (User.Identity?.IsAuthenticated == true) //display it only if the user logged in
+    {
+        <nav class="tabbar" aria-label="Main (mobile)">
+            @if (User.IsInRole(AppRoles.Regular))
+            {
+                <a class="nav-link @(controller == "Inventory" ? "is-active" : "")" asp-controller="Inventory" asp-action="Index"><i class="ti ti-fridge" aria-hidden="true"></i>Fridge</a>
+                <a class="nav-link @(controller == "ShoppingList" ? "is-active" : "")" asp-controller="ShoppingList" asp-action="Index"><i class="ti ti-shopping-cart" aria-hidden="true"></i>Shopping List</a>
+                <button type="button" class="tabbar__fab add-trigger" aria-label="Add" aria-haspopup="menu" aria-expanded="false" aria-controls="add-menu"><i class="ti ti-plus" aria-hidden="true"></i></button>
+                <a class="nav-link @(controller == "Household" ? "is-active" : "")" asp-controller="Household" asp-action="Index"><i class="ti ti-home" aria-hidden="true"></i>Household</a>
+            }
+            @if (User.IsInRole(AppRoles.Admin))
+            {
+                <a class="nav-link @(controller == "Admin" ? "is-active" : "")" asp-controller="Admin" asp-action="Index"><i class="ti ti-users" aria-hidden="true"></i>Users</a>
+                <a class="nav-link @(controller == "Ingredients" ? "is-active" : "")" asp-controller="Ingredients" asp-action="Index"><i class="ti ti-carrot" aria-hidden="true"></i>Ingredients</a>
+                <a class="nav-link @(controller == "ReportedIngredients" ? "is-active" : "")" asp-controller="ReportedIngredients" asp-action="Index"><i class="ti ti-..." aria-hidden="true"></i>Report @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
+            }
+            @if (User.IsInRole(AppRoles.Moderator))
+            {
+                <a class="nav-link @(controller == "Moderation" ? "is-active" : "")" asp-controller="Moderation" asp-action="Index"><i class="ti ti-shield-check" aria-hidden="true"></i>Moderation @await Component.InvokeAsync("StaffBadge", new { kind = "moderation" })</a>
+            }
+
+            <a class="nav-link" asp-controller="Profile" asp-action="Index">Profile</a>
+            <form asp-controller="Account" asp-action="Logout" method="post">
+                <button type="submit" class="nav-link nav-link--button">Log out</button>
+            </form>
+        </nav>
+
+        @if (User.IsInRole(AppRoles.Regular))
+        {
+            <div class="add-overlay" id="add-overlay" hidden></div>
+            <div class="add-menu" id="add-menu" role="menu" hidden>
+                <a class="add-menu__item" role="menuitem" asp-controller="Inventory" asp-action="Add"><i class="ti ti-fridge" aria-hidden="true"></i>Add to fridge</a>
+                <a class="add-menu__item" role="menuitem" asp-controller="ShoppingList" asp-action="Add"><i class="ti ti-shopping-cart-plus" aria-hidden="true"></i>Add to shopping list</a>
+
+            </div>
+        }
+    }
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

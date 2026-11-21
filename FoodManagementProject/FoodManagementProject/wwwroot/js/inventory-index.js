@@ -65,7 +65,7 @@
 
         // updating the empty state and the count after applying all the filters
         emptyMessage.hidden = visible !== 0;
-        shownLabel.textContent = "Showing" + visible + " of " + rows.length;
+        shownLabel.textContent = "Showing " + visible + " of " + rows.length;
     }
 
     function bindButtons(selector, key, dataName) {

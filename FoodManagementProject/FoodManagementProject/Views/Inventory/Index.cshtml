@@ -29,8 +29,8 @@
     }
 
     <p>
-        <a asp-controller="Inventory" asp-action="Add" class="back-link">Add Ingredients</a>
-        <a asp-controller="ShoppingList" asp-action="Index" class="back-link">Shopping list</a>
+        <a asp-controller="Inventory" asp-action="Add" class="btn btn--primary">Add Ingredients</a>
+        <a asp-controller="ShoppingList" asp-action="Index" class="btn btn--outline">Shopping list</a>
     </p>
 
 
@@ -88,11 +88,12 @@
                     data-search="@((group.IngredientName + " " + group.CategoryName).ToLowerInvariant())" data-days="@group.SortDays">
                     <details class="inv-details">
                         <summary>
-                            <span class="inv-title inv-title--@(group.CategoryId % 6)" aria-hidden="true">@group.Initial</span>
+                            <span class="inv-tile inv-tile--@(group.CategoryId % 6)" aria-hidden="true">@group.Initial</span>
                             <span class="inv-main">
                                 <span class="inv-meta">@group.IngredientName</span>
                                 <span class="inv-meta">@group.MetaText</span>
                             </span>
+                            <span class="chip chip--@group.Status">@group.ExpiryText</span>
                         </summary>
 
                         <div class="inv-batches">

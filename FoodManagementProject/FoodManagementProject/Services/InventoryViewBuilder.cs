@@ -40,7 +40,7 @@ namespace FoodManagementProject.Services
                         : rows.Any(r => r.Status == "ok") ? "ok"
                         : "none";
 
-            var dated = batches.Where(b => b.ExpirationDate.HasValue).Select(b => b.ExpirationDate.Value).ToList();
+            var dated = batches.Where(b => b.ExpirationDate.HasValue).Select(b => b.ExpirationDate!.Value).ToList();
             DateOnly? earliest = dated.Count > 0 ? dated.Min() : null;
 
             // total sum is shown only when every batch has a quantity in the same unit
