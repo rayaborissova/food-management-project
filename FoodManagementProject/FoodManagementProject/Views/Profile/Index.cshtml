@@ -49,7 +49,7 @@
 
         <div class="field">
             <label asp-for="Details.CurrentPassword" class="field__label"></label>
-            <input asp-for="Details.CurrentPassword" class="input" autocomplete="current-password" />
+            <input asp-for="Details.CurrentPassword" class="input" autocomplete="current-password" value="@Model.Details.CurrentPassword" />
             <span asp-validation-for="Details.CurrentPassword" class="field__error"></span>
         </div>
 
@@ -60,19 +60,19 @@
     <form asp-controller="Profile" asp-action="ChangePassword" method="post">
         <div class="field">
             <label asp-for="Password.CurrentPassword" class="field__label"></label>
-            <input asp-for="Password.CurrentPassword" class="input" autocomplete="current-password" />
+            <input asp-for="Password.CurrentPassword" class="input" autocomplete="current-password" value="@Model.Password.CurrentPassword" />
             <span asp-validation-for="Password.CurrentPassword" class="field__error"></span>
         </div>
 
         <div class="field">
             <label asp-for="Password.NewPassword" class="field__label"></label>
-            <input asp-for="Password.NewPassword" class="input" autocomplete="new-password" />
+            <input asp-for="Password.NewPassword" class="input" autocomplete="new-password" value="@Model.Password.NewPassword" />
             <span asp-validation-for="Password.NewPassword" class="field__error"></span>
         </div>
 
         <div class="field">
             <label asp-for="Password.ConfirmPassword" class="field__label"></label>
-            <input asp-for="Password.ConfirmPassword" class="input" autocomplete="new-password" />
+            <input asp-for="Password.ConfirmPassword" class="input" autocomplete="new-password" value="@Model.Password.NewPassword" />
             <span asp-validation-for="Password.ConfirmPassword" class="field__error"></span>
         </div>
 

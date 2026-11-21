@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FoodManagementProject.Controllers
 {
     [AllowAnonymous]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class AccountController : Controller
     {
         private readonly FoodManagementDbContext _context;

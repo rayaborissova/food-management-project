@@ -12,6 +12,7 @@ using FoodManagementProject.Services;
 namespace FoodManagementProject.Controllers
 {
     [Authorize]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class ProfileController : Controller
     {
         private readonly FoodManagementDbContext _context;
@@ -25,7 +26,7 @@ namespace FoodManagementProject.Controllers
 
         private int CurrentUserId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-        private async Task<ProfilePageViewModel> BuildPageAsync(ProfileDetailsViewModels? details = null)
+        private async Task<ProfilePageViewModel> BuildPageAsync(ProfileDetailsViewModels? details = null, ChangePasswordViewModel? password = null)
         {
             var userId = CurrentUserId;
             var user = await _context.AppUsers.AsNoTracking().FirstAsync(u => u.UserId == userId);
@@ -48,6 +49,7 @@ namespace FoodManagementProject.Controllers
             return new ProfilePageViewModel
             {
                 Details = details ?? new ProfileDetailsViewModels { DisplayName = user.DisplayName, Email = user.Email },
+                Password = password ?? new ChangePasswordViewModel(),
                 Role = user.UserRole,
                 Registered = user.DateCreated,
                 HouseholdName = householdName,
@@ -137,7 +139,7 @@ namespace FoodManagementProject.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("Index", await BuildPageAsync());
+                return View("Index", await BuildPageAsync(null, form));
             }
 
             var user = await _context.AppUsers.FirstAsync(u => u.UserId == CurrentUserId);
@@ -145,7 +147,7 @@ namespace FoodManagementProject.Controllers
             if (_hasher.VerifyHashedPassword(user, user.PasswordHash, form.CurrentPassword) == PasswordVerificationResult.Failed)
             {
                 ModelState.AddModelError("Password.CurrentPassword", "The current password is incorrect.");
-                return View("Index", await BuildPageAsync());
+                return View("Index", await BuildPageAsync(null, form));
             }
 
             user.PasswordHash = _hasher.HashPassword(user, form.NewPassword);

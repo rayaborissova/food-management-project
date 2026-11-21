@@ -647,6 +647,21 @@ textarea.input {
     border: 0;
 }
 
+.password-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.password-toggle {
+    min-width: 72px;
+}
+
+input[type="password"]::-ms-reveal {
+    display: none;
+}
+
+
 @media (max-width: 768px) {
     .sidebar {
         display: none;

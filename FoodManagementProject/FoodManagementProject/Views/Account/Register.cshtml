@@ -25,14 +25,14 @@
 
         <div class="field">
             <label asp-for="Password" class="field__label"></label>
-            <input asp-for="Password" class="input" autocomplete="new-password" />
+            <input asp-for="Password" class="input" autocomplete="new-password" value="@Model.Password" />
             <span asp-validation-for="Password" class="field__error"></span>
         </div>
 
 
         <div class="field">
             <label asp-for="ConfirmPassword" class="field__label"></label>
-            <input asp-for="ConfirmPassword" class="input" autocomplete="new-password" />
+            <input asp-for="ConfirmPassword" class="input" autocomplete="new-password" value="@Model.ConfirmPassword" />
             <span asp-validation-for="ConfirmPassword" class="field__error"></span>
         </div>
 

@@ -113,7 +113,6 @@ C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodMa
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\scopedcss\bundle\FoodManagementProject.styles.css
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\scopedcss\projectbundle\FoodManagementProject.bundle.scp.css
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\2n4wmih7cm-{0}-61n19gt1b8-61n19gt1b8.gz
-C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\gir60ykr19-{0}-xtxxf3hu2r-xtxxf3hu2r.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\1gked3iguz-{0}-t1cqhe9u97-t1cqhe9u97.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\l9nyjex80t-{0}-c2jlpeoesf-c2jlpeoesf.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\dqekn2xyxw-{0}-sejl45xvog-sejl45xvog.gz
@@ -621,4 +620,5 @@ C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodMa
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\ohc47plyl7-{0}-v1vy2to33n-v1vy2to33n.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\2wlpaqpzx6-{0}-ysew0n4kjn-ysew0n4kjn.gz
 C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-5x0jfkmwk7-5x0jfkmwk7.gz
-C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-b26wkab9xq-b26wkab9xq.gz
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-vchc7gxnfa-vchc7gxnfa.gz
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\gir60ykr19-{0}-sijm9igkio-sijm9igkio.gz
