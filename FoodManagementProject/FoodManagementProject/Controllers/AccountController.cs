@@ -1,5 +1,5 @@
-﻿using System.Security.Claims;
-using FoodManagementProject.Models;
+﻿using FoodManagementProject.Models;
+using FoodManagementProject.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -14,11 +14,13 @@ namespace FoodManagementProject.Controllers
     {
         private readonly FoodManagementDbContext _context;
         private readonly IPasswordHasher<AppUser> _hasher;
+        private readonly PasswordResetService _passwordResets;
 
-        public AccountController(FoodManagementDbContext context, IPasswordHasher<AppUser> hasher)
+        public AccountController(FoodManagementDbContext context, IPasswordHasher<AppUser> hasher, PasswordResetService passwordResets)
         {
             _context = context;
             _hasher = hasher;
+            _passwordResets = passwordResets;
         }
 
         private static DateTime Now => DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
@@ -140,7 +142,7 @@ namespace FoodManagementProject.Controllers
 
             await SignInUserAsync(user, model.RememberMe);
 
-            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+            if (user.UserRole == AppRoles.Regular && !string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
             {
                 return LocalRedirect(returnUrl);
             }
@@ -162,19 +164,64 @@ namespace FoodManagementProject.Controllers
             return View();
         }
 
-        private async Task SignInUserAsync(AppUser user, bool isPersistent)
+        private Task SignInUserAsync(AppUser user, bool isPersistent)
         {
-            var claims = new List<Claim>
+            return AuthSignIn.SignInAsync(HttpContext, user, isPersistent);
+        }
+
+        // for forgotten password
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View(new ForgotPasswordViewModel());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
             {
-                new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new(ClaimTypes.Name, user.DisplayName),
-                new(ClaimTypes.Email, user.Email),
-                new(ClaimTypes.Role, user.UserRole)
-            };
+                return View(model);
+            }
 
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await _passwordResets.RequestAsync(model.Email, token => Url.Action("ResetPassword", "Account", new { token }, Request.Scheme)!);
 
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity), new AuthenticationProperties { IsPersistent = isPersistent });
+            // the same answer whether or not the email belongs to an account
+            return RedirectToAction(nameof(ForgotPasswordConfirmation));
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPasswordConfirmation()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ResetPassword(string? token)
+        {
+            var valid = !string.IsNullOrEmpty(token) && await _passwordResets.IsValidAsync(token);
+            return View(new ResetPasswordViewModel { Token = token ?? string.Empty, TokenIsValid = valid });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.TokenIsValid = await _passwordResets.IsValidAsync(model.Token);
+                return View();
+            }
+
+            if (!await _passwordResets.ResetAsync(model.Token, model.Password))
+            {
+                model.TokenIsValid = false;
+                return View(model);
+            }
+
+            TempData["AccountMessage"] = "Your password has changed. Log in with the new password.";
+            return RedirectToAction(nameof(Login));
         }
     }
 }

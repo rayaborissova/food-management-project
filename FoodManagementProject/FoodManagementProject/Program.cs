@@ -18,6 +18,17 @@ builder.Services.AddDbContext<FoodManagementDbContext>(options => options.UseNpg
 
 builder.Services.AddScoped<HouseholdService>();
 
+// for the password reset
+if (!string.IsNullOrEmpty(builder.Configuration["Email:Host"]))
+{
+    builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+} else
+{
+    builder.Services.AddScoped<IEmailSender, LogEmailSender>();
+}
+
+builder.Services.AddScoped<PasswordResetService>();
+
 builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>

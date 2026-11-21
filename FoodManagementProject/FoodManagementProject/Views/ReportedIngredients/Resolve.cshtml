@@ -8,6 +8,11 @@
 <div class="page">
     <h1 class="page__title">Reported ingredient</h1>
 
+    @if (TempData["ReportAdminMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+
     <dl class="details-list">
         <dt>Ingredient</dt>
         <dd>@report.Ingredient.IngredientName</dd>
@@ -34,7 +39,7 @@
     }
 
     <p>
-        <a asp-controller="Ingredients" asp-action="Edit" asp-route-id="@report.IngredientId" class="btn btn--outline">Open ingredient to edit it</a>
+        <a asp-controller="Ingredients" asp-action="Edit" asp-route-id="@report.IngredientId" asp-route-returnUrl="@Url.Action("Resolve", "ReportedIngredients", new { id = report.ReportId })" class="btn btn--outline">Open ingredient to edit it</a>
     </p>
 
     <form asp-controller="ReportedIngredients" asp-action="Resolve" method="post">

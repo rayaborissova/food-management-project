@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
 using Microsoft.AspNetCore.Authorization;
+using FoodManagementProject.Services;
 
 namespace FoodManagementProject.Controllers {
 
@@ -17,7 +18,7 @@ namespace FoodManagementProject.Controllers {
         }
 
         // get ingredients
-        public async Task<IActionResult> Index(string search)   
+        public async Task<IActionResult> Index(string? search)   
         {
             var ingredients = _context.Ingredients.Include(i=>i.Category).AsQueryable();
             if (!string.IsNullOrWhiteSpace(search)){ //if search is not null or a white space
@@ -62,17 +63,28 @@ namespace FoodManagementProject.Controllers {
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IngredientId,CategoryId,IngredientName,IngredientNameNormalized,IngredientSource,Status")] Ingredient ingredient)
         {
+            // search form is derived from the name, not typed by hand
+            ingredient.IngredientNameNormalized = IngredientNormalizer.Normalize(ingredient.IngredientNameNormalized ?? string.Empty);
+            ModelState.Remove(nameof(Ingredient.IngredientNameNormalized));
+
+            // no two ingredients have the same name
+            if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == ingredient.IngredientNameNormalized)) 
+            {
+                ModelState.AddModelError(nameof(Ingredient.IngredientName), "An ingredient with this name already exists.");
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(ingredient);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(ingredient);
         }
 
         // GET: INGREDIENTS/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string? returnUrl)
         {
             if (id == null)
             {
@@ -84,6 +96,8 @@ namespace FoodManagementProject.Controllers {
             {
                 return NotFound();
             }
+
+            ViewData["ReturnUrl"] = Url.IsLocalUrl(returnUrl) ? returnUrl : null; // only addresses inside this site are kept
             return View(ingredient);
         }
 
@@ -92,11 +106,21 @@ namespace FoodManagementProject.Controllers {
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("IngredientId,CategoryId,IngredientName,IngredientNameNormalized,IngredientSource,Status")] Ingredient ingredient)
+        public async Task<IActionResult> Edit(int? id, [Bind("IngredientId,CategoryId,IngredientName,IngredientNameNormalized,IngredientSource,Status")] Ingredient ingredient, string? returnUrl)
         {
             if (id != ingredient.IngredientId)
             {
                 return NotFound();
+            }
+
+            // search form is derived from the name, not typed by hand
+            ingredient.IngredientNameNormalized = IngredientNormalizer.Normalize(ingredient.IngredientNameNormalized ?? string.Empty);
+            ModelState.Remove(nameof(Ingredient.IngredientNameNormalized));
+
+            // no two ingredients have the same name
+            if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == ingredient.IngredientNameNormalized && i.IngredientId != ingredient.IngredientId))
+            {
+                ModelState.AddModelError(nameof(Ingredient.IngredientName), "Another ingredient already has this name.");
             }
 
             if (ModelState.IsValid)
@@ -117,8 +141,17 @@ namespace FoodManagementProject.Controllers {
                         throw;
                     }
                 }
+
+                if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                {
+                    TempData["ReportAdminMessage"] = "Ingredient saved. You can now close the report below.";
+                    return LocalRedirect(returnUrl);
+                }
+
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["ReturnUrl"] = Url.IsLocalUrl(returnUrl) ? returnUrl : null;
             return View(ingredient);
         }
 
@@ -140,7 +173,7 @@ namespace FoodManagementProject.Controllers {
             return View(ingredient);
         }
 
-        // POST: INGREDIENTS/Delete/5
+        // if an ingredient is in someone's inventory or shopping list
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int? id)
@@ -149,9 +182,18 @@ namespace FoodManagementProject.Controllers {
             if (ingredient != null)
             {
                 _context.Ingredients.Remove(ingredient);
-            }
 
-            await _context.SaveChangesAsync();
+                try
+                {
+                    await _context.SaveChangesAsync();
+                } catch (DbUpdateException)
+                {
+                    TempData["IngredientError"] = "This ingredient is used in inventories or shopping lists and can't be deleted";
+                    return RedirectToAction(nameof(Index));
+                }
+
+
+            }
             return RedirectToAction(nameof(Index));
         }
 

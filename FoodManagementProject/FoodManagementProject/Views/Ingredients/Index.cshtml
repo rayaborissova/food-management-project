@@ -4,6 +4,12 @@
     ViewData["Title"] = "Index";
 }
 
+@if (TempData["IngredientError"] is string ingredientError)
+{
+    <p class="form-errors" role="alert">@ingredientError</p>
+}
+
+
 <h1>Index</h1>
 
 <p>
@@ -53,7 +59,7 @@
             <td>
                 @Html.DisplayFor(model => item.Status)
             </td>
-            <td><!--will be switched to have "add to inventory"-->
+            <td>
                 <a asp-action="Edit" asp-route-id="@item.IngredientId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.IngredientId">Details</a> |
                 <a asp-action="Delete" asp-route-id="@item.IngredientId">Delete</a>

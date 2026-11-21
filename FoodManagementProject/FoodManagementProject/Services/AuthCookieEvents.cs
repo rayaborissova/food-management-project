@@ -19,9 +19,9 @@ namespace FoodManagementProject.Services
 
             var db = context.HttpContext.RequestServices.GetRequiredService<FoodManagementDbContext>();
 
-            var user = await db.AppUsers.AsNoTracking().Where(u => u.UserId == userId).Select(u => new { u.IsActive, u.UserRole }).FirstOrDefaultAsync();
+            var user = await db.AppUsers.AsNoTracking().Where(u => u.UserId == userId).Select(u => new { u.IsActive, u.UserRole, u.SecurityStamp }).FirstOrDefaultAsync();
 
-            if (user == null || !user.IsActive || user.UserRole != context.Principal!.FindFirstValue(ClaimTypes.Role))
+            if (user == null || !user.IsActive || user.UserRole != context.Principal!.FindFirstValue(ClaimTypes.Role) || user.SecurityStamp.ToString() != context.Principal.FindFirstValue(AuthSignIn.StampClaim))
             {
                 await RejectAsync(context);
             }
