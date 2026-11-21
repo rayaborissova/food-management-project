@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
 using FoodManagementProject.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using FoodManagementProject.Services;
 
 [Authorize(Roles = AppRoles.Regular)]
 public class InventoryController : HouseholdControllerBase
@@ -14,15 +15,14 @@ public class InventoryController : HouseholdControllerBase
         _context = context;
     }
 
-    // GET: INVENTORYBATCHS
+    // get inventory
     public async Task<IActionResult> Index()
     { 
-        // retrieving the inventory batches, including the ingredient name, units; later quantity
-        var inventory = await _context.InventoryBatches.Where(b => b.HouseholdId == HouseholdId).Include(b => b.Ingredient).Include(b => b.Unit)
-            .OrderBy(b => b.Ingredient.IngredientName).ToListAsync();
-        
-        
-        return View(inventory);
+        // retrieving the household's batches, including the ingredient, category, and unit
+        var batches = await _context.InventoryBatches.AsNoTracking().Where(b => b.HouseholdId == HouseholdId).Include(b => b.Ingredient).ThenInclude(i => i.Category).Include(b => b.Unit).ToListAsync();
+
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        return View(InventoryViewBuilder.Build(batches, today));
     }
 
     // this method will help load the ingredients into the searchable checklist

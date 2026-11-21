@@ -22,27 +22,28 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for (int i=0; i < Model.Items.Count; i++)
+                    @for (int i = 0; i < Model.Items.Count; i++)
                     {
                         <tr>
-                            <td>@Model.Items[i].IngredientName
-                                <input type="hidden" asp-for="Items[i].IngredientId"/>
+                            <td>
+                                @Model.Items[i].IngredientName
+                                <input type="hidden" asp-for="Items[i].IngredientId" />
                             </td>
                             <td>
-                                <input asp-for="Items[i].Quantity" type="number" min="0.5" step="0.5" aria-label="Quantity for @Model.Items[i].IngredientName" class="input"/>
+                                <input asp-for="Items[i].Quantity" type="number" min="0.5" step="0.5" aria-label="Quantity for @Model.Items[i].IngredientName" class="input" />
                             </td>
                             <td>
                                 <select asp-for="Items[i].UnitId" aria-label="Unit for @Model.Items[i].IngredientName" class="input">
                                     <option value="">Not specified</option>
 
                                     @foreach (var unit in Model.AvailableUnits)
-                                        {
-                                            <option value="@unit.UnitId">@unit.UnitName</option>
-                                        }
+                                    {
+                                        <option value="@unit.UnitId">@unit.UnitName</option>
+                                    }
                                 </select>
                             </td>
                             <td>
-                                <input asp-for="Items[i].ExpirationDate" type="date" aria-label="Expiration date for @Model.Items[i].IngredientName" class="input"/>
+                                <input asp-for="Items[i].ExpirationDate" type="date" aria-label="Expiration date for @Model.Items[i].IngredientName" class="input" />
                             </td>
                         </tr>
                     }
@@ -53,6 +54,6 @@
         <button type="submit" class="btn btn--primary">Add to inventory</button>
     </form>
 
-    <a asp-controller="Inventory" asp-action="Add" class="back-link" >Back to selection</a>
+    <a asp-controller="Inventory" asp-action="Add" class="back-link">Back to selection</a>
 
 </div>
