@@ -69,7 +69,7 @@ namespace FoodManagementProject.Services
             await _context.SaveChangesAsync();
 
             var body = $"Hello {user.DisplayName},\n\n"
-                + "Someone asked to reset the password of your accoun. Use this link within 1 hour:\n\n"
+                + "Someone asked to reset the password of your account. Use this link within 1 hour:\n\n"
                 + $"{buildLink(token)}\n\n"
                 + "If this wasn't you, ignore this message and your password stays the same.";
 

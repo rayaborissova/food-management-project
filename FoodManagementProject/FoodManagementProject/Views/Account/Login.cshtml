@@ -7,6 +7,12 @@
 <div class="page page--narrow">
     <h1 class="page__title">Log in</h1>
 
+    @if (TempData["AccountMessage"] is string accountMessage)
+    {
+        <p role="status">@accountMessage</p>
+    }
+
+
     <form asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
         <div asp-validation-summary="ModelOnly" class="form-errors"></div>
 
@@ -30,6 +36,8 @@
 
         <button type="submit" class="btn btn--primary">Log in</button>
     </form>
+
+    <p class="auth-switch"><a asp-controller="Account" asp-action="ForgotPassword">Forgot your password?</a></p>
 
     <p class="auth-switch">No account yet? <a asp-controller="Account" asp-action="Register">Register</a></p>
 </div>
