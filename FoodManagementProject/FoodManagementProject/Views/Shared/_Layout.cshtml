@@ -53,7 +53,7 @@
             </nav>
         }
         <main role="main" class="app__main">
-            <header class="topbar">
+            <header class="topbar@(User.Identity?.IsAuthenticated == true ? "" : " topbar--guest")">
                 <a class="topbar__brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
             </header>
             <div class="app__body">
@@ -86,10 +86,7 @@
                 <a class="nav-link @(controller == "Moderation" && (action == "Reports" || action == "ReviewReport" || action == "ReportHistory") ? "is-active" : "")" asp-controller="Moderation" asp-action="Reports"><i class="ti ti-flag" aria-hidden="true"></i>Reports @await Component.InvokeAsync("StaffBadge", new { kind = "open-reports" })</a>
             }
 
-            <a class="nav-link" asp-controller="Profile" asp-action="Index"><i class="ti ti-user" aria-hidden="true"></i>Profile</a>
-            <form asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="nav-link nav-link--button"><i class="ti ti-logout" aria-hidden="true"></i>Log out</button>
-            </form>
+            <a class="nav-link @(controller == "Profile" ? "is-active" : "")" asp-controller="Profile" asp-action="Index"><i class="ti ti-user" aria-hidden="true"></i>Profile</a>
         </nav>
 
         @if (User.IsInRole(AppRoles.Regular))

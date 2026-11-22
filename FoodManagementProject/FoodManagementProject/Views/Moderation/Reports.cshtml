@@ -9,11 +9,11 @@
 
     @if (TempData["ModerationMessage"] is string message)
     {
-        <p role="status">@message</p>
+        <p class="notice" role="status">@message</p>
     }
     @if (TempData["ModerationError"] is string error)
     {
-        <p class="form-error" role="alert">@error</p>
+        <p class="notice notice--error" role="alert">@error</p>
     }
 
     @if (!Model.Any())

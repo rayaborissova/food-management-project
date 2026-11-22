@@ -1,25 +1,46 @@
 ﻿@model FoodManagementProject.Models.SummaryCardViewModel
 
+@{
+    var tone = Model.HintStatus switch
+    {
+        "expired" => " summary-card--danger",
+        "soon" => " summary-card--attention",
+        _ => ""
+    };
+}
+
 @if (!string.IsNullOrEmpty(Model.Controller))
 {
-    <a asp-controller="@Model.Controller" asp-action="@Model.Action" class="summary-card">
-        <span class="summary-card__title">@Model.Title</span>
+    <a asp-controller="@Model.Controller" asp-action="@Model.Action" class="summary-card@(tone)">
+        <span class="summary-card__head">
+            <span class="summary-card__title">@Model.Title</span>
+            @if (!string.IsNullOrEmpty(Model.Icon))
+            {
+                <i class="summary-card__icon ti ti-@Model.Icon" aria-hidden="true"></i>
+            }
+        </span>
         <span class="summary-card__value">@Model.Value</span>
         @if (!string.IsNullOrEmpty(Model.Hint))
         {
             <span class="chip chip--@Model.HintStatus">@Model.Hint</span>
         }
+        <i class="summary-card__go ti ti-chevron-right" aria-hidden="true"></i>
     </a>
 }
 else
 {
-    <div class="summary-card summary-card--static">
-        <span class="summary-card__title">@Model.Title</span>
+    <div class="summary-card summary-card@(tone)">
+        <span class="summary-card__head">
+            <span class="summary-card__title">@Model.Title</span>
+            @if (!string.IsNullOrEmpty(Model.Icon))
+            {
+                <i class="summary-card__icon ti ti-@Model.Icon" aria-hidden="true"></i>
+            }
+        </span>
         <span class="summary-card__value">@Model.Value</span>
         @if (!string.IsNullOrEmpty(Model.Hint))
         {
             <span class="chip chip--@Model.HintStatus">@Model.Hint</span>
         }
-
     </div>
 }

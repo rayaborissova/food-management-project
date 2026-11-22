@@ -118,7 +118,10 @@ body {
 
 .page__title {
     margin: 0 0 12px;
+    font-family: "Fraunces", Georgia, serif;
     font-size: 32px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
 }
 
 .page__lead {
@@ -154,6 +157,10 @@ body {
     font: inherit;
     box-sizing: border-box;
 }
+
+    .input:focus-visible {
+        border-color: var(--primary);
+    }
 
 .btn {
     min-height: 44px;
@@ -306,11 +313,20 @@ body {
 /*styling for errors*/
 .form-errors {
     margin-bottom: 16px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    background: var(--danger-bg);
     color: var(--danger);
+    font-weight: 700;
 }
 
+    .form-errors.validation-summary-valid {
+        display: none;
+    }
+
     .form-errors ul {
-        padding-left: 12px;
+        margin: 0;
+        padding-left: 20px;
     }
 
 .field__error {
@@ -324,12 +340,24 @@ body {
 }
 /*styling for the delete inventory page and button*/
 .details-list dt {
-    margin: 4px 0 0;
+    margin: 0;
+    font-size: 14px;
+    color: var(--ink-muted);
 }
 
 .details-list dd {
-    font-weight: bold;
-    margin-top: 16px;
+    margin: 2px 0 16px;
+    font-weight: 700;
+}
+
+.details-card {
+    padding: 20px 24px;
+    margin-bottom: 16px;
+}
+
+.page__section {
+    margin: 28px 0 8px;
+    font-size: 20px;
 }
 
 .btn--danger-solid {
@@ -373,12 +401,8 @@ body {
     padding: 10px 16px;
     background: var(--surface);
     border: var(--border);
-    border: var(--radius-card);
+    border-radius: var(--radius-card);
 }
-
-    .shop-item:first-child {
-        border-top: none;
-    }
 
 .shop-item__label {
     flex: 1;
@@ -647,31 +671,42 @@ textarea.input {
 }
 
 .status {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #E9EFEC;
+    font-size: 13px;
     font-weight: 700;
     text-transform: capitalize;
 }
 
 .status--pending {
+    background: #E9EFEC;
     color: var(--ink-muted);
 }
 
 .status--approved {
+    background: var(--sage-tint);
     color: var(--sage);
 }
 
 .status--rejected {
+    background: var(--danger-bg);
     color: var(--danger);
 }
 
 .status--dismissed {
+    background: #E9EFEC;
     color: var(--ink-muted);
 }
 
 .status--forwarded {
+    background: var(--amber-bg);
     color: var(--amber);
 }
 
 .status--resolved {
+    background: var(--sage-tint);
     color: var(--sage);
 }
 
@@ -1116,6 +1151,8 @@ input[type="password"]::-ms-reveal {
 }
 
 .summary-card {
+    position: relative;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -1128,8 +1165,14 @@ input[type="password"]::-ms-reveal {
     text-decoration: none;
 }
 
-a.summary-card:hover {
-    background: var(--mint);
+a.summary-card {
+    padding-bottom: 44px;
+}
+
+@media (hover:hover) {
+    a.summary-card:hover {
+        border-color: var(--primary);
+    }
 }
 
 .summary-card__title {
@@ -1144,12 +1187,62 @@ a.summary-card:hover {
     line-height: 1;
 }
 
-
-@media (min-width: 769px) {
-    .add-overlay {
-        background: transparent; /*on desktop it only catches outside clicks*/
-    }
+.summary-card__head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 }
+
+.summary-card__icon {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: var(--mint);
+    color: var(--primary-dark);
+    font-size: 20px;
+}
+
+.summary-card__go {
+    position: absolute;
+    right: 16px;
+    bottom: 18px;
+    font-size: 18px;
+    color: var(--ink-muted);
+}
+
+.summary-card .chip {
+    max-width: 100%;
+    white-space: normal;
+    flex-shrink: 1;
+}
+
+a.summary-card .chip {
+    max-width: calc(100% - 28px);
+}
+
+.summary-card--attention {
+    background: var(--amber-bg);
+    border-color: #EBCF9A;
+}
+
+.summary-card--danger {
+    background: var(--danger-bg);
+    border-color: #E8B9B5;
+}
+
+    .summary-card--attention .chip, .summary-card--danger .chip {
+        background: var(--surface);
+    }
+
+    .summary-card--attention .summary-card__icon, .summary-card--danger .summary-card__icon {
+        background: var(--surface);
+    }
 
 /*center button on mobile*/
 .tabbar__fab {
@@ -1249,6 +1342,40 @@ a.summary-card:hover {
     font-weight: 700;
 }
 
+.sidebar .nav-badge {
+    margin-left: auto;
+}
+
+@media (min-width: 769px) {
+    .add-overlay {
+        background: transparent; /*on desktop it only catches outside clicks*/
+    }
+
+    .topbar--guest {
+        display: block;
+        padding: 40px 16px 0;
+        text-align: center;
+    }
+
+        .topbar--guest .topbar__brand {
+            font-size: 36px;
+            color: var(--primary-dark);
+        }
+
+    .page--narrow {
+        margin: 24px auto 0;
+        padding: 32px;
+        background: var(--surface);
+        border: var(--border);
+        border-radius: var(--radius-card);
+    }
+}
+
+.auth-switch a, .page__lead a {
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         display: none;
@@ -1278,6 +1405,7 @@ a.summary-card:hover {
             justify-content: center;
             gap: 2px;
             font-size: 12px;
+            position: relative;
         }
 
             .tabbar .nav-link i {
@@ -1313,6 +1441,18 @@ a.summary-card:hover {
     .tabbar .nav-link--button {
         width: auto;
         text-align: center;
+    }
+
+    .tabbar .nav-badge {
+        position: absolute;
+        top: 2px;
+        left: 50%;
+        margin: 0;
+        min-width: 18px;
+        padding: 1px 5px;
+        text-align: center;
+        font-size: 11px;
+        transform: translateX(6px);
     }
 
     .topbar {
@@ -1361,6 +1501,51 @@ a.summary-card:hover {
     .page--picker .page__lead {
         display: none;
     }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .summary-card {
+        padding: 14px;
+        gap: 6px;
+    }
+
+    .summary-card__title {
+        font-size: 13px;
+        line-height: 1.25;
+    }
+
+    .summary-card__icon {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+
+    .summary-card__value {
+        font-size: 28px;
+    }
+
+    .summary-card .chip {
+        font-size: 12px;
+        padding: 3px 8px;
+    }
+
+    .summary-card__go {
+        right: 12px;
+        bottom: 14px;
+        font-size: 16px;
+    }
+
+    a.summary-card .chip {
+        max-width: calc(100% - 22px);
+    }
+
+    .summary-grid > :last-child:nth-child(odd) {
+        grid-column: 1 / -1;
+    }
+
 }
 
 @media (max-width:520px) {

@@ -1,54 +1,42 @@
 @model FoodManagementProject.Models.Ingredient
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create ingredient";
 }
 
-<h1>Create</h1>
+<div class="page page--narrow">
+    <h1 class="page__title">Create ingredient</h1>
+    <p class="page__lead">Add a new ingredient to the catalogue.</p>
 
-<h4>Ingredient</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="form-errors"></div>
 
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" />
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
+        <div class="field">
+            <label asp-for="CategoryId" class="field__label"></label>
+            <input asp-for="CategoryId" class="input" />
+            <span asp-validation-for="CategoryId" class="field__error"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="IngredientName" class="control-label"></label>
-                <input asp-for="IngredientName" class="form-control" />
-                <span asp-validation-for="IngredientName" class="text-danger"></span>
-            </div>
+        <div class="field">
+            <label asp-for="IngredientName" class="field__label"></label>
+            <input asp-for="IngredientName" class="input" />
+            <span asp-validation-for="IngredientName" class="field__error"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="IngredientNameNormalized" class="control-label"></label>
-                <input asp-for="IngredientNameNormalized" class="form-control" />
-                <span asp-validation-for="IngredientNameNormalized" class="text-danger"></span>
-            </div>
+        <div class="field">
+            <label asp-for="IngredientSource" class="field__label"></label>
+            <input asp-for="IngredientSource" class="input" />
+            <span asp-validation-for="IngredientSource" class="field__error"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="IngredientSource" class="control-label"></label>
-                <input asp-for="IngredientSource" class="form-control" />
-                <span asp-validation-for="IngredientSource" class="text-danger"></span>
-            </div>
+        <div class="field">
+            <label asp-for="Status" class="field__label"></label>
+            <input asp-for="Status" class="input" />
+            <span asp-validation-for="Status" class="field__error"></span>
+        </div>
 
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+        <button type="submit" class="btn btn--primary">Create</button>
+    </form>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="back-link">Back to List</a>
 </div>

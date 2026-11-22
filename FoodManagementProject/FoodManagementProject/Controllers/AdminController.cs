@@ -177,25 +177,20 @@ namespace FoodManagementProject.Controllers
                 Lead = "Users, the ingredient catalogue and the reports waiting for you.",
                 Cards = new List<SummaryCardViewModel>
                 {
-                    new() {Title = "Users", Value= roles.Sum(r=>r.Count).ToString(),
-                        Hint = $"{RoleCount(AppRoles.Regular)} regular · {RoleCount(AppRoles.Moderator)} moderators · {RoleCount(AppRoles.Admin)} admins",
+                    new() {Title = "Users", Icon="users", Value= roles.Sum(r=>r.Count).ToString(),
+                        Hint = $"{RoleCount(AppRoles.Regular)} regular · {RoleCount(AppRoles.Moderator)} mod · {RoleCount(AppRoles.Admin)} admins",
                         Controller = "Admin", Action = "Index" },
-                    new() {Title = "Deactivated accounts", Value= deactivated.ToString(),
+                    new() {Title = "Deactivated accounts", Icon="user-off", Value= deactivated.ToString(),
                         Controller = "Admin", Action = "Index" },
-                    new() {Title = "Reports waiting for you", Value= forwarded.Count.ToString(),
+                    new() {Title = "Reports waiting for you", Icon="flag", Value= forwarded.Count.ToString(),
                         Hint = waitingHint, HintStatus = waitingStatus,
                         Controller = "ReportedIngredients", Action = "Index" },
-                    new() {Title = "Ingredients", Value= ingredients.ToString(),
+                    new() {Title = "Ingredients", Icon="carrot", Value= ingredients.ToString(),
                         Hint = $"{categories} categories",
                         Controller = "Ingredients", Action = "Index" },
-                    new() {Title = "Shared households", Value= sharedHouseholds.ToString() }
+                    new() {Title = "Shared households", Icon="home", Value= sharedHouseholds.ToString() }
                 }
             });
-
-
         }
-
-
-
     }
 }

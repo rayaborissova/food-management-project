@@ -283,16 +283,16 @@ namespace FoodManagementProject.Controllers
                 Lead = "What is waiting for review, and what the team handled this week.",
                 Cards = new List<SummaryCardViewModel>
                 {
-                    new() {Title = "Suggestions waiting", Value= pending.Count.ToString(),
+                    new() {Title = "Suggestions waiting", Icon="bulb", Value= pending.Count.ToString(),
                         Hint = pendingHint, HintStatus = pendingStatus,
                         Controller = "Moderation", Action = "Index" },
-                    new() {Title = "Reports waiting", Value= openReports.Count.ToString(),
+                    new() {Title = "Reports waiting", Icon="flag", Value= openReports.Count.ToString(),
                         Hint = reportsHint, HintStatus = reportsStatus,
                         Controller = "Moderation", Action = "Reports" },
-                    new() {Title = "Suggestions decided this week", Value= (Decided(RequestStatuses.Approved) + Decided(RequestStatuses.Rejected)).ToString(),
+                    new() {Title = "Suggestions decided this week", Icon="checks", Value= (Decided(RequestStatuses.Approved) + Decided(RequestStatuses.Rejected)).ToString(),
                         Hint = $"{Decided(RequestStatuses.Approved)} approved · {Decided(RequestStatuses.Rejected)} rejected",
                         Controller = "Moderation", Action = "History" },
-                    new() {Title = "Reports handled this week", Value= reportsHandled.ToString(),
+                    new() {Title = "Reports handled this week", Icon="circle-check", Value= reportsHandled.ToString(),
                         Controller = "Moderation", Action = "ReportHistory" },
                 }
             });

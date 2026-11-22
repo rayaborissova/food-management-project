@@ -5,9 +5,10 @@ using FoodManagementProject.Models;
 using Microsoft.AspNetCore.Authorization;
 using FoodManagementProject.Services;
 
-namespace FoodManagementProject.Controllers {
+namespace FoodManagementProject.Controllers
+{
 
-    [Authorize (Roles = AppRoles.Admin)]
+    [Authorize(Roles = AppRoles.Admin)]
     public class IngredientsController : Controller
     {
         private readonly FoodManagementDbContext _context;
@@ -18,14 +19,15 @@ namespace FoodManagementProject.Controllers {
         }
 
         // get ingredients
-        public async Task<IActionResult> Index(string? search)   
+        public async Task<IActionResult> Index(string? search)
         {
-            var ingredients = _context.Ingredients.Include(i=>i.Category).AsQueryable();
-            if (!string.IsNullOrWhiteSpace(search)){ //if search is not null or a white space
+            var ingredients = _context.Ingredients.Include(i => i.Category).AsQueryable();
+            if (!string.IsNullOrWhiteSpace(search))
+            { //if search is not null or a white space
                 search = search.Trim().ToLower();
                 //fuzzy search using the postgres extention pg_trgm
                 ingredients = ingredients.Where(i => i.IngredientNameNormalized.Contains(search) || EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, search) >= 0.17) // 0.17 was chosen based on the "chik" search, I wanted to output all chicken related ingredients
-                    .OrderByDescending(i=> EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized,search)); 
+                    .OrderByDescending(i => EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, search));
                 //either contains exactly or by string similarity; ordered by the biggest string % match
             }
 
@@ -40,8 +42,7 @@ namespace FoodManagementProject.Controllers {
                 return NotFound();
             }
 
-            var ingredient = await _context.Ingredients
-                .FirstOrDefaultAsync(m => m.IngredientId == id);
+            var ingredient = await _context.Ingredients.Include(i => i.Category).FirstOrDefaultAsync(m => m.IngredientId == id);
             if (ingredient == null)
             {
                 return NotFound();
@@ -59,14 +60,14 @@ namespace FoodManagementProject.Controllers {
         // POST: INGREDIENTS/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IngredientId,CategoryId,IngredientName,IngredientNameNormalized,IngredientSource,Status")] Ingredient ingredient)
+        public async Task<IActionResult> Create([Bind("IngredientId,CategoryId,IngredientName,IngredientSource,Status")] Ingredient ingredient)
         {
             // search form is derived from the name, not typed by hand
             ingredient.IngredientNameNormalized = IngredientNormalizer.Normalize(ingredient.IngredientName ?? string.Empty);
             ModelState.Remove(nameof(Ingredient.IngredientNameNormalized));
 
             // no two ingredients have the same name
-            if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == ingredient.IngredientNameNormalized)) 
+            if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == ingredient.IngredientNameNormalized))
             {
                 ModelState.AddModelError(nameof(Ingredient.IngredientName), "An ingredient with this name already exists.");
             }
@@ -102,7 +103,7 @@ namespace FoodManagementProject.Controllers {
         // POST: INGREDIENTS/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int? id, [Bind("IngredientId,CategoryId,IngredientName,IngredientNameNormalized,IngredientSource,Status")] Ingredient ingredient, string? returnUrl)
+        public async Task<IActionResult> Edit(int? id, [Bind("IngredientId,CategoryId,IngredientName,IngredientSource,Status")] Ingredient ingredient, string? returnUrl)
         {
             if (id != ingredient.IngredientId)
             {
@@ -182,7 +183,8 @@ namespace FoodManagementProject.Controllers {
                 try
                 {
                     await _context.SaveChangesAsync();
-                } catch (DbUpdateException)
+                }
+                catch (DbUpdateException)
                 {
                     TempData["IngredientError"] = "This ingredient is used in inventories or shopping lists and can't be deleted";
                     return RedirectToAction(nameof(Index));

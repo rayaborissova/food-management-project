@@ -5,7 +5,7 @@
 }
 
 <div class="page page--wide">
-    <h1 class="page page--wide"></h1>
+    <h1 class="page__title">Report history</h1>
 
     @if (!Model.Any())
     {
@@ -32,7 +32,7 @@
                             <td>@report.Ingredient.IngredientName</td>
                             <td>@ReportReasons.Label(report.Reason)</td>
                             <td>@report.Reporter.DisplayName</td>
-                            <td><span class="status status--@report.ReportStatus"></span></td>
+                            <td><span class="status status--@report.ReportStatus">@report.ReportStatus</span></td>
                             <td>@(report.Reviewer?.DisplayName ?? "Removed account")</td>
                             <td>@report.DateReviewed?.ToString("dd/MM/yyyy")</td>
                             <td>@report.ReviewNote</td>
