@@ -2,8 +2,10 @@
 {
     public static class DashboardHelper
     {
-        // an item waiting longer rhan this counts as stale
+        // an item waiting longer than this counts as stale
         public const int StaleDays = 7;
+
+        public const int AttentionDays = 3;
 
         // the hint under a "waiting" card (how long the oldest item has waited, coloured by urgency)
         public static (string Hint, string Status) WaitingHint(IReadOnlyCollection<DateTime> dates, DateTime now)
@@ -20,7 +22,7 @@
             }
 
             var oldest = (int)(now - dates.Min()).TotalDays;
-            return ($"Oldest: {oldest} {(oldest == 1 ? "day" : "days")}", oldest >= 3 ? "soon" : "ok");
+            return ($"Oldest: {oldest} {(oldest == 1 ? "day" : "days")}", oldest >= AttentionDays ? "soon" : "ok");
         }
 
     }

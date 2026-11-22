@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FoodManagementProject</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />"
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -15,6 +15,7 @@
 <body>
     @{
         var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+        var action = ViewContext.RouteData.Values["action"]?.ToString();
     }
     <div class="app">
         @if (User.Identity?.IsAuthenticated == true) //display it only if the user logged in
@@ -33,13 +34,16 @@
                 }
                 @if (User.IsInRole(AppRoles.Admin))
                 {
-                    <a class="nav-link @(controller == "Admin" ? "is-active" : "")" asp-controller="Admin" asp-action="Index"><i class="ti ti-users" aria-hidden="true"></i>Users</a>
+                    <a class="nav-link @(controller == "Admin" && action == "Dashboard" ? "is-active" : "")" asp-controller="Admin" asp-action="Dashboard"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</a>
+                    <a class="nav-link @(controller == "Admin" && action != "Dashboard" ? "is-active" : "")" asp-controller="Admin" asp-action="Index"><i class="ti ti-users" aria-hidden="true"></i>Users</a>
                     <a class="nav-link @(controller == "Ingredients" ? "is-active" : "")" asp-controller="Ingredients" asp-action="Index"><i class="ti ti-carrot" aria-hidden="true"></i>Ingredients</a>
-                    <a class="nav-link @(controller == "ReportedIngredients" ? "is-active" : "")" asp-controller="ReportedIngredients" asp-action="Index"><i class="ti ti-flag" aria-hidden="true"></i>Report @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
+                    <a class="nav-link @(controller == "ReportedIngredients" ? "is-active" : "")" asp-controller="ReportedIngredients" asp-action="Index"><i class="ti ti-flag" aria-hidden="true"></i>Reports @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
                 }
                 @if (User.IsInRole(AppRoles.Moderator))
                 {
-                    <a class="nav-link @(controller == "Moderation" ? "is-active" : "")" asp-controller="Moderation" asp-action="Index"><i class="ti ti-shield-check" aria-hidden="true"></i>Moderation @await Component.InvokeAsync("StaffBadge", new { kind = "moderation" })</a>
+                    <a class="nav-link @(controller == "Moderation" && action == "Dashboard" ? "is-active" : "")" asp-controller="Moderation" asp-action="Dashboard"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</a>
+                    <a class="nav-link @(controller == "Moderation" && (action == "Index" || action == "Review" || action == "History") ? "is-active" : "")" asp-controller="Moderation" asp-action="Index"><i class="ti ti-shield-check" aria-hidden="true"></i>Suggestions @await Component.InvokeAsync("StaffBadge", new { kind = "suggestions" })</a>
+                    <a class="nav-link @(controller == "Moderation" && (action == "Reports" || action == "ReviewReport" || action == "ReportHistory") ? "is-active" : "")" asp-controller="Moderation" asp-action="Reports"><i class="ti ti-flag" aria-hidden="true"></i>Reports @await Component.InvokeAsync("StaffBadge", new { kind = "open-reports" })</a>
                 }
 
                 <form asp-controller="Account" asp-action="Logout" method="post" class="sidebar__logout">
@@ -70,18 +74,20 @@
             }
             @if (User.IsInRole(AppRoles.Admin))
             {
-                <a class="nav-link @(controller == "Admin" ? "is-active" : "")" asp-controller="Admin" asp-action="Index"><i class="ti ti-users" aria-hidden="true"></i>Users</a>
+                <a class="nav-link @(controller == "Admin" && action == "Dashboard" ? "is-active" : "")" asp-controller="Admin" asp-action="Dashboard"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</a>
+                <a class="nav-link @(controller == "Admin" && action != "Dashboard" ? "is-active" : "")" asp-controller="Admin" asp-action="Index"><i class="ti ti-users" aria-hidden="true"></i>Users</a>
                 <a class="nav-link @(controller == "Ingredients" ? "is-active" : "")" asp-controller="Ingredients" asp-action="Index"><i class="ti ti-carrot" aria-hidden="true"></i>Ingredients</a>
-                <a class="nav-link @(controller == "ReportedIngredients" ? "is-active" : "")" asp-controller="ReportedIngredients" asp-action="Index"><i class="ti ti-..." aria-hidden="true"></i>Report @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
+                <a class="nav-link @(controller == "ReportedIngredients" ? "is-active" : "")" asp-controller="ReportedIngredients" asp-action="Index"><i class="ti ti-flag" aria-hidden="true"></i>Reports @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
             }
             @if (User.IsInRole(AppRoles.Moderator))
             {
-                <a class="nav-link @(controller == "Moderation" ? "is-active" : "")" asp-controller="Moderation" asp-action="Index"><i class="ti ti-shield-check" aria-hidden="true"></i>Moderation @await Component.InvokeAsync("StaffBadge", new { kind = "moderation" })</a>
+                <a class="nav-link @(controller == "Moderation" && action == "Dashboard" ? "is-active" : "")" asp-controller="Moderation" asp-action="Dashboard"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</a>
+                <a class="nav-link @(controller == "Moderation" && (action == "Index" || action == "Review" || action == "History") ? "is-active" : "")" asp-controller="Moderation" asp-action="Index"><i class="ti ti-shield-check" aria-hidden="true"></i>Suggestions @await Component.InvokeAsync("StaffBadge", new { kind = "suggestions" })</a>
+                <a class="nav-link @(controller == "Moderation" && (action == "Reports" || action == "ReviewReport" || action == "ReportHistory") ? "is-active" : "")" asp-controller="Moderation" asp-action="Reports"><i class="ti ti-flag" aria-hidden="true"></i>Reports @await Component.InvokeAsync("StaffBadge", new { kind = "open-reports" })</a>
             }
 
             <a class="nav-link" asp-controller="Profile" asp-action="Index"><i class="ti ti-user" aria-hidden="true"></i>Profile</a>
             <form asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="nav-link nav-link--button"><i class="ti ti-logout" aria-hidden="true"></i>Log out</button>
                 <button type="submit" class="nav-link nav-link--button"><i class="ti ti-logout" aria-hidden="true"></i>Log out</button>
             </form>
         </nav>

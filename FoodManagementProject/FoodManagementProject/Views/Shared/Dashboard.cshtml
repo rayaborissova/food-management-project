@@ -6,7 +6,10 @@
 
 <div class="page page--wide">
     <h1 class="page__title">@Model.Heading</h1>
-    <p class="page__lead">@Model.Lead</p>
+    @if (!string.IsNullOrEmpty(Model.Lead))
+    {
+        <p class="page__lead">@Model.Lead</p>
+    }
 
     <div class="summary-grid">
         @foreach (var card in Model.Cards)

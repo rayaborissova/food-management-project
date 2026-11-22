@@ -256,10 +256,46 @@ namespace FoodManagementProject.Controllers
 
             return View(handled);
         }
+
+        // the moderator's dashboard (what is waiting, what was done this week)
+        [HttpGet]
+        public async Task<IActionResult> Dashboard()
+        {
+            var now = Now;
+            var weekAgo = now.AddDays(-7);
+
+            var pending = await _context.IngredientRequests.AsNoTracking().Where(r => r.RequestStatus == RequestStatuses.Pending).Select(r => r.DateCreated).ToListAsync();
+
+            var openReports = await _context.IngredientReports.AsNoTracking().Where(r => r.ReportStatus == ReportStatuses.Open).Select(r => r.DateCreated).ToListAsync();
+
+            var suggestionsDecided = await _context.IngredientRequests.AsNoTracking().Where(r => r.DateReviewed > weekAgo).GroupBy(r => r.RequestStatus).Select(g => new { Status = g.Key, Count = g.Count() }).ToListAsync();
+
+            var reportsHandled = await _context.IngredientReports.AsNoTracking().Where(r => r.DateReviewed > weekAgo).CountAsync();
+
+            int Decided(string status) => suggestionsDecided.FirstOrDefault(s => s.Status == status)?.Count ?? 0;
+
+            var (pendingHint, pendingStatus) = DashboardHelper.WaitingHint(pending, now);
+            var (reportsHint, reportsStatus) = DashboardHelper.WaitingHint(openReports, now);
+
+            return View(new DashboardViewModel
+            {
+                Heading = "Dashboard",
+                Lead = "What is waiting for review, and what the team handled this week.",
+                Cards = new List<SummaryCardViewModel>
+                {
+                    new() {Title = "Suggestions waiting", Value= pending.Count.ToString(),
+                        Hint = pendingHint, HintStatus = pendingStatus,
+                        Controller = "Moderation", Action = "Index" },
+                    new() {Title = "Reports waiting", Value= openReports.Count.ToString(),
+                        Hint = reportsHint, HintStatus = reportsStatus,
+                        Controller = "Moderation", Action = "Reports" },
+                    new() {Title = "Suggestions decided this week", Value= (Decided(RequestStatuses.Approved) + Decided(RequestStatuses.Rejected)).ToString(),
+                        Hint = $"{Decided(RequestStatuses.Approved)} approved · {Decided(RequestStatuses.Rejected)} rejected",
+                        Controller = "Moderation", Action = "History" },
+                    new() {Title = "Reports handled this week", Value= reportsHandled.ToString(),
+                        Controller = "Moderation", Action = "ReportHistory" },
+                }
+            });
+        }
     }
-
-
-
-
-
 }

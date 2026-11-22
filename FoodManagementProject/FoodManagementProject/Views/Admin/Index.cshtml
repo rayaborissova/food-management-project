@@ -1,6 +1,7 @@
 ﻿@model FoodManagementProject.Models.AdminUserViewListModel
 @{
     ViewData["Title"] = "Users";
+    var roles = new[] { AppRoles.Regular, AppRoles.Moderator, AppRoles.Admin };
 }
 
 <div class="page page--wide">
@@ -15,19 +16,34 @@
         <p class="form-errors" role="alert">@error</p>
     }
 
-    <form asp-controller="Admin" asp-action="Index" method="get" class="search">
-        <label for="user-search" class="field__label">Search by name or email</label>
-        <div class="search__controls">
-            <input id="user-search" type="search" name="search" value="@Model.Search" class="input" />
-            <button type="submit" class="btn btn--primary">Search</button>
-        </div>
-    </form>
-
     @if (!Model.Users.Any())
     {
         <p class="empty-state">No users found.</p>
-    } else
+    }
+    else
     {
+        <div class="inv-toolbar">
+            <div class="inv-tabs" role="group" aria-label="Filter by role">
+                <button type="button" class="inv-tab is-active" data-role="all" aria-pressed="true">All <span class="inv-count">@Model.Users.Count</span></button>
+                @foreach (var role in roles)
+                {
+                    <button type="button" class="inv-tab" data-role="@role" aria-pressed="false">@role <span class="inv-count">@Model.Users.Count(u => u.UserRole == role)</span></button>
+                }
+            </div>
+
+            <div class="inv-chips" role="group" aria-label="Filter by status">
+                <button type="button" class="chip-filter is-active" data-status="all" aria-pressed="true">All</button>
+                <button type="button" class="chip-filter" data-status="active" aria-pressed="false">Active (@Model.Users.Count(u => u.IsActive))</button>
+                <button type="button" class="chip-filter" data-status="inactive" aria-pressed="false">Deactivated (@Model.Users.Count(u => !u.IsActive))</button>
+            </div>
+
+            <div class="inv-controls">
+                <input id="user-search" type="search" class="input" placeholder="Search by name or email" aria-label="Search users" autocomplete="off" />
+            </div>
+
+            <p id="user-shown" class="inv-summary" aria-live="polite"></p>
+        </div>
+
         <div class="table-wrap">
             <table class="data-table">
                 <thead>
@@ -44,28 +60,29 @@
                     @foreach (var user in Model.Users)
                     {
                         var isSelf = user.UserId == Model.CurrentUserId;
-                        <tr>
+                        <tr class="user-row" data-role="@user.UserRole" data-status="@(user.IsActive ? "active" : "inactive")" data-search="@((user.DisplayName + " " + user.Email).ToLowerInvariant())">
                             <td>@user.DisplayName@(isSelf ? " (you)" : "")</td>
                             <td>@user.Email</td>
                             <td>
                                 @if (isSelf)
                                 {
                                     @user.UserRole
-                                } else
+                                }
+                                else
                                 {
                                     <form asp-controller="Admin" asp-action="ChangeRole" method="post" class="inline-form">
-                                        <input type="hidden" name="id" value="@user.UserId"/>
+                                        <input type="hidden" name="id" value="@user.UserId" />
                                         <select name="role" class="input" aria-label="Role for @user.Email">
-                                            @foreach (var role in new[] { AppRoles.Regular, AppRoles.Moderator, AppRoles.Admin })
-                                                {
-                                                    <option value = "@role" selected = "@(role == user.UserRole)">@role</option>                
-                                                }
-                                            </select>
-                                            <button type="submit" class="btn btn--outline btn--sm">Save</button>
+                                            @foreach (var role in roles)
+                                            {
+                                                <option value="@role" selected="@(role == user.UserRole)">@role</option>
+                                            }
+                                        </select>
+                                        <button type="submit" class="btn btn--outline btn--sm">Save</button>
                                     </form>
                                 }
                             </td>
-                            <td>@(user.IsActive ? "Active" : "Deactivated")</td>
+                            <td><span class="chip chip--@(user.IsActive ? "ok" : "expired")">@(user.IsActive ? "Active" : "Deactivated")</span></td>
                             <td>@user.DateCreated.ToString("dd/MM/yyyy")</td>
                             <td>
                                 @if (!isSelf)
@@ -73,10 +90,10 @@
                                     <div class="inline-form">
                                         <form asp-controller="Admin" asp-action="SetActive" method="post" class="inline-form">
                                             <input type="hidden" name="id" value="@user.UserId" />
-                                            <input type="hidden" name="active" value="@(user.IsActive ? "false" : "true")"/>
+                                            <input type="hidden" name="active" value="@(user.IsActive ? "false" : "true")" />
                                             <button type="submit" class="btn btn--outline btn--sm">@(user.IsActive ? "Deactivate" : "Reactivate")</button>
                                         </form>
-                                        <a asp-controller="Admin" asp-action="Delete" asp-route-id="@user.UserId" class="btn btn--danger btn-sm">Delete</a>
+                                        <a asp-controller="Admin" asp-action="Delete" asp-route-id="@user.UserId" class="btn btn--danger btn--sm">Delete</a>
                                     </div>
                                 }
                             </td>
@@ -85,6 +102,12 @@
                 </tbody>
             </table>
         </div>
+
+        <p id="user-empty" class="empty-state" hidden>No users match your filters.</p>
     }
 
-</div> 
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-users.js" asp-append-version="true"></script>
+}

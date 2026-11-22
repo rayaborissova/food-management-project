@@ -12,7 +12,7 @@
 
     @if (TempData["ShoppingListSuccess"] is string successMessage)
     {
-        <p role="status">@successMessage</p>
+        <p role="status" class="notice">@successMessage</p>
 
         <script>
             sessionStorage.removeItem("shoppingListSelectedIngredientIds");
@@ -21,12 +21,12 @@
 
     @if (TempData["ShoppingListEditSuccess"] is string editMessage)
     {
-        <p role="status">@editMessage</p>
+        <p role="status" class="notice">@editMessage</p>
     }
 
     @if (TempData["ShoppingListDeleteSuccess"] is string deleteMessage)
     {
-        <p role="status">@deleteMessage</p>
+        <p role="status" class="notice">@deleteMessage</p>
     }
 
     @if (!Model.Any())
@@ -59,8 +59,8 @@
                             </label>
 
                             <div class="shop-item__actions">
-                                <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="btn btn--outline btn--sm">Edit</a>
-                                <a asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@item.ShoppingListItemId" class="btn btn--danger btn--sm">Remove</a>
+                                <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="icon-btn icon-btn--soft" aria-label="Edit"><i class="ti ti-pencil" aria-hidden="true"></i>Edit</a>
+                                <a asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@item.ShoppingListItemId" class="icon-btn icon-btn--danger" aria-label="Remove"><i class="ti ti-trash" aria-hidden="true"></i>Remove</a>
                             </div>
                         </li>
                     }

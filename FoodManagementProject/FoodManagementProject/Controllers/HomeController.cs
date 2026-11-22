@@ -27,13 +27,13 @@ namespace FoodManagementProject.Controllers
             // land page for admin
             if(User.IsInRole(AppRoles.Admin))
             {
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("Dashboard", "Admin");
             }
 
             // land page for moderator
             if (User.IsInRole(AppRoles.Moderator))
             {
-                return RedirectToAction("Index", "Moderation");
+                return RedirectToAction("Dashboard", "Moderation");
             }
 
             return RedirectToAction("Index", "Inventory");

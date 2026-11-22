@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using FoodManagementProject.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ViewComponents;
+using Microsoft.AspNetCore.Html;
 
 namespace FoodManagementProject.ViewComponents
 {
@@ -18,12 +20,13 @@ namespace FoodManagementProject.ViewComponents
         {
             var count = kind switch
             {
-                "moderation" => await _context.IngredientRequests.CountAsync(r => r.RequestStatus == RequestStatuses.Pending) + await _context.IngredientReports.CountAsync(r => r.ReportStatus == ReportStatuses.Open),
+                "suggestions" => await _context.IngredientRequests.CountAsync(r => r.RequestStatus == RequestStatuses.Pending),
+                "open-reports" => await _context.IngredientReports.CountAsync(r => r.ReportStatus == ReportStatuses.Open),
                 "reports" => await _context.IngredientReports.CountAsync(r => r.ReportStatus == ReportStatuses.Forwarded),
                 _ => 0
             };
 
-            return Content(count > 0 ? $"{count}" : string.Empty);
+            return new HtmlContentViewComponentResult (new HtmlString(count > 0 ? $"<span class=\"nav-badge\">{count}</span>" : string.Empty));
         }
     }
 }
