@@ -17,8 +17,6 @@
     --line-strong: #bfd6d3;
     --danger-bg: #FBEAE9;
     --danger-bg-dark: #8F1E18;
-    --warn-bg: #fbe8d0;
-    --warn-link: #7a4a0b;
     --topbar-h: 56px;
     --amber: #9A6200;
     --amber-bg: #FBF1DC;
@@ -712,11 +710,11 @@ input[type="password"]::-ms-reveal {
 .inv-tab, .chip-filter {
     flex-shrink: 0;
     min-height: 40px;
-    padding: 0 14px;
-    border: var(--border);
+    padding: 0 16px;
+    border: 1px solid var(--line-strong);
     border-radius: 999px;
-    background: transparent;
-    color: var(--ink);
+    background: var(--surface);
+    color: var(--ink-muted);
     font: inherit;
     font-weight: 700;
     cursor: pointer;
@@ -727,11 +725,21 @@ input[type="password"]::-ms-reveal {
     font-size: 14px;
 }
 
-    .inv-tab.is-active, .chip-filter.is-active {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: white;
+    .inv-tab:hover, .chip-filter:hover {
+        background: var(--mint);
     }
+
+.inv-tab.is-active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #fff;
+}
+
+.chip-filter.is-active {
+    background: var(--mint);
+    border-color: var(--primary);
+    color: var(--primary-dark);
+}
 
 .inv-count {
     margin-left: 4px;
@@ -756,8 +764,8 @@ input[type="password"]::-ms-reveal {
 
 .inv-toggle {
     display: inline-flex;
-    border: var(--border);
-    border-radius: var(--radius);
+    border: 1px solid var(--line-strong);
+    border-radius: 999px;
     overflow: hidden;
 }
 
@@ -766,14 +774,15 @@ input[type="password"]::-ms-reveal {
         padding: 0 14px;
         border: 0;
         background: transparent;
-        color: var(--ink);
+        color: var(--ink-muted);
         font: inherit;
         font-weight: 700;
         cursor: pointer;
     }
 
         .inv-toggle button.is-active {
-            background: var(--sage-tint);
+            background: var(--mint);
+            color: var(--primary-dark);
         }
 
 .inv-list {
@@ -798,7 +807,7 @@ input[type="password"]::-ms-reveal {
     background: var(--surface);
     border: var(--border);
     border-left-width: 6px;
-    border-radius: var(--radius);
+    border-radius: var(--radius-card);
     overflow: hidden;
 }
 
@@ -838,6 +847,15 @@ input[type="password"]::-ms-reveal {
 
     .inv-details > summary::after {
         content: "\203A";
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: var(--mint);
+        color: var(--primary-dark);
         font-size: 26px;
         line-height: 1;
         transition: transform .15s;
@@ -854,7 +872,7 @@ input[type="password"]::-ms-reveal {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 50%;
     font-size: 18px;
     font-weight: 700;
 }
@@ -1041,6 +1059,71 @@ input[type="password"]::-ms-reveal {
         font-size: 20px;
     }
 
+
+.inv-select {
+    display: none;
+}
+
+.inv-list--selecting .inv-select {
+    display: inline-block;
+}
+
+.inv-bulk-bar[hidden] {
+    display: none;
+}
+
+.household-line {
+    margin: 0 0 16px;
+    color: var(--ink-muted);
+}
+
+.household-link {
+    font-weight: 700;
+    color: var(--primary-dark);
+    text-decoration: none;
+}
+
+    .household-link:hover {
+        text-decoration: underline;
+    }
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.summary-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: var(--border);
+    border-radius: var(--radius-card);
+    color: var(--ink);
+    text-decoration: none;
+}
+
+a.summary-card:hover {
+    background: var(--mint);
+}
+
+.summary-card__title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink-muted);
+}
+
+.summary-card__value {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+
 @media (min-width: 769px) {
     .add-overlay {
         background: transparent; /*on desktop it only catches outside clicks*/
@@ -1072,32 +1155,6 @@ input[type="password"]::-ms-reveal {
     border-radius: var(--radius-card);
 }
 
-.chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 16px;
-}
-
-.chip {
-    min-height: 36px;
-    padding: 0 14px;
-    border: 1px solid var(--line-strong);
-    border-radius: 999px;
-    background: var(--surface);
-    color: var(--ink-muted);
-    font: inherit;
-    font-size: 14px;
-    cursor: pointer;
-}
-
-    .chip.is-active {
-        background: var(--primary);
-        border-color: var(--primary);
-        color: #fff;
-        font-weight: 700;
-    }
-
 .pill {
     display: inline-block;
     padding: 4px 10px;
@@ -1109,8 +1166,8 @@ input[type="password"]::-ms-reveal {
 }
 
 .pill--warn {
-    background: var(--warn-bg);
-    color: var(--danger);
+    background: var(--amber-bg);
+    color: var(--amber);
 }
 
 .pill--danger {
@@ -1136,6 +1193,11 @@ input[type="password"]::-ms-reveal {
 .icon-btn--soft {
     background: var(--mint);
     color: var(--primary-dark);
+}
+
+.icon-btn--danger {
+    background: var(--danger-bg);
+    color: var(--danger);
 }
 
 @media (max-width: 768px) {

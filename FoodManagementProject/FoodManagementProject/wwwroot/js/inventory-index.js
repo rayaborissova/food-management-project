@@ -106,4 +106,81 @@
     // applying the default filters and expiry sort when the page first loads
     render();
 
+    const selectToggle = document.getElementById("inv-select-toggle");
+    const bulkBar = document.getElementById("inv-bulk-bar");
+
+    if (selectToggle && bulkBar) {
+        const bulkCount = document.getElementById("inv-bulk-count");
+        const selectAllButton = document.getElementById("inv-select-all");
+        const needsSelection = Array.from(bulkBar.querySelectorAll("[data-needs-selection]"));
+
+        // only rows that are currently shown count, a filter can't act on hidden rows
+        function selectedIds() {
+            return rows.filter(row => !row.hidden).map(row => row.querySelector(".inv-select")).filter(box => box.checked).map(box => box.value);
+        }
+
+        function updateBulk() {
+            const count = selectedIds().length;
+            bulkCount.textContent = count + " selected";
+            needsSelection.forEach(button => { button.disabled = count === 0; });
+        }
+
+        selectToggle.addEventListener("click", function () {
+            const entering = !list.classList.contains("inv-list--selecting");
+
+            list.classList.toggle("inv-list--selecting", entering);
+            bulkBar.hidden = !entering;
+            selectToggle.textContent = entering ? "Cancel selection" : "Select";
+
+            if (!entering) {
+                list.querySelectorAll(".inv-select").forEach(box => { box.checked = false; });
+            }
+
+            updateBulk();
+        });
+
+        list.addEventListener("change", function (event) {
+            if (event.target.matches(".inv-select")) {
+                updateBulk();
+            }
+        });
+
+        selectAllButton.addEventListener("click", function () {
+            rows.filter(row => !row.hidden).forEach(row => { row.querySelector(".inv-select").checked = true; });
+            updateBulk();
+        });
+
+        // filters change what is shown so the count has to follow
+        document.querySelectorAll(".inv-tab, .chip-filter, .inv-toggle button").forEach(button => button.addEventListener("click", updateBulk));
+        searchInput.addEventListener("input", updateBulk);
+
+        // both bulk forms send the selected ingredient ids, the remove form asks for confirmation first
+        for (const form of bulkBar.querySelectorAll("form")) {
+            form.addEventListener("submit", function (event) {
+                const ids = selectedIds();
+
+                if (ids.length === 0) {
+                    event.preventDefault();
+                    return;
+                }
+
+                if (form.dataset.confirm && !confirm(form.dataset.confirm)) {
+                    event.preventDefault();
+                    return;
+                }
+
+                form.querySelectorAll("input[name='ingredientIds']").forEach(input => input.remove());
+
+                for (const id of ids) {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = "ingredientIds";
+                    input.value = id;
+                    form.appendChild(input);
+
+                }
+            });
+        }
+
+    }
 })();

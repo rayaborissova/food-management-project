@@ -17,12 +17,21 @@ public class InventoryController : HouseholdControllerBase
 
     // get inventory
     public async Task<IActionResult> Index()
-    { 
+    {
         // retrieving the household's batches, including the ingredient, category, and unit
         var batches = await _context.InventoryBatches.AsNoTracking().Where(b => b.HouseholdId == HouseholdId).Include(b => b.Ingredient).ThenInclude(i => i.Category).Include(b => b.Unit).ToListAsync();
 
         var today = DateOnly.FromDateTime(DateTime.Today);
-        return View(InventoryViewBuilder.Build(batches, today));
+        var model = InventoryViewBuilder.Build(batches, today);
+
+        // the household header - a personal fridge or a shared fridge and how many members
+        var household = await _context.Households.AsNoTracking().Where(h => h.HouseholdId == HouseholdId).Select(h => new { h.HouseholdName, Shared = h.PersonalUserId == null }).FirstAsync();
+
+        model.IsShared = household.Shared;
+        model.HouseholdName = household.Shared ? household.HouseholdName : "Personal fridge";
+        model.MemberCount = await _context.HouseholdMembers.CountAsync(m => m.HouseholdId == HouseholdId);
+
+        return View(model);
     }
 
     // this method will help load the ingredients into the searchable checklist
@@ -37,7 +46,8 @@ public class InventoryController : HouseholdControllerBase
             ingredients = ingredients.Where(i => i.IngredientNameNormalized.Contains(search) || EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, search) >= 0.17).
                 OrderByDescending(i => EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, search)); // either contains the search or is close to the search; threshold was chosen based on trial and error
                                                                                                              // the results are then sorted by their similarity score
-        } else
+        }
+        else
         {
             ingredients = ingredients.OrderBy(i => i.IngredientName); // if search is empty, the ingredients are sorted alphabetically by name
         }
@@ -69,12 +79,12 @@ public class InventoryController : HouseholdControllerBase
             return BadRequest("One or more ingredients no longer exist.");
         }
 
-        
+
         var model = new InventoryReviewViewModel
         {
             // creating one review item per ingredient
             Items = ingredients.Select(i => new InventoryReviewItemViewModel { IngredientId = i.IngredientId, IngredientName = i.IngredientName }).ToList(),
-            
+
             // loading the units from the dropdown
             AvailableUnits = await _context.Units.OrderBy(u => u.UnitName).ToListAsync()
         };
@@ -100,10 +110,10 @@ public class InventoryController : HouseholdControllerBase
         var ingredients = await _context.Ingredients.Where(i => ingredientIds.Contains(i.IngredientId)).ToDictionaryAsync(i => i.IngredientId);
 
         //reloading the units
-        model.AvailableUnits = await _context.Units.OrderBy(u=>u.UnitName).ToListAsync();
+        model.AvailableUnits = await _context.Units.OrderBy(u => u.UnitName).ToListAsync();
 
         // comparing the number of unique IDs with the number of items
-        if(ingredientIds.Length != model.Items.Count)
+        if (ingredientIds.Length != model.Items.Count)
         {
             // if different, an ingridient was submitted more than once; a general form error is displayed
             ModelState.AddModelError("", "An ingredient was submitted more than once.");
@@ -117,48 +127,57 @@ public class InventoryController : HouseholdControllerBase
             if (!ingredients.TryGetValue(item.IngredientId, out var ingredient))
             {
                 ModelState.AddModelError("", "A selected ingredient no longer exists.");
-                continue; 
+                continue;
             }
 
             // using the name from the database
             item.IngredientName = ingredient.IngredientName;
 
             // if quantity is input and is below 0, an error is displayed
-            if (item.Quantity.HasValue && item.Quantity.Value <= 0) {
+            if (item.Quantity.HasValue && item.Quantity.Value <= 0)
+            {
                 ModelState.AddModelError($"Items[{i}].Quantity", $"Quantity for {item.IngredientName} must be greater than zero.");
             }
 
             //if either quantity or unit are not present, an error is displayed
-            if(item.Quantity.HasValue != item.UnitId.HasValue)
+            if (item.Quantity.HasValue != item.UnitId.HasValue)
             {
                 ModelState.AddModelError($"Items[{i}].Quantity", $"For {item.IngredientName}, enter both quantity and unit, or leave both empty.");
             }
 
-            if(item.UnitId.HasValue)
+            if (item.UnitId.HasValue)
             {
                 //finding the the database unit with the submitted ID
                 var unit = model.AvailableUnits.FirstOrDefault(u => u.UnitId == item.UnitId.Value);
 
-                if(unit == null)
+                if (unit == null)
                 {
                     ModelState.AddModelError($"Items[{i}].UnitId", $"Choose a valid unit for {item.IngredientName}");
-                } else if (unit.Abbreviation == "pc" && item.Quantity.HasValue && item.Quantity.Value % 0.25m != 0) {
+                }
+                else if (unit.Abbreviation == "pc" && item.Quantity.HasValue && item.Quantity.Value % 0.25m != 0)
+                {
                     ModelState.AddModelError($"Items[{i}].Quantity", $"Use increments of 0.25 pieces for {item.IngredientName}.");
                 }
             }
         }
 
         // if there are errors, Review is redisplayed, nothing is saved
-        if (!ModelState.IsValid) {
+        if (!ModelState.IsValid)
+        {
             return View("Review", model);
         }
 
         var dateAdded = DateTime.UtcNow;
 
         // creating a new entry per submitted review item; assigning householdid to be the test one; later to be changed
-        var batches = model.Items.Select(item => new InventoryBatch { 
-            IngredientId = item.IngredientId, HouseholdId = HouseholdId, Quantity = item.Quantity, 
-            UnitId = item.UnitId, ExpirationDate = item.ExpirationDate, DateAdded = dateAdded 
+        var batches = model.Items.Select(item => new InventoryBatch
+        {
+            IngredientId = item.IngredientId,
+            HouseholdId = HouseholdId,
+            Quantity = item.Quantity,
+            UnitId = item.UnitId,
+            ExpirationDate = item.ExpirationDate,
+            DateAdded = dateAdded
         }).ToList();
 
         // inserting into the database
@@ -192,8 +211,12 @@ public class InventoryController : HouseholdControllerBase
         // preparing the information for the view so that the existing values populate the form
         var model = new InventoryEditViewModel
         {
-            IngredientBatchId = batch.IngredientBatchId, IngredientName = batch.Ingredient.IngredientName, Quantity = batch.Quantity, 
-            UnitId = batch.UnitId, ExpirationDate = batch.ExpirationDate, AvailableUnits = await _context.Units.OrderBy(u => u.UnitName).ToListAsync()
+            IngredientBatchId = batch.IngredientBatchId,
+            IngredientName = batch.Ingredient.IngredientName,
+            Quantity = batch.Quantity,
+            UnitId = batch.UnitId,
+            ExpirationDate = batch.ExpirationDate,
+            AvailableUnits = await _context.Units.OrderBy(u => u.UnitName).ToListAsync()
         };
 
 
@@ -206,15 +229,15 @@ public class InventoryController : HouseholdControllerBase
     public async Task<IActionResult> Edit(int? ingredientbatchid, InventoryEditViewModel model)
     {
         // checking that the ID matches the ID from the form
-        if(ingredientbatchid == null || ingredientbatchid != model.IngredientBatchId)
+        if (ingredientbatchid == null || ingredientbatchid != model.IngredientBatchId)
         {
             return NotFound();
         }
 
         // retrieving the existing information from the test household
         var batch = await _context.InventoryBatches.Include(b => b.Ingredient).FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid && b.HouseholdId == HouseholdId);
-        
-        if(batch == null)
+
+        if (batch == null)
         {
             return NotFound();
         }
@@ -223,10 +246,10 @@ public class InventoryController : HouseholdControllerBase
         model.IngredientName = batch.Ingredient.IngredientName;
 
         // reloading the dropdown if validation fails
-        model.AvailableUnits = await _context.Units.OrderBy( u => u.UnitName).ToListAsync();
+        model.AvailableUnits = await _context.Units.OrderBy(u => u.UnitName).ToListAsync();
 
         // quantity needs to be above 0
-        if(model.Quantity.HasValue && model.Quantity.Value <= 0)
+        if (model.Quantity.HasValue && model.Quantity.Value <= 0)
         {
             ModelState.AddModelError(nameof(model.Quantity), "Quantity must be greater than zero.");
         }
@@ -238,9 +261,10 @@ public class InventoryController : HouseholdControllerBase
         }
 
         // vaidating the selected unit if entered
-        if (model.UnitId.HasValue) {
+        if (model.UnitId.HasValue)
+        {
             // finding the unit by Id
-            var unit = model.AvailableUnits.FirstOrDefault( u => u.UnitId == model.UnitId.Value);
+            var unit = model.AvailableUnits.FirstOrDefault(u => u.UnitId == model.UnitId.Value);
             if (unit == null)
             {
                 ModelState.AddModelError(nameof(model.UnitId), "Choose a valid unit.");
@@ -255,9 +279,9 @@ public class InventoryController : HouseholdControllerBase
         // if validation fails, the page is loaded again with the errors
         if (!ModelState.IsValid)
         {
-           return View(model);
+            return View(model);
         }
-        
+
         //changing these properties to match what was writen by the user
         batch.Quantity = model.Quantity;
         batch.UnitId = model.UnitId;
@@ -278,9 +302,9 @@ public class InventoryController : HouseholdControllerBase
         }
 
         // finding the batch in the test household and loading the ingredient and unit info
-        var batch = await _context.InventoryBatches.Include(b=>b.Ingredient).Include(b=>b.Unit)
+        var batch = await _context.InventoryBatches.Include(b => b.Ingredient).Include(b => b.Unit)
             .FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid.Value && b.HouseholdId == HouseholdId);
-        
+
         if (batch == null)
         {
             return NotFound();
@@ -303,15 +327,69 @@ public class InventoryController : HouseholdControllerBase
         }
 
         // checking the batch and household again
-        var batch = await _context.InventoryBatches.FirstOrDefaultAsync(b=>b.IngredientBatchId == ingredientbatchid.Value && b.HouseholdId == HouseholdId);
-        if (batch == null) { 
-            return NotFound(); 
+        var batch = await _context.InventoryBatches.FirstOrDefaultAsync(b => b.IngredientBatchId == ingredientbatchid.Value && b.HouseholdId == HouseholdId);
+        if (batch == null)
+        {
+            return NotFound();
         }
 
         _context.InventoryBatches.Remove(batch);
         //executing the deletion
         await _context.SaveChangesAsync();
-        
+
+        return RedirectToAction(nameof(Index));
+    }
+
+    //adding the selected ingredients to the household's shopping list
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddToShoppingList(int[] ingredientIds)
+    {
+        if (ingredientIds == null || ingredientIds.Length == 0)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        var ids = ingredientIds.Distinct().ToArray();
+
+        // only the ingredients that really are in the household's inventory
+        var inInventory = await _context.InventoryBatches.Where(b => b.HouseholdId == HouseholdId && ids.Contains(b.IngredientId)).Select(b => b.IngredientId).Distinct().ToListAsync();
+
+        var alreadyListed = await _context.ShoppingListItems.Where(i => i.HouseholdId == HouseholdId && !i.IsPurchased && ids.Contains(i.IngredientId)).Select(i => i.IngredientId).ToListAsync();
+
+        var toAdd = inInventory.Except(alreadyListed).ToList();
+        var dateAdded = DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Unspecified);
+
+        _context.ShoppingListItems.AddRange(toAdd.Select(id => new ShoppingListItem
+        {
+            HouseholdId = HouseholdId,
+            IngredientId = id,
+            IsPurchased = false,
+            ItemSource = "manual",
+            DateAdded = dateAdded
+        }));
+
+        await _context.SaveChangesAsync();
+
+        TempData["InventoryMessage"] = $"{toAdd.Count} added to the shopping list. {inInventory.Count - toAdd.Count} were already on it.";
+        return RedirectToAction(nameof(Index));
+    }
+
+    // removing the selected ingredients, with all their batches, from the inventory
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveIngredients(int[] ingredientIds)
+    {
+        if (ingredientIds == null || ingredientIds.Length == 0)
+        {
+            return RedirectToAction(nameof(Index));
+        }
+
+        var ids = ingredientIds.Distinct().ToArray();
+
+        var removed = await _context.InventoryBatches.Where(b => b.HouseholdId == HouseholdId && ids.Contains(b.IngredientId)).ExecuteDeleteAsync();
+
+        TempData["InventoryMessage"] = $"{removed} batches removed from the inventory";
         return RedirectToAction(nameof(Index));
     }
 }

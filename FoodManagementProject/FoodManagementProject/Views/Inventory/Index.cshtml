@@ -9,6 +9,18 @@
 
     <h1 class="page__title">Fridge</h1>
 
+    <p class="household-line">
+        <a asp-controller="Household" asp-action="Index" class="household-link"><i class="ti ti-home" aria-hidden="true"></i>@Model.HouseholdName</a>
+        @if (Model.IsShared)
+        {
+            var others = Model.MemberCount - 1;
+            <span>· shared with @others @(others == 1 ? "other person" : "other people")</span>
+        } else
+        {
+            <span>· <a asp-controller="Household" asp-action="Index">create or join a household</a></span>
+        }
+    </p>
+
     <!--message to be displayed after a sucessful save-->
     @if (TempData["InventorySuccess"] is string successMessage)
     {
@@ -76,6 +88,8 @@
                     <button type="button" class="is-active" data-view="list" aria-pressed="true">List</button>
                     <button type="button" data-view="category" aria-pressed="false">By category</button>
                 </div>
+
+                <button type="button" id="inv-select-toggle" class="btn btn--outline btn--sm">Select</button>
             </div>
 
             <p id="inv-shown" class="inv-summary" aria-live="polite"></p>
@@ -88,6 +102,7 @@
                     data-search="@((group.IngredientName + " " + group.CategoryName).ToLowerInvariant())" data-days="@group.SortDays">
                     <details class="inv-details">
                         <summary>
+                            <input type="checkbox" class="checkbox inv-select" value="@group.IngredientId" aria-label="Select @group.IngredientName" />
                             <span class="inv-tile inv-tile--@(group.CategoryId % 6)" aria-hidden="true">@group.Initial</span>
                             <span class="inv-main">
                                 <span class="inv-meta">@group.IngredientName</span>
@@ -104,8 +119,8 @@
                                         <span class="inv-batch__amount">@batch.QuantityText</span>
                                         <span class="chip chip--@batch.Status">@batch.ExpiryText</span>
                                         <span class="inv-batch__actions">
-                                            <a asp-action="Edit" asp-route-ingredientbatchid="@batch.IngredientBatchId" class="btn btn--outline btn--sm">Edit</a>
-                                            <a asp-action="Delete" asp-route-ingredientbatchid="@batch.IngredientBatchId" class="btn btn--danger btn--sm">Delete</a>
+                                            <a asp-action="Edit" asp-route-ingredientbatchid="@batch.IngredientBatchId" class="icon-btn icon-btn--soft" aria-label="Edit batch"><i class="ti ti-pencil" aria-hidden="true"></i>Edit</a>
+                                            <a asp-action="Delete" asp-route-ingredientbatchid="@batch.IngredientBatchId" class="icon-btn icon-btn--danger" aria-label="Delete batch"><i class="ti ti-trash" aria-hidden="true"></i>Delete</a>
                                         </span>
                                     </li>
                                 }
@@ -119,6 +134,20 @@
         </ul>
 
         <p id="inv-empty" class="empty-state" hidden>No ingredients match your filters.</p>
+
+        <div id="inv-bulk-bar" class="action-bar inv-bulk-bar" hidden>
+            <p id="inv-bulk-count" class="selection-count">0 selected</p>
+            <button type="button" id="inv-select-all" class="btn btn--outline btn--sm">Select all shown</button>
+
+            <form asp-controller="Inventory" asp-action="AddToShoppingList" method="post">
+                <button type="submit" class="btn btn--sage btn--sm" data-needs-selection disabled>Add to shopping list</button>
+            </form>
+
+            <form asp-controller="Inventory" asp-action="RemoveIngredients" method="post" data-confirm="Remove the selected ingredients, with all their batches, from yout inventory?">
+                <button type="submit" class="btn btn--danger btn--sm" data-needs-selection disabled>Remove</button>
+            </form>
+        </div>
+
     }
 </div>
 <script src="~/js/inventory-index.js" asp-append-version="true" defer></script>

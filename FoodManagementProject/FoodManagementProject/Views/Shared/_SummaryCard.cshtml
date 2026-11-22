@@ -1,0 +1,25 @@
+﻿@model FoodManagementProject.Models.SummaryCardViewModel
+
+@if (!string.IsNullOrEmpty(Model.Controller))
+{
+    <a asp-controller="@Model.Controller" asp-action="@Model.Action" class="summary-card">
+        <span class="summary-card__title">@Model.Title</span>
+        <span class="summary-card__value">@Model.Value</span>
+        @if (!string.IsNullOrEmpty(Model.Hint))
+        {
+            <span class="chip chip--@Model.HintStatus">@Model.Hint</span>
+        }
+    </a>
+}
+else
+{
+    <div class="summary-card summary-card--static">
+        <span class="summary-card__title">@Model.Title</span>
+        <span class="summary-card__value">@Model.Value</span>
+        @if (!string.IsNullOrEmpty(Model.Hint))
+        {
+            <span class="chip chip--@Model.HintStatus">@Model.Hint</span>
+        }
+
+    </div>
+}
