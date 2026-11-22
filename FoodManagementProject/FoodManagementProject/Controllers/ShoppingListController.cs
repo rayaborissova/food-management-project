@@ -273,42 +273,6 @@ public class ShoppingListController : HouseholdControllerBase
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> ConfirmPurchase(int[] purchasedItemIds)
-    {
-        if (purchasedItemIds == null || purchasedItemIds.Length == 0)
-        {
-            return RedirectToAction(nameof(Index));
-        }
-
-        var itemIds = purchasedItemIds.Distinct().ToArray();
-
-        var items = await _context.ShoppingListItems.Include(item => item.Ingredient).Include(item => item.Unit).Where(item => itemIds.
-        Contains(item.ShoppingListItemId) && item.HouseholdId == HouseholdId && !item.IsPurchased).OrderBy(item => item.Ingredient.IngredientName).ToListAsync(); 
-
-        if (items.Count != itemIds.Length)
-        {
-            return BadRequest("One or more selected shopping list entries are no longer available");
-        }
-
-        var model = new ShoppingListPurchaseViewModel
-        {
-            Items = items.Select(item => new ShoppingListPurchaseItemViewModel
-            {
-                ShoppingListItemId = item.ShoppingListItemId,
-                IngredientName = item.Ingredient.IngredientName,
-                Quantity = item.Quantity,
-                UnitId = item.UnitId,
-                UnitName = item.Unit?.UnitName ?? "Not specified"
-            }).ToList()
-        };
-
-        return View(model);
-    }
-
-
-
-    [HttpPost]
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddAsListed(int[] purchasedItemIds)
     {
         if (purchasedItemIds == null || purchasedItemIds.Length == 0)

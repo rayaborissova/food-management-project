@@ -4,7 +4,6 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - FoodManagementProject</title>
-    <script type="importmap"></script>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/FoodManagementProject.styles.css" asp-append-version="true" />
     <link rel="stylesheet"
@@ -33,8 +32,7 @@
                 {
                     <a class="nav-link @(controller == "Admin" ? "is-active" : "")" asp-controller="Admin" asp-action="Index"><i class="ti ti-users" aria-hidden="true"></i>Users</a>
                     <a class="nav-link @(controller == "Ingredients" ? "is-active" : "")" asp-controller="Ingredients" asp-action="Index"><i class="ti ti-carrot" aria-hidden="true"></i>Ingredients</a>
-                    <a class="nav-link @(controller == "ReportedIngredients" ? "is-active" : "")" asp-controller="ReportedIngredients" asp-action="Index"><i class="ti ti-..." aria-hidden="true"></i>Report @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
-                    //TO ADD ICON
+                    <a class="nav-link @(controller == "ReportedIngredients" ? "is-active" : "")" asp-controller="ReportedIngredients" asp-action="Index"><i class="ti ti-flag" aria-hidden="true"></i>Report @await Component.InvokeAsync("StaffBadge", new { kind = "reports" })</a>
                 }
                 @if (User.IsInRole(AppRoles.Moderator))
                 {
@@ -42,8 +40,8 @@
                 }
 
                 <form asp-controller="Account" asp-action="Logout" method="post" class="sidebar__logout">
-                    <a asp-controller="Profile" asp-action="Index" class="sidebar__user">@User.Identity.Name</a>
-                    <button type="submit" class="nav-link nav-link--button">Log out</button>
+                    <a asp-controller="Profile" asp-action="Index" class="sidebar__user"><i class="ti ti-user" aria-hidden="true"></i>@User.Identity.Name</a>
+                    <button type="submit" class="nav-link nav-link--button"><i class="ti ti-logout" aria-hidden="true"></i>Log out</button>
                 </form>
             </nav>
         }
@@ -78,9 +76,10 @@
                 <a class="nav-link @(controller == "Moderation" ? "is-active" : "")" asp-controller="Moderation" asp-action="Index"><i class="ti ti-shield-check" aria-hidden="true"></i>Moderation @await Component.InvokeAsync("StaffBadge", new { kind = "moderation" })</a>
             }
 
-            <a class="nav-link" asp-controller="Profile" asp-action="Index">Profile</a>
+            <a class="nav-link" asp-controller="Profile" asp-action="Index"><i class="ti ti-user" aria-hidden="true"></i>Profile</a>
             <form asp-controller="Account" asp-action="Logout" method="post">
-                <button type="submit" class="nav-link nav-link--button">Log out</button>
+                <button type="submit" class="nav-link nav-link--button"><i class="ti ti-logout" aria-hidden="true"></i>Log out</button>
+                <button type="submit" class="nav-link nav-link--button"><i class="ti ti-logout" aria-hidden="true"></i>Log out</button>
             </form>
         </nav>
 
@@ -90,7 +89,7 @@
             <div class="add-menu" id="add-menu" role="menu" hidden>
                 <a class="add-menu__item" role="menuitem" asp-controller="Inventory" asp-action="Add"><i class="ti ti-fridge" aria-hidden="true"></i>Add to fridge</a>
                 <a class="add-menu__item" role="menuitem" asp-controller="ShoppingList" asp-action="Add"><i class="ti ti-shopping-cart-plus" aria-hidden="true"></i>Add to shopping list</a>
-
+                <a class="add-menu__item" role="menuitem" asp-controller="IngredientRequests" asp-action="Index"><i class="ti ti-bulb" aria-hidden="true"></i>Suggest an ingredient</a>
             </div>
         }
     }

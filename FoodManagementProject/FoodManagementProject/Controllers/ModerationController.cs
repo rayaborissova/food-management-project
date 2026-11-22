@@ -69,7 +69,7 @@ namespace FoodManagementProject.Controllers
         {
             var model = await LoadReviewAsync(id);
 
-            if(model == null)
+            if (model == null)
             {
                 TempData["ModerationError"] = "This suggestion was not found or has already been reviewed.";
                 return RedirectToAction(nameof(Index));
@@ -86,15 +86,16 @@ namespace FoodManagementProject.Controllers
             var normalized = IngredientNormalizer.Normalize(finalName);
 
 
-            if(finalName.Length == 0 || finalName.Length > 150 )
+            if (finalName.Length == 0 || finalName.Length > 150)
             {
                 ModelState.AddModelError(nameof(form.FinalName), "Enter an ingredient name (up to 150 characters).");
-            } else if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == normalized))
+            }
+            else if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == normalized))
             {
                 ModelState.AddModelError(nameof(form.FinalName), "An ingredient with this name already exists. Reject the suggestion as a duplicate instead.");
             }
 
-            if (form.CategoryId == null || !await _context.Categories.AnyAsync(c=> c.CategoryId == form.CategoryId))
+            if (form.CategoryId == null || !await _context.Categories.AnyAsync(c => c.CategoryId == form.CategoryId))
             {
                 ModelState.AddModelError(nameof(form.CategoryId), "Choose a category.");
             }
@@ -172,7 +173,7 @@ namespace FoodManagementProject.Controllers
             TempData[claimed > 0 ? "ModerationMessage" : "ModerationError"] = claimed > 0 ? "Suggestion rejected." : "This suggestion was already reviewed by someone else.";
 
             return RedirectToAction(nameof(Index));
-        
+
         }
 
         // opening reports, oldest first
@@ -184,6 +185,7 @@ namespace FoodManagementProject.Controllers
             return View(open);
         }
 
+        [HttpGet]
         public async Task<IActionResult> ReviewReport(int id)
         {
             var model = await IngredientReportLoader.LoadDecisionAsync(_context, id, ReportStatuses.Open);
@@ -201,7 +203,7 @@ namespace FoodManagementProject.Controllers
         [ValidateAntiForgeryToken]
         public Task<IActionResult> DismissReport(ReportDecisionViewModel form)
         {
-            return DecideReportAsync(form, ReportStatuses.Dismissed, "Explain briefly why npthing needs to change. The reporter will see it.", "Report dismissed.");
+            return DecideReportAsync(form, ReportStatuses.Dismissed, "Explain briefly why nothing needs to change. The reporter will see it.", "Report dismissed.");
         }
 
         [HttpPost]
@@ -209,7 +211,7 @@ namespace FoodManagementProject.Controllers
         public Task<IActionResult> ForwardReport(ReportDecisionViewModel form)
         {
             return DecideReportAsync(form, ReportStatuses.Forwarded, "Tell the admin what is wrong and what the fix should be.", "Report forwarded to the admin.");
-        } 
+        }
 
         private async Task<IActionResult> DecideReportAsync(ReportDecisionViewModel form, string newStatus, string noteError, string successMessage)
         {
@@ -247,6 +249,7 @@ namespace FoodManagementProject.Controllers
             return RedirectToAction(nameof(Reports));
         }
 
+        [HttpGet]
         public async Task<IActionResult> ReportHistory()
         {
             var handled = await _context.IngredientReports.AsNoTracking().Include(r => r.Ingredient).Include(r => r.Reporter).Include(r => r.Reviewer).Where(r => r.ReportStatus != ReportStatuses.Open).OrderByDescending(r => r.DateReviewed).Take(100).ToListAsync();

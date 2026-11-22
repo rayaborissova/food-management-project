@@ -90,11 +90,11 @@
 
     bindButtons(".inv-tab", "category", "category");
     bindButtons(".chip-filter", "status", "status");
-    bindButtons(".inv-toggle", "view", "view");
+    bindButtons(".inv-toggle button", "view", "view");
 
     // filter as the user types, the view should write data-search in lowercase
     searchInput.addEventListener("input", function () {
-        state.search = searchInput.ariaValueMax.trim().toLowerCase();
+        state.search = searchInput.value.trim().toLowerCase();
         render();
     });
 

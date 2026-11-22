@@ -139,6 +139,7 @@ namespace FoodManagementProject.Controllers
             if (isLastMember && !confirmDelete)
             {
                 TempData["HouseholdError"] = "You are the last member, so leaving would delete this household. Try again and confirm the warning.";
+                return RedirectToAction(nameof(Index));
             }
 
             await using var transaction = await _context.Database.BeginTransactionAsync();

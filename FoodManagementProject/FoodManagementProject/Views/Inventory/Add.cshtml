@@ -4,7 +4,7 @@
     ViewData["Title"] = "Add Ingredients";
 }
 
-<div class="page page--picker">
+<div class="page page--picker" data-storage-key="inventorySelectedIngredientsIds">
     <h1 class="page__title">Add Ingredients</h1>
     <p class="page__lead"> Search for ingredients and select the ones you have.</p>
 
@@ -81,4 +81,6 @@
     </div>
 
 </div>
-<script src="~/js/inventory-add.js" asp-append-version="true" defer></script>
+@section Scripts {
+    <script src="~/js/ingredient-picker.js" asp-append-version="true"></script>
+}

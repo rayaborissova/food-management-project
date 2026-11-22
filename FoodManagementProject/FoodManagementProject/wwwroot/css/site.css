@@ -680,7 +680,9 @@ textarea.input {
 }
 
 .password-toggle {
-    min-width: 72px;
+    flex: 0 0 76px;
+    width: 76px;
+    padding: 0;
 }
 
 input[type="password"]::-ms-reveal {

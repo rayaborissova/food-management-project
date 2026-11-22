@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace FoodManagementProject.Controllers
 {
-    [Authorize(Roles =AppRoles.Admin)]
+    [Authorize(Roles = AppRoles.Admin)]
     public class ReportedIngredientsController : Controller
     {
         private readonly FoodManagementDbContext _context;
@@ -29,7 +29,7 @@ namespace FoodManagementProject.Controllers
             return View(new ReportedIngredientsViewModel
             {
                 Forwarded = await _context.IngredientReports.AsNoTracking().Include(r => r.Ingredient).ThenInclude(i => i.Category).Include(r => r.Reporter).Include(r => r.Reviewer).Where(r => r.ReportStatus == ReportStatuses.Forwarded).OrderBy(r => r.DateReviewed).ToListAsync(),
-                Resolved = await _context.IngredientReports.AsNoTracking().Include(r => r.Ingredient).Include(r => r.Resolver).Where(r => r.ReportStatus == ReportStatuses.Resolved).OrderBy(r => r.DateResolved).Take(30).ToListAsync()
+                Resolved = await _context.IngredientReports.AsNoTracking().Include(r => r.Ingredient).Include(r => r.Resolver).Where(r => r.ReportStatus == ReportStatuses.Resolved).OrderByDescending(r => r.DateResolved).Take(30).ToListAsync()
             });
         }
 
@@ -52,18 +52,18 @@ namespace FoodManagementProject.Controllers
         public async Task<IActionResult> Resolve(ReportDecisionViewModel form)
         {
             var note = (form.Note ?? string.Empty).Trim();
-            
-            if(form.Resolution != ReportResolutions.Fixed && form.Resolution != ReportResolutions.NoChange)
+
+            if (form.Resolution != ReportResolutions.Fixed && form.Resolution != ReportResolutions.NoChange)
             {
                 ModelState.AddModelError(nameof(form.Resolution), "Choose an outcome.");
             }
 
             if (note.Length == 0 || note.Length > 300)
             {
-                ModelState.AddModelError(nameof(form.Note), "Descibe what you did, or why nothing changed. The reporter will see it.");
+                ModelState.AddModelError(nameof(form.Note), "Describe what you did, or why nothing changed. The reporter will see it.");
             }
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 var invalid = await IngredientReportLoader.LoadDecisionAsync(_context, form.ReportId, ReportStatuses.Forwarded, form.Note, form.Resolution);
                 if (invalid == null)
@@ -85,7 +85,7 @@ namespace FoodManagementProject.Controllers
 
             return RedirectToAction(nameof(Index));
 
-        } 
+        }
 
 
     }

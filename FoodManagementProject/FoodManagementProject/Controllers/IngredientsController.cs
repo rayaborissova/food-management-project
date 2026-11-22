@@ -57,14 +57,12 @@ namespace FoodManagementProject.Controllers {
         }
 
         // POST: INGREDIENTS/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("IngredientId,CategoryId,IngredientName,IngredientNameNormalized,IngredientSource,Status")] Ingredient ingredient)
         {
             // search form is derived from the name, not typed by hand
-            ingredient.IngredientNameNormalized = IngredientNormalizer.Normalize(ingredient.IngredientNameNormalized ?? string.Empty);
+            ingredient.IngredientNameNormalized = IngredientNormalizer.Normalize(ingredient.IngredientName ?? string.Empty);
             ModelState.Remove(nameof(Ingredient.IngredientNameNormalized));
 
             // no two ingredients have the same name
@@ -102,8 +100,6 @@ namespace FoodManagementProject.Controllers {
         }
 
         // POST: INGREDIENTS/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int? id, [Bind("IngredientId,CategoryId,IngredientName,IngredientNameNormalized,IngredientSource,Status")] Ingredient ingredient, string? returnUrl)
@@ -114,7 +110,7 @@ namespace FoodManagementProject.Controllers {
             }
 
             // search form is derived from the name, not typed by hand
-            ingredient.IngredientNameNormalized = IngredientNormalizer.Normalize(ingredient.IngredientNameNormalized ?? string.Empty);
+            ingredient.IngredientNameNormalized = IngredientNormalizer.Normalize(ingredient.IngredientName ?? string.Empty);
             ModelState.Remove(nameof(Ingredient.IngredientNameNormalized));
 
             // no two ingredients have the same name

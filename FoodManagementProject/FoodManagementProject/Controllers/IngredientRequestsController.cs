@@ -55,10 +55,12 @@ namespace FoodManagementProject.Controllers
             var cleanName = IngredientNormalizer.Clean(form.Name);
             var normalized = IngredientNormalizer.Normalize(form.Name);
 
-            if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == normalized)) 
+            if (await _context.Ingredients.AnyAsync(i => i.IngredientNameNormalized == normalized))
             {
                 ModelState.AddModelError("Form.Name", "This ingredient is already in the catalogue. Search for it in the Add page.");
-            } else if (await _context.IngredientRequests.AnyAsync( r=> r.RequestStatus == RequestStatuses.Pending && r.RequestedName.ToLower() == normalized)) {
+            }
+            else if (await _context.IngredientRequests.AnyAsync(r => r.RequestStatus == RequestStatuses.Pending && r.RequestedName.ToLower() == normalized))
+            {
                 ModelState.AddModelError("Form.Name", "This ingredient has already been requested and is waiting for a review.");
             }
 
@@ -94,15 +96,17 @@ namespace FoodManagementProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Cancel(int id)
         {
             var userId = CurrentUserId;
 
-            var removed = await _context.IngredientRequests.Where(r => r.RequestId == id && r.RequestStatus == RequestStatuses.Pending).ExecuteDeleteAsync();
+            var removed = await _context.IngredientRequests.Where(r => r.RequestId == id && r.RequestedBy == userId && r.RequestStatus == RequestStatuses.Pending).ExecuteDeleteAsync();
 
             TempData["RequestMessage"] = removed > 0 ? "Request withdrawn." : "That request can no longer be withdrawn.";
             return RedirectToAction(nameof(Index));
-        
+
         }
     }
 }

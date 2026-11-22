@@ -1,46 +1,53 @@
-﻿const storageKey = "inventorySelectedIngredientsIds";
+﻿(function () {
+    const page = document.querySelector("[data-storage-key]");
+    if (!page) {
+        return;
+    }
 
-// reading the stored ingredient ids, and if nothing is selected, it returns empty
-let selectedIds = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
+    const storageKey = page.dataset.storageKey;
 
-// finding all ingredient checkboxes displayed on the page
-const checkboxes = document.querySelectorAll('input[name="selectedIngredientIds"]');
+    // reading the stored ingredient ids, and if nothing is selected, it returns empty
+    let selectedIds = JSON.parse(sessionStorage.getItem(storageKey) || "[]");
 
-// finding the paragraph that displays the number selected
-const selectionCount = document.getElementById("selection-count");
+    // finding all ingredient checkboxes displayed on the page
+    const checkboxes = document.querySelectorAll('input[name="selectedIngredientIds"]');
 
-// finding the button that clears the selection
-const clearButton = document.getElementById("clear-selection");
+    // finding the paragraph that displays the number selected
+    const selectionCount = document.getElementById("selection-count");
 
-//undo button
-const undoButton = document.getElementById("undo-selection");
+    // finding the button that clears the selection
+    const clearButton = document.getElementById("clear-selection");
 
-//review button
-const reviewButton = document.getElementById("review-selected");
+    //undo button
+    const undoButton = document.getElementById("undo-selection");
 
-const reviewForm = document.getElementById("review-selected-form");
+    //review button
+    const reviewButton = document.getElementById("review-selected");
 
-const selectedInputs = document.getElementById("selected-ingredient-inputs");
+    const reviewForm = document.getElementById("review-selected-form");
+    const selectedInputs = document.getElementById("selected-ingredient-inputs");
 
-if (selectionCount && clearButton instanceof HTMLButtonElement && undoButton instanceof HTMLButtonElement && reviewButton instanceof HTMLButtonElement && reviewForm instanceof HTMLFormElement && selectedInputs) {
+    if (!selectionCount || !clearButton || !undoButton || !reviewButton || !reviewForm || !selectedInputs) {
+        return;
+    }
+
     let selectionBeforeClear = null;
 
     // updating the displayed number of selected ingredients
-    const updateSelectionDisplay = () => {
+    function updateSelectionDisplay() {
         const count = selectedIds.length;
         const label = count === 1 ? "ingredient" : "ingredients";
 
-        selectionCount.textContent = selectionBeforeClear === null ? `${count} ${label} selected` : "Selection cleared.";
+        selectionCount.textContent = selectionBeforeClear === null ? count + " " + label + " selected" : "Selection cleared.";
 
         clearButton.hidden = count === 0;
         undoButton.hidden = selectionBeforeClear === null;
         reviewButton.disabled = count === 0;
 
         for (const checkbox of checkboxes) {
-            if (!(checkbox instanceof HTMLInputElement)) continue;
             checkbox.checked = selectedIds.includes(checkbox.value);
         }
-    };
+    }
 
     // storing the current selections and updating their count
     function saveSelection() {
@@ -50,7 +57,6 @@ if (selectionCount && clearButton instanceof HTMLButtonElement && undoButton ins
     }
 
     for (const checkbox of checkboxes) {
-        if (!(checkbox instanceof HTMLInputElement)) continue;
 
         // whenever the user ticks or unticks
         checkbox.addEventListener("change", function () {
@@ -94,10 +100,6 @@ if (selectionCount && clearButton instanceof HTMLButtonElement && undoButton ins
         clearButton.focus();
     });
 
-    //displaying the count after loading
-    updateSelectionDisplay();
-
-
     reviewForm.addEventListener("submit", function (event) {
         if (selectedIds.length === 0) {
             event.preventDefault();
@@ -119,4 +121,7 @@ if (selectionCount && clearButton instanceof HTMLButtonElement && undoButton ins
         }
 
     });
-}
+
+    //displaying the count after loading
+    updateSelectionDisplay();
+})();

@@ -6,15 +6,15 @@ namespace FoodManagementProject.Models
     public class ProfileDetailsViewModels
     {
         [Required, StringLength(100)]
-        [Display(Name ="Display name")]
+        [Display(Name = "Display name")]
         public string DisplayName { get; set; } = string.Empty;
 
         [Required, EmailAddress, StringLength(255)]
-        public string Email { get ; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [DataType(DataType.Password)]
         [Display(Name = "Current password (only needed to change your email)")]
-        public string? CurrentPassword {  get; set; }
+        public string? CurrentPassword { get; set; }
     }
 
     public class ChangePasswordViewModel
@@ -28,7 +28,7 @@ namespace FoodManagementProject.Models
         public string NewPassword { get; set; } = string.Empty;
 
         [Required, DataType(DataType.Password)]
-        [Compare(nameof(NewPassword), ErrorMessage = "The passwords do not match")]
+        [Compare(nameof(NewPassword), ErrorMessage = "The passwords do not match.")]
         [Display(Name = "Confirm new password")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
@@ -43,12 +43,12 @@ namespace FoodManagementProject.Models
         public string Role { get; set; } = string.Empty;
 
         [ValidateNever]
-        public DateTime Registered {  get; set; }
+        public DateTime Registered { get; set; }
 
         [ValidateNever]
         public string? HouseholdName { get; set; }
 
         [ValidateNever]
-        public string? HouseholdRole {  get; set; }
+        public string? HouseholdRole { get; set; }
     }
 }

@@ -31,6 +31,15 @@
         }
     </dl>
 
+    @if (User.IsInRole(AppRoles.Regular))
+    {
+        <h2>My activity</h2>
+        <ul>
+            <li><a asp-controller="IngredientRequests" asp-action="Index">My ingredient suggestions</a></li>
+            <li><a asp-controller="IngredientReports" asp-action="Index">My reports</a></li>
+        </ul>
+    }
+
     <h2>Your details</h2>
     <form asp-controller="Profile" asp-action="UpdateDetails" method="post">
         <div asp-validation-summary="ModelOnly" class="form-errors"></div>
