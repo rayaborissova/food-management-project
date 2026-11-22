@@ -616,7 +616,6 @@ C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodMa
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\jsmodules\jsmodules.build.manifest.json
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\scopedcss\scopedcss.cache
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\u0sispcgwk-{0}-tchfgznwy8-tchfgznwy8.gz
-C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\h26sam7jz4-{0}-nb3aqe03i4-nb3aqe03i4.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\ohc47plyl7-{0}-v1vy2to33n-v1vy2to33n.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\2wlpaqpzx6-{0}-ysew0n4kjn-ysew0n4kjn.gz
 C:\Users\RayaBorissova\OneDrive - aubg.edu\Documents\SENIOR PROJECT\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-5x0jfkmwk7-5x0jfkmwk7.gz
@@ -626,3 +625,4 @@ C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodMa
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\2181ieum0t-{0}-j36qr2xkwq-j36qr2xkwq.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\f4k66b4ogl-{0}-83kgt28z43-83kgt28z43.gz
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\nu4rgrs5ej-{0}-v8trd8jvns-v8trd8jvns.gz
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\obj\Debug\net10.0\compressed\h26sam7jz4-{0}-4m6uvh9o2u-4m6uvh9o2u.gz

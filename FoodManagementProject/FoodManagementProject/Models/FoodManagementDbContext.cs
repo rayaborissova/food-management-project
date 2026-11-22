@@ -24,6 +24,9 @@ public partial class FoodManagementDbContext : DbContext
     public virtual DbSet<IngredientRequest> IngredientRequests { get; set; }
     public virtual DbSet<IngredientReport> IngredientReports { get; set; }
     public virtual DbSet<PasswordReset> PasswordResets { get; set; }
+    // recipe functionality
+    public virtual DbSet<Recipe> Recipes { get; set; }
+    public virtual DbSet<RecipeIngredient> RecipeIngredients { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -214,7 +217,38 @@ public partial class FoodManagementDbContext : DbContext
             entity.HasOne(e => e.User).WithMany().HasForeignKey(e => e.UserId);
         });
 
+        // mapping the recipe table columns
+        modelBuilder.Entity<Recipe>(entity =>
+        {
+            entity.ToTable("recipe");
+            entity.HasKey(e => e.RecipeId);
+            entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
+            entity.Property(e => e.AuthorId).HasColumnName("author_id");
+            entity.Property(e => e.Title).HasColumnName("title");
+            entity.Property(e => e.Servings).HasColumnName("servings");
+            entity.Property(e => e.PrepMinutes).HasColumnName("prep_minutes");
+            entity.Property(e => e.CookMinutes).HasColumnName("cook_minutes");
+            entity.Property(e => e.Instructions).HasColumnName("instructions");
+            entity.Property(e => e.Visibility).HasColumnName("visibility");
+            entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.DateUpdated).HasColumnName("expires_at").HasColumnType("timestamp without time zone");
+            entity.HasOne(e => e.Author).WithMany().HasForeignKey(e => e.AuthorId);
+        });
+
+        // mapping the recipe ingredient table columns
+        modelBuilder.Entity<RecipeIngredient>(entity =>
+        {
+            entity.ToTable("recipe_ingredient");
+            entity.HasKey(e => e.RecipeIngredientId);
+            entity.Property(e => e.RecipeIngredientId).HasColumnName("recipe_ingredient_id");
+            entity.Property(e => e.RecipeId).HasColumnName("recipe_id");
+            entity.Property(e => e.IngredientId).HasColumnName("ingredient_id");
+            entity.Property(e => e.UnitId).HasColumnName("unit_id");
+            entity.Property(e => e.Quantity).HasColumnName("quantity");
+            entity.Property(e => e.Note).HasColumnName("note");
+            entity.HasOne(e => e.Recipe).WithMany(r => r.Ingredients).HasForeignKey(e => e.RecipeId);
+            entity.HasOne(e => e.Ingredient).WithMany().HasForeignKey(e => e.IngredientId);
+            entity.HasOne(e => e.Unit).WithMany().HasForeignKey(e => e.UnitId);
+        });
     }
-
-
 }
