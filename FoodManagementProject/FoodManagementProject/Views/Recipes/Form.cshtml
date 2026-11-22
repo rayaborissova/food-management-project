@@ -1,0 +1,101 @@
+﻿@model FoodManagementProject.Models.RecipeFormViewModels
+
+@{
+    var isEdit = Model.RecipeId != null;
+    ViewData["Title"] = isEdit ? "Edit recipe" : "New recipe";
+}
+
+<div class="page">
+    <h1 class="page__title">@ViewData["Title"]</h1>
+
+    <form id="recipe-form" asp-controller="Recipes" asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@Model.RecipeId" method="post" data-search-url="@Url.Action("SearchIngredients", "Recipes")">
+        <div asp-validation-summary="All" class="form-errors"></div>
+
+        <div class="field">
+            <label asp-for="Title" class="field__label"></label>
+            <input asp-for="Title" class="input" maxlength="150" />
+            <span asp-validation-for="Title" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="Servings" class="field__label"></label>
+            <input asp-for="Servings" type="number" min="1" max="100" class="input" />
+            <span asp-validation-for="Servings" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="PrepMinutes" class="field__label"></label>
+            <input asp-for="PrepMinutes" type="number" min="0" max="1440" class="input" />
+            <span asp-validation-for="PrepMinutes" class="field__error"></span>
+        </div>
+
+        <div class="field">
+            <label asp-for="CookMinutes" class="field__label"></label>
+            <input asp-for="CookMinutes" type="number" min="0" max="1440" class="input" />
+            <span asp-validation-for="CookMinutes" class="field__error"></span>
+        </div>
+
+        <fieldset class="field-group">
+            <legend class="field__label">Who can see this recipe?</legend>
+            <label class="radio-option">
+                <input type="radio" name="Visibility" value="private" class="checkbox" checked="@(Model.Visibility == "private")" />
+                Private: only you
+            </label>
+            <label class="radio-option">
+                <input type="radio" name="Visibility" value="public" class="checkbox" checked="@(Model.Visibility == "public")" />
+                Public: everyone can see it
+            </label>
+            <span asp-validation-for="Visibility" class="field__error"></span>
+        </fieldset>
+
+        <h2>Ingredients</h2>
+
+        <div class="field">
+            <label for="ingredient-search" class="field__label">Find an ingredient to add</label>
+            <input id="ingredient-search" type="search" class="input" placeholder="Search the catalogue" autocomplete="off" />
+            <ul id="ingredient-results" class="ingredient-results"></ul>
+            <p class="request-link">Not in the catalogue? <a asp-controller="IngredientRequests" asp-action="Index" target="_blank">Suggest a new ingredient</a></p>
+        </div>
+
+        <p id="recipe-lines-empty" class="empty-state">No ingredients yet. Search above and click one to add it.</p>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Ingredient</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Note</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody id="recipe-lines"></tbody>
+            </table>
+        </div>
+        
+        <select id="unit-options" hidden>
+            <option value="">No unit</option>
+            @foreach (var unit in Model.Units)
+            {
+                <option value="@unit.UnitId">@unit.UnitName</option>
+            }
+        </select>
+
+        <div class="field">
+            <label asp-for="Instructions" class="field__label"></label>
+            <textarea asp-for="Instructions" class="input" rows="10" maxlength="8000"></textarea>
+            <span asp-validation-for="Instructions" class="field__error"></span>
+        </div>
+
+        <button type="submit" class="btn btn--primary">Save recipe</button>
+    </form>
+ 
+    <a asp-controller="Recipes" asp-action="Index" class="back-link">Cancel</a>
+</div>
+
+<script type="application/json" id="recipe-initial-lines">@Json.Serialize(Model.Lines.Select(l => new { l.IngredientId, l.IngredientName, l.Quantity, l.UnitId, l.Note }))</script>
+
+@section Scripts {
+    <script src="~/js/recipe-form.js" asp-append-version="true"></script>
+}

@@ -231,7 +231,7 @@ public partial class FoodManagementDbContext : DbContext
             entity.Property(e => e.Instructions).HasColumnName("instructions");
             entity.Property(e => e.Visibility).HasColumnName("visibility");
             entity.Property(e => e.DateCreated).HasColumnName("date_created").HasColumnType("timestamp without time zone");
-            entity.Property(e => e.DateUpdated).HasColumnName("expires_at").HasColumnType("timestamp without time zone");
+            entity.Property(e => e.DateUpdated).HasColumnName("date_updated").HasColumnType("timestamp without time zone");
             entity.HasOne(e => e.Author).WithMany().HasForeignKey(e => e.AuthorId);
         });
 

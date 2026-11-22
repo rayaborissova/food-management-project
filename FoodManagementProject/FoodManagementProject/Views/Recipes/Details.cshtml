@@ -1,0 +1,56 @@
+﻿@model FoodManagementProject.Models.RecipeDetailsViewModel
+
+@{
+    var recipe = Model.Recipe;
+    ViewData["Title"] = recipe.Title;
+}
+
+<div class="page">
+    <h1 class="page__title">@recipe.Title</h1>
+
+    @if (TempData["RecipeMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+
+    <p class="page__lead">
+        By @recipe.Author.DisplayName
+        · <span class="status status--@recipe.Visibility">@recipe.Visibility</span>
+        · @recipe.Servings @(recipe.Servings == 1 ? "serving" : "servings")
+        @if ((recipe.PrepMinutes ?? 0) + (recipe.CookMinutes ?? 0) > 0)
+        {
+            <text>· @((recipe.PrepMinutes ?? 0) + (recipe.CookMinutes ?? 0)) min</text>
+        }
+    </p>
+
+    @if (Model.IsAuthor)
+    {
+        <div class="toolbar">
+            <a asp-controller="Recipes" asp-action="Edit" asp-route-id="@recipe.RecipeId" class="btn btn--outline">Edit</a>
+            <a asp-controller="Recipes" asp-action="Delete" asp-route-id="@recipe.RecipeId" class="btn btn--danger">Delete</a>
+        </div>
+    }
+
+    <h2>Ingredients</h2>
+    <ul class="recipe-ingredients">
+        @foreach (var line in recipe.Ingredients.OrderBy(i => i.Ingredient.IngredientName))
+        {
+            <li>
+                @if (line.Quantity.HasValue)
+                {
+                    <strong>@line.Quantity.Value.ToString("0.##") @line.Unit?.Abbreviation</strong>
+                }
+                @line.Ingredient.IngredientName
+                @if (!string.IsNullOrWhiteSpace(line.Note))
+                {
+                    <span class="page__lead">(@line.Note)</span>
+                }
+            </li>
+        }
+    </ul>
+
+    <h2>Instructions</h2>
+    <p class="instructions">@recipe.Instructions</p>
+
+    <a asp-controller="Recipes" asp-action="Index" class="back-link">My recipes</a>
+</div>

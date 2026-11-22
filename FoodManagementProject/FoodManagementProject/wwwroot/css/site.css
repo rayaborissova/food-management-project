@@ -1346,6 +1346,40 @@ a.summary-card .chip {
     margin-left: auto;
 }
 
+.ingredient-results {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.recipe-ingredients {
+    margin: 0 0 24px;
+    padding-left: 20px;
+    line-height: 1.8;
+}
+
+.instructions {
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+.status--private {
+    color: var(--ink-muted);
+}
+
+.status--public {
+    color: var(--sage)
+}
+
+.field-group {
+    margin: 0 0 16px;
+    padding: 0;
+    border: 0;
+}
+
 @media (min-width: 769px) {
     .add-overlay {
         background: transparent; /*on desktop it only catches outside clicks*/
@@ -1545,7 +1579,6 @@ a.summary-card .chip {
     .summary-grid > :last-child:nth-child(odd) {
         grid-column: 1 / -1;
     }
-
 }
 
 @media (max-width:520px) {

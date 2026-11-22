@@ -26,11 +26,11 @@ namespace FoodManagementProject.Models
         [Range(1, 100)]
         public int Servings { get; set; } = 2;
 
-        [Range(1, 1500)]
+        [Range(0, 1440)]
         [Display(Name = "Preparation (minutes)")]
         public int? PrepMinutes { get; set; }
 
-        [Range(1, 1500)]
+        [Range(0, 1440)]
         [Display(Name = "Cooking (minutes)")]
         public int? CookMinutes { get; set; }
 
@@ -53,9 +53,9 @@ namespace FoodManagementProject.Models
         public string Title { get; set; } = string.Empty;
         public string AuthorName { get; set; } = string.Empty;
         public string Visibility { get; set; } = string.Empty;
-        public int Servings { get; set; } 
-        public int TotalMinutes { get; set; } 
-        public int IngredientCount { get; set; } 
+        public int Servings { get; set; }
+        public int TotalMinutes { get; set; }
+        public int IngredientCount { get; set; }
         public int HaveCount { get; set; } // how many are present in the inevntory
         public DateTime DateUpdated { get; set; }
     }

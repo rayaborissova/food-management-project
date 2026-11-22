@@ -1,0 +1,52 @@
+﻿@model List<FoodManagementProject.Models.RecipeCardViewModel>
+
+@{
+    ViewData["Title"] = "My recipes";
+}
+
+<div class="page page--wide">
+    <h1 class="page__title">My recipes</h1>
+
+    @if (TempData["RecipeMessage"] is string message)
+    {
+        <p role="status">@message</p>
+    }
+
+    <div class="toolbar">
+        <a asp-controller="Recipes" asp-action="Create" class=" btn btn--primary">New recipe</a>
+    </div>
+
+    @if(!Model.Any())
+    {
+        <p class="empty-state">You haven't added any recipes yet.</p>
+    } else
+    {
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Recipes</th>
+                        <th scope="col">Visibility</th>
+                        <th scope="col">Servings</th>
+                        <th scope="col">Time</th>
+                        <th scope="col">Ingredients</th>
+                        <th scope="col">Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var recipe in Model)
+                    {
+                        <tr>
+                            <td><a asp-controller="Recipes" asp-action="Details" asp-route-id="@recipe.RecipeId">@recipe.Title</a></td>
+                            <td><span class="status status--@recipe.Visibility">@recipe.Visibility</span></td>
+                            <td>@recipe.Servings</td>
+                            <td>@(recipe.TotalMinutes > 0 ? recipe.TotalMinutes + " min" : "Not specified")</td>
+                            <td>@recipe.IngredientCount</td>
+                            <td>@recipe.DateUpdated.ToString("dd/MM/yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

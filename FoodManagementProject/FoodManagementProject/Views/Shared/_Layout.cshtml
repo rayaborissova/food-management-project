@@ -31,6 +31,7 @@
                     <a class="nav-link @(controller == "Inventory" ? "is-active" : "")" asp-controller="Inventory" asp-action="Index"><i class="ti ti-fridge" aria-hidden="true"></i>Fridge</a>
                     <a class="nav-link @(controller == "ShoppingList" ? "is-active" : "")" asp-controller="ShoppingList" asp-action="Index"><i class="ti ti-shopping-cart" aria-hidden="true"></i>Shopping List</a>
                     <a class="nav-link @(controller == "Household" ? "is-active" : "")" asp-controller="Household" asp-action="Index"><i class="ti ti-home" aria-hidden="true"></i>Household</a>
+                    <a class="nav-link @(controller == "Recipes" ? "is-active" : "")" asp-controller="Recipes" asp-action="Index"><i class="ti ti-chef-hat" aria-hidden="true"></i>Recipes</a>
                 }
                 @if (User.IsInRole(AppRoles.Admin))
                 {

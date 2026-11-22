@@ -1,0 +1,25 @@
+﻿@model FoodManagementProject.Models.Recipe
+
+@{
+    ViewData["Title"] = "Delete recipes";
+}
+
+<div class="page">
+    <h1 class="page__title">Delete recipe</h1>
+
+    <p class="page__lead">This permanently deletes the recipe and its ingredient list. This can't be undone.</p>
+
+    <dl class="details-list">
+        <dt>Recipe</dt>
+        <dd>@Model.Title</dd>
+
+        <dt>Visibility</dt>
+        <dd>@Model.Visibility</dd>
+    </dl>
+
+    <form asp-controller="Recipes" asp-action="Delete" asp-route-id="@Model.RecipeId" method="post">
+        <button type="submit" class="btn btn--danger-solid">Delete recipe</button>
+    </form>
+
+    <a asp-controller="Recipes" asp-action="Details" asp-route-id="@Model.RecipeId" class="back-link">Cancel</a>
+</div>
