@@ -3,7 +3,6 @@ wwwroot\js\admin-users.js
 wwwroot\js\ingredient-picker.js
 wwwroot\js\inventory-index.js
 wwwroot\js\recipe-form.js
-wwwroot\js\shopping-list-index.js
 wwwroot\js\site.js
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -66,12 +65,12 @@ wwwroot\lib\jquery\dist\jquery.slim.min.js
 wwwroot\lib\jquery\dist\jquery.slim.min.map
 wwwroot\lib\jquery\LICENSE.txt
 wwwroot\css\site.css
+wwwroot\js\shopping-list-index.js
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\favicon.ico
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\js\admin-users.js
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\js\ingredient-picker.js
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\js\inventory-index.js
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\js\recipe-form.js
-C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\js\shopping-list-index.js
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\js\site.js
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\lib\bootstrap\dist\css\bootstrap-grid.css.map
@@ -133,3 +132,4 @@ C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodMa
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\lib\jquery\dist\jquery.slim.min.map
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\lib\jquery\LICENSE.txt
 C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\css\site.css
+C:\Users\rayab\source\repos\food-management-project\FoodManagementProject\FoodManagementProject\wwwroot\js\shopping-list-index.js

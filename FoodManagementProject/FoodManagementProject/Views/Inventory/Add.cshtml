@@ -14,8 +14,8 @@
         </label>
 
         <div class="search__controls">
-            <input id="ingredient-search" type="search" name="search" value="@ViewData["Search"]" placeholder="Search chicken" class="input" />
-            <button type="submit" class="btn btn--primary">Search</button>
+            <input id="ingredient-search" type="search" name="search" value="@ViewData["Search"]" placeholder="Search ingredients" class="input" />
+            <button type="submit" class="btn btn--primary search__btn" aria-label="Search"><i class="ti ti-search" aria-hidden="true"></i><span class="search__btn-text">Search</span></button>
         </div>
     </form>
 
@@ -41,7 +41,6 @@
                     <tr>
                         <th scope="col">Select</th>
                         <th scope="col">Ingredient</th>
-                        <th scope="col">Category</th>
                         <th scope="col"><span class="visually-hidden">Report</span></th>
                     </tr>
                 </thead>
@@ -49,7 +48,7 @@
                     @foreach (var ingredient in Model) /*creates one table row for each ingredient*/
                     {
                         <tr>
-                            <td>
+                            <td class="pick-cell--shrink">
                                 <input type="checkbox" id="ingredient-@ingredient.IngredientId" name="selectedIngredientIds"
                                        value="@ingredient.IngredientId" class="checkbox" />
                             </td> <!-- stores id of the ingredient as the value of the checkbox-->
@@ -57,12 +56,10 @@
                                 <label for="ingredient-@ingredient.IngredientId" class="pick-row__name">
                                     @ingredient.IngredientName
                                 </label> <!-- name is connected to the checkbox as well so clicking on name ticks it-->
+                                <span class="pick-cat">@ingredient.Category?.CategoryName</span>
                             </td>
-                            <td>
-                                @ingredient.Category?.CategoryName
-                            </td>
-                            <td>
-                                <a asp-controller="IngredientReports" asp-action="Create" asp-route-ingredientId="@ingredient.IngredientId" class="report-link">Report</a>
+                            <td class="pick-cell--shrink">
+                                <a asp-controller="IngredientReports" asp-action="Create" asp-route-ingredientId="@ingredient.IngredientId" class="icon-btn icon-btn--plain" title="Report a problem"><i class="ti ti-flag" aria-hidden="true"></i><span class="visually-hidden">Report a problem with @ingredient.IngredientName</span></a>
                             </td>
                         </tr>
                     }
@@ -72,7 +69,7 @@
     }
 
     <div class="picker-footer">
-        <a asp-controller="Inventory" asp-action="Index" class="back-link">Back to Inventory</a>
+        <a asp-controller="Inventory" asp-action="Index" class="back-link">Back to fridge</a>
 
         <form asp-controller="Inventory" asp-action="Review" method="post" id="review-selected-form">
             <div id="selected-ingredient-inputs"></div>

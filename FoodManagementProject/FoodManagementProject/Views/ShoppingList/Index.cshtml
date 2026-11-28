@@ -8,7 +8,7 @@
     <h1 class="page__title">Shopping List</h1>
     <p class="page__lead">Check off ingredients as you shop</p>
 
-    <a asp-controller="ShoppingList" asp-action="Add" class="btn btn--primary">Add ingredients</a>
+    <a asp-controller="ShoppingList" asp-action="Add" class="btn btn--primary shop-add">Add ingredients</a>
 
     @if (TempData["ShoppingListSuccess"] is string successMessage)
     {
@@ -59,8 +59,8 @@
                             </label>
 
                             <div class="shop-item__actions">
-                                <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="icon-btn icon-btn--soft" aria-label="Edit"><i class="ti ti-pencil" aria-hidden="true"></i>Edit</a>
-                                <a asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@item.ShoppingListItemId" class="icon-btn icon-btn--danger" aria-label="Remove"><i class="ti ti-trash" aria-hidden="true"></i>Remove</a>
+                                <a asp-controller="ShoppingList" asp-action="Edit" asp-route-id="@item.ShoppingListItemId" class="icon-btn icon-btn--soft" aria-label="Edit"><i class="ti ti-pencil" aria-hidden="true"></i><span class="visually-hidden">Edit @item.Ingredient.IngredientName</span></a>
+                                <a asp-controller="ShoppingList" asp-action="Delete" asp-route-id="@item.ShoppingListItemId" class="icon-btn icon-btn--danger" aria-label="Remove"><i class="ti ti-trash" aria-hidden="true"></i><span class="visually-hidden">Remove @item.Ingredient.IngredientName</span></a>
                             </div>
                         </li>
                     }
@@ -72,19 +72,14 @@
 
     @if (Model.Any())
     {
-        <form asp-controller="ShoppingList" asp-action="AddAsListed" method="post" id="confirm-purchase-form">
-            <div id="checked-purchase-inputs"></div>
-
-            <div class="toolbar">
-                <button type="submit" class="btn btn--sage">Add to inventory as listed</button>
-                <button type="submit" asp-controller="ShoppingList" asp-action="EditPurchase" class="btn btn--outline">Add to inventory (edit details)</button>
-            </div>
-
-            <p class="page__lead">"As listed" uses the quantities from your list. "Edit details" lets you change quantities and units and add expiration dates first.</p>
+        <form asp-controller="ShoppingList" asp-action="AddAsListed" method="post" id="confirm-purchase-form" class="action-bar purchase-bar" hidden>
+            <div id="checked-purchase-inputs" hidden></div>
+            <button type="submit" id="purchase-move" class="btn btn--primary">Move to fridge</button>
+            <button type="submit" asp-controller="ShoppingList" asp-action="EditPurchase" class="btn btn--outline">Edit details first</button>
         </form>
     }
-    <a asp-controller="Inventory" asp-action="Index" class="back-link">
-        Back to Inventory
+    <a asp-controller="Inventory" asp-action="Index" class="back-link shop-back">
+        Back to fridge
     </a>
 
 </div>

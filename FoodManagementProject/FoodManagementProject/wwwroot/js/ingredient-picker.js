@@ -75,6 +75,24 @@
         });
     }
 
+    // whole row is a checkbox, except clicks on the checkbox itself
+    for (const checkbox of checkboxes) {
+        const row = checkbox.closest("tr");
+        if (!row) {
+            continue;
+        }
+
+        row.addEventListener("click", function (event) {
+            if (event.target.closest("a, input, label, button")) {
+                return;
+            }
+            checkbox.checked = !checkbox.checked;
+            // the change listener saves the selection and updates the count
+            checkbox.dispatchEvent(new Event("change"));
+        });
+    }
+
+
     // when the clear button ic clicked
     clearButton.addEventListener("click", function () {
 

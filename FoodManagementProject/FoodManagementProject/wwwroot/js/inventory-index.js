@@ -12,6 +12,13 @@
     const searchInput = document.getElementById("inv-search");
     const sortSelect = document.getElementById("inv-sort");
 
+    // filter panel; bottom sheet on the phone and a dropdown on desktop
+    const filterPanel = document.getElementById("inv-filter");
+    const filterOpen = document.getElementById("inv-filter-open");
+    const filterCount = document.getElementById("inv-filter-count");
+    const filterApply = document.getElementById("inv-filter-apply");
+    const phone = window.matchMedia("(max-width: 768px)");
+
     // everything the user can change in the toolbar (filters, sort orders, display mode)
     const state = { category: "all", status: "all", search: "", sort: "expiry", view: "list" };
 
@@ -33,7 +40,7 @@
     }
 
     function matches(row) {
-        // a row is visible only if it pases all three filters
+        // a row is visible only if it passes all three filters
         return (state.category === "all" || row.dataset.category === state.category) && (state.status === "all" || row.dataset.status === state.status) && row.dataset.search.includes(state.search);
     }
 
@@ -66,6 +73,13 @@
         // updating the empty state and the count after applying all the filters
         emptyMessage.hidden = visible !== 0;
         shownLabel.textContent = "Showing " + visible + " of " + rows.length;
+
+        // the badge shows how many filters are on, while the panel button shows the result count
+        const activeFilters = (state.category !== "all" ? 1 : 0) + (state.status !== "all" ? 1 : 0);
+        filterCount.textContent = activeFilters;
+        filterCount.hidden = activeFilters === 0;
+        filterOpen.classList.toggle("is-active", activeFilters > 0);
+        filterApply.textContent = "Show " + visible + (visible === 1 ? " item" : " items");
     }
 
     function bindButtons(selector, key, dataName) {
@@ -73,10 +87,10 @@
 
         for (const button of buttons) {
             button.addEventListener("click", function () {
-                // reading the clicked button's value and updating the correspodning setting
+                // reading the clicked button's value and updating the corresponding setting
                 state[key] = button.dataset[dataName];
 
-                // updating both the visual styling and teh accessible pressed state
+                // updating both the visual styling and the accessible pressed state
                 for (const other of buttons) {
                     const active = other === button;
                     other.classList.toggle("is-active", active);
@@ -101,6 +115,80 @@
     sortSelect.addEventListener("change", function () {
         state.sort = sortSelect.value;
         render();
+    });
+
+    function openFilters() {
+        // modal on phone (dark backdrop)
+        if (phone.matches) {
+            filterPanel.showModal();
+        } else {
+            filterPanel.show();
+        }
+        filterOpen.setAttribute("aria-expanded", "true");
+    }
+
+    function closeFilters() {
+        filterPanel.close();
+    }
+
+    filterPanel.addEventListener("close", function () {
+        filterOpen.setAttribute("aria-expanded", "false");
+    });
+
+    filterOpen.addEventListener("click", function () {
+        if (filterPanel.open) {
+            closeFilters();
+        } else {
+            openFilters();
+        }
+    });
+
+    filterPanel.querySelectorAll("[data-close-filter]").forEach(button => button.addEventListener("click", closeFilters));
+
+    // a tap on the backdrop lands on the dialog element
+    filterPanel.addEventListener("click", function (event) {
+        if (event.target === filterPanel) {
+            closeFilters();
+        }
+    });
+
+    // closing the desktop dropdown on outside click or pressing Escape button
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && filterPanel.open) {
+            closeFilters();
+        }
+    });
+
+    document.addEventListener("click", function (event) {
+        if (filterPanel.open && !phone.matches && !filterPanel.contains(event.target) && !filterOpen.contains(event.target)) {
+            closeFilters();
+        }
+    });
+
+    // styling updates too
+    document.getElementById("inv-filter-clear").addEventListener("click", function () {
+        document.querySelector('.inv-tab[data-category="all"]').click();
+        document.querySelector('.chip-filter[data-status="all"]').click();
+    });
+
+    // showing and hiding the batches that have more than one batch 
+    list.addEventListener("click", function (event) {
+        const expand = event.target.closest(".inv-expand");
+        if (!expand) {
+            return;
+        }
+        const open = expand.getAttribute("aria-expanded") !== "true";
+        expand.setAttribute("aria-expanded", String(open));
+        document.getElementById(expand.getAttribute("aria-controls")).hidden = !open;
+    });
+
+    // only one menu at a time
+    document.addEventListener("click", function (event) {
+        list.querySelectorAll(".inv-more[open]").forEach(function (menu) {
+            if (!menu.contains(event.target)) {
+                menu.removeAttribute("open");
+            }
+        }); 
     });
 
     // applying the default filters and expiry sort when the page first loads
@@ -130,7 +218,9 @@
 
             list.classList.toggle("inv-list--selecting", entering);
             bulkBar.hidden = !entering;
-            selectToggle.textContent = entering ? "Cancel selection" : "Select";
+            selectToggle.classList.toggle("is-active", entering);
+            selectToggle.setAttribute("aria-pressed", String(entering));
+            selectToggle.querySelector("i").className = entering ? "ti ti-x" : "ti ti-checkbox";
 
             if (!entering) {
                 list.querySelectorAll(".inv-select").forEach(box => { box.checked = false; });

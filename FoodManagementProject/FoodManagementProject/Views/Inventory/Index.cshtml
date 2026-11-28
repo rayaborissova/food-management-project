@@ -91,7 +91,7 @@
                 <div class="sheet__body">
                     <div class="sheet__head">
                         <h2 id="inv-filter-title" class="sheet__title">Filters</h2>
-                        <button type="button" class="icon-btn icon-btn--plain" data-close-filter aria-label="Close filters"><i class="ti ti-x" aria-hidden="true"</i></button>
+                        <button type="button" class="icon-btn icon-btn--plain" data-close-filter aria-label="Close filters"><i class="ti ti-x" aria-hidden="true"></i></button>
                     </div>
 
                     <section>
@@ -144,7 +144,7 @@
 
                     <div class="inv-row">
                         <input type="checkbox" class="checkbox inv-select" value="@group.IngredientId" aria-label="Select @group.IngredientName" />
-                        <span class="inv-tile inv-tile--@(group.CategoryId % 6)" aria-hidden="true">@group.Initial</span>
+                        <span class="inv-tile inv-tile--@(group.CategoryId % 6)" aria-hidden="true"><i class="ti @CategoryIcon(group.CategoryName)"></i></span>
                         <span class="inv-main">
                             <span class="inv-name">@group.IngredientName</span>
                             <span class="inv-sub">
@@ -214,3 +214,26 @@
     }
 </div>
 <script src="~/js/inventory-index.js" asp-append-version="true" defer></script>
+
+@functions {
+    static string CategoryIcon(string name)
+    {
+        var n = name.ToLowerInvariant();
+
+        if (n.Contains("dairy")) return "ti-milk";
+        if (n.Contains("fish") || n.Contains("seafood")) return "ti-fish";
+        if (n.Contains("meat")) return "ti-meat";
+        if (n.Contains("fruit")) return "ti-apple";
+        if (n.Contains("vegetable")) return "ti-carrot";
+        if (n.Contains("bakery") || n.Contains("bread")) return "ti-bread";
+        if (n.Contains("pasta") || n.Contains("grain")) return "ti-bowl";
+        if (n.Contains("nut") || n.Contains("seed")) return "ti-seedling";
+        if (n.Contains("herb") || n.Contains("spice")) return "ti-leaf";
+        if (n.Contains("oil") || n.Contains("fat")) return "ti-droplet";
+        if (n.Contains("condiment")) return "ti-bottle";
+        if (n.Contains("drink") || n.Contains("bevarage")) return "ti-cup";
+        if (n.Contains("legume")) return "ti-plant";
+
+        return "ti-tools-kitchen-2";
+    }
+}

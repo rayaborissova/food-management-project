@@ -5,6 +5,8 @@
     const purchaseCheckboxes = document.querySelectorAll('input[name="purchasedItemIds"]');
     const purchaseForm = document.getElementById("confirm-purchase-form");
     const purchaseInputs = document.getElementById("checked-purchase-inputs");
+    const purchaseMove = document.getElementById("purchase-move");
+
 
     if (!purchaseForm || !purchaseInputs) {
         return;
@@ -19,6 +21,10 @@
 
     function savePurchaseChecks() {
         sessionStorage.setItem(purchaseStorageKey, JSON.stringify(checkedItemIds));
+
+        const count = checkedItemIds.length;
+        purchaseForm.hidden = count === 0;
+        purchaseMove.textContent = "Move " + count + " to fridge";
     }
 
     for (const checkbox of purchaseCheckboxes) {
