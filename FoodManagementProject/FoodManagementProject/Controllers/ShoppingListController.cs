@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FoodManagementProject.Models;
 using FoodManagementProject.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using FoodManagementProject.Services;
 
 [Authorize(Roles = AppRoles.Regular)]
 public class ShoppingListController : HouseholdControllerBase
@@ -34,7 +35,7 @@ public class ShoppingListController : HouseholdControllerBase
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            search = search.Trim().ToLowerInvariant();
+            search = IngredientNormalizer.Normalize(search);
             // same fuzzy search as the inventory search
             ingredients = ingredients.Where(ingredient => ingredient.IngredientNameNormalized.Contains(search) || EF.Functions.TrigramsSimilarity(ingredient.IngredientNameNormalized, search) >= 0.17).OrderByDescending(ingredient => EF.Functions.TrigramsSimilarity(ingredient.IngredientNameNormalized, search)).ThenBy(ingredient => ingredient.IngredientName);
         }

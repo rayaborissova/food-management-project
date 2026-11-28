@@ -15,13 +15,10 @@ namespace FoodManagementProject.Models
         [Required, EmailAddress, StringLength(255)] 
         public string Email {  get; set; } = string.Empty;
 
-        [Required, DataType(DataType.Password), StringLength(100, MinimumLength = 8)] //min length for password set to 8
-        public string Password {  get; set; } = string.Empty;
-
-        [Required,DataType(DataType.Password)]
-        [Compare(nameof(Password), ErrorMessage ="The passwords do not match.")] //validation for matching
-        [Display(Name = "Confirm password")]
-        public string ConfirmPassword {  get; set; } = string.Empty;
+        [Required, DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Please create a password that meets all requirements below.")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$", ErrorMessage = "Please create a password that meets all requirements below.")]  // regex for a letter, a digit, and something that is neither
+        public string Password { get; set; } = string.Empty;
 
     }
 }

@@ -4,9 +4,8 @@
     ViewData["Title"] = "Register";
 }
 
-<div class="page page--narrow">
+<div class="page page--narrow auth">
     <h1 class="page__title">Create an account</h1>
-    <p class="page__lead">Use at least 8 characters for your password.</p>
 
     <form asp-controller="Account" asp-action="Register" method="post">
         <div asp-validation-summary="ModelOnly" class="form-errors"></div>
@@ -27,16 +26,15 @@
             <label asp-for="Password" class="field__label"></label>
             <input asp-for="Password" class="input" autocomplete="new-password" value="@Model.Password" />
             <span asp-validation-for="Password" class="field__error"></span>
+            <ul class="password-rules" data-for="Password">
+                <li data-rule="length"><i class="ti ti-circle-x" aria-hidden="true"></i>At least 8 characters</li>
+                <li data-rule="letter"><i class="ti ti-circle-x" aria-hidden="true"></i>1 letter</li>
+                <li data-rule="number"><i class="ti ti-circle-x" aria-hidden="true"></i>1 number</li>
+                <li data-rule="special"><i class="ti ti-circle-x" aria-hidden="true"></i>1 special character</li>
+            </ul>
         </div>
 
-
-        <div class="field">
-            <label asp-for="ConfirmPassword" class="field__label"></label>
-            <input asp-for="ConfirmPassword" class="input" autocomplete="new-password" value="@Model.ConfirmPassword" />
-            <span asp-validation-for="ConfirmPassword" class="field__error"></span>
-        </div>
-
-        <button type="submit" class="btn btn--primary">Register</button>
+        <button type="submit" class="btn btn--primary btn--block">Register</button>
     </form>
 
     <p class="auth-switch">Already registered? <a asp-controller="Account" asp-action="Login">Log in</a></p>

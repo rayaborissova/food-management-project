@@ -4,7 +4,7 @@
     ViewData["Title"] = "Log in";
 }
 
-<div class="page page--narrow">
+<div class="page page--narrow auth">
     <h1 class="page__title">Log in</h1>
 
     @if (TempData["AccountMessage"] is string accountMessage)
@@ -28,16 +28,15 @@
             <span asp-validation-for="Password" class="field__error"></span>
         </div>
 
-        <div class="field">
+        <div class="auth-row">
             <label>
                 <input asp-for="RememberMe"/> @Html.DisplayNameFor(m => m.RememberMe)
             </label>
+            <a asp-controller="Account" asp-action="ForgotPassword">Forgot your password?</a>
         </div>
 
-        <button type="submit" class="btn btn--primary">Log in</button>
+        <button type="submit" class="btn btn--primary btn--block">Log in</button>
     </form>
-
-    <p class="auth-switch"><a asp-controller="Account" asp-action="ForgotPassword">Forgot your password?</a></p>
 
     <p class="auth-switch">No account yet? <a asp-controller="Account" asp-action="Register">Register</a></p>
 </div>

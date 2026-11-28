@@ -17,6 +17,7 @@
                 <button type="submit" class="btn btn--primary">Search</button>
             </div>
         </form>
+        <p class="request-link">Can't find what you are looking for?<a asp-controller="IngredientRequests" asp-action="Index" asp-route-name="@ViewData["Search"]">Suggest a new ingredient</a></p>
 
         <p class="request-link">Can't find it? <a asp-controller="IngredientRequests" asp-action="Index" asp-route-name="@ViewData["Search"]">Suggest a new ingredient</a></p>
 

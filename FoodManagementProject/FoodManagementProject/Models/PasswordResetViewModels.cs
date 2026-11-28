@@ -13,8 +13,10 @@ namespace FoodManagementProject.Models
         [Required]
         public string Token { get; set; } = string.Empty;
 
-        [Required, DataType(DataType.Password), StringLength(100, MinimumLength = 8)]
-        [Display(Name = "New Password")]
+        [Required, DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Please create a password that meets all requirements below.")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$", ErrorMessage = "Please create a password that meets all requirements below.")]  // regex for a letter, a digit, and something that is neither
+        [Display(Name = "New password")]
         public string Password { get; set; } = string.Empty;
 
         [Required, DataType(DataType.Password)]

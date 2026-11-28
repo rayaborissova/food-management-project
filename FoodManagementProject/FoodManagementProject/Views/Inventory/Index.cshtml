@@ -9,15 +9,15 @@
 
     <h1 class="page__title">Fridge</h1>
 
-    <p class="household-line">
-        <a asp-controller="Household" asp-action="Index" class="household-link"><i class="ti ti-home" aria-hidden="true"></i>@Model.HouseholdName</a>
+    <p class="household-bar">
+        <a asp-controller="Household" asp-action="Index" class="household-pill"><i class="ti ti-home" aria-hidden="true"></i>@Model.HouseholdName</a>
         @if (Model.IsShared)
         {
-            var others = Model.MemberCount - 1;
-            <span>· shared with @others @(others == 1 ? "other person" : "other people")</span>
-        } else
+            <span class="household-bar__meta"><i class="ti ti-users" aria-hidden="true"></i>@Model.MemberCount</span>
+        }
+        else
         {
-            <span>· <a asp-controller="Household" asp-action="Index">create or join a household</a></span>
+            <a asp-controller="Household" asp-action="Index" class="icon-btn icon-btn--soft" title="Create or join a household"><i class="ti ti-users-plus" aria-hidden="true"></i><span class="visually-hidden">Create or join a household</span></a>
         }
     </p>
 
@@ -40,7 +40,7 @@
         <p role="status">@inventoryMessage</p>
     }
 
-    <p>
+    <p class="inv-actions">
         <a asp-controller="Inventory" asp-action="Add" class="btn btn--primary">Add Ingredients</a>
         <a asp-controller="ShoppingList" asp-action="Index" class="btn btn--outline">Shopping list</a>
     </p>
@@ -59,40 +59,76 @@
         </p>
 
         <div class="inv-toolbar">
-
-            <div class="inv-tabs" role="group" aria-label="Filter by category">
-                <button type="button" class="inv-tab is-active" data-category="all" aria-pressed="true">All <span class="inv-count">@Model.Groups.Count</span></button>
-                @foreach (var tab in Model.Categories)
-                {
-                    <button type="button" class="inv-tab" data-category="@tab.Id" aria-pressed="false">@tab.Name <span class="inv-count">@tab.Count</span></button>
-                }
-            </div>
-
-            <div class="inv-chips" role="group" aria-label="Filter by expiry">
-                <button type="button" class="chip-filter is-active" data-status="all" aria-pressed="true">All</button>
-                <button type="button" class="chip-filter" data-status="soon" aria-pressed="false">Use soon (@Model.SoonCount)</button>
-                <button type="button" class="chip-filter" data-status="expired" aria-pressed="false">Expired (@Model.ExpireCount)</button>
-                <button type="button" class="chip-filter" data-status="none" aria-pressed="false">No date (@Model.NoDateCount)</button>
-            </div>
-
             <div class="inv-controls">
-                <input id="inv-search" type="search" class="input" placeholder="Search ingredients" aria-label="Search ingredients" autocomplete="off" />
+                <label class="search-box">
+                    <i class="ti ti-search" aria-hidden="true"></i>
+                    <input id="inv-search" type="search" class="input" placeholder="Search ingredients" aria-label="Search ingredients" autocomplete="off" />
+                </label>
 
-                <select id="inv-sort" class="input" aria-label="Sort by">
-                    <option value="expiry">Soonest expiry</option>
-                    <option value="name">Name A-Z</option>
-                    <option value="category">Category</option>
-                </select>
+                <button type="button" id="inv-filter-open" class="tool-btn" aria-haspopup="dialog" aria-controls="inv-filter" aria-expanded="false">
+                    <i class="ti ti-filter" aria-hidden="true"></i><span class="tool-btn__label">Filter</span>
+                    <span id="inv-filter-count" class="tool-btn__badge" hidden></span>
+                </button>
 
-                <div class="inv-toggle" role="group" aria-label="View">
-                    <button type="button" class="is-active" data-view="list" aria-pressed="true">List</button>
-                    <button type="button" data-view="category" aria-pressed="false">By category</button>
-                </div>
+                <label class="tool-btn tool-btn--select">
+                    <i class="ti ti-arrows-sort" aria-hidden="true"></i><span class="tool-btn__label">Sort</span>
+                    <select id="inv-sort" aria-label="Sort by">
+                        <option value="expiry">Soonest expiry</option>
+                        <option value="name">Name A-Z</option>
+                        <option value="category">Category</option>
+                    </select>
+                </label>
 
-                <button type="button" id="inv-select-toggle" class="btn btn--outline btn--sm">Select</button>
+                <button type="button" id="inv-select-toggle" class="tool-btn" aria-label="Select items" aria-pressed="false">
+                    <i class="ti ti-checkbox" aria-hidden="true"></i>
+                </button>
             </div>
+        
 
             <p id="inv-shown" class="inv-summary" aria-live="polite"></p>
+
+            <dialog id="inv-filter" class="sheet" aria-labelledby="inv-filter-title">
+                <div class="sheet__body">
+                    <div class="sheet__head">
+                        <h2 id="inv-filter-title" class="sheet__title">Filters</h2>
+                        <button type="button" class="icon-btn icon-btn--plain" data-close-filter aria-label="Close filters"><i class="ti ti-x" aria-hidden="true"</i></button>
+                    </div>
+
+                    <section>
+                        <h3 class="sheet__label">Category</h3>
+                        <div class="inv-tabs" role="group" aria-label="Filter by category">
+                            <button type="button" class="inv-tab is-active" data-category="all" aria-pressed="true">All <span class="inv-count">@Model.Groups.Count</span></button>
+                            @foreach (var tab in Model.Categories)
+                            {
+                                <button type="button" class="inv-tab" data-category="@tab.Id" aria-pressed="false">@tab.Name <span class="inv-count">@tab.Count</span></button>
+                            }
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 class="sheet__label">Expiry</h3>
+                        <div class="inv-chips" role="group" aria-label="Filter by expiry">
+                            <button type="button" class="chip-filter is-active" data-status="all" aria-pressed="true">All</button>
+                            <button type="button" class="chip-filter" data-status="soon" aria-pressed="false">Use soon (@Model.SoonCount)</button>
+                            <button type="button" class="chip-filter" data-status="expired" aria-pressed="false">Expired (@Model.ExpireCount)</button>
+                            <button type="button" class="chip-filter" data-status="none" aria-pressed="false">No date (@Model.NoDateCount)</button>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 class="sheet__label">Show as</h3>
+                        <div class="inv-toggle" role="group" aria-label="View">
+                            <button type="button" class="is-active" data-view="list" aria-pressed="true">List</button>
+                            <button type="button" data-view="category" aria-pressed="false">By category</button>
+                        </div>
+                    </section>
+
+                    <div class="sheet__foot">
+                        <button type="button" id="inv-filter-clear" class="btn btn--outline">Clear all</button>
+                        <button type="button" id="inv-filter-apply" class="btn btn--primary" data-close-filter>Show items</button>
+                    </div>
+                </div>
+            </dialog>
         </div>
 
         <ul id="inv-list" class="inv-list">
@@ -100,35 +136,62 @@
             {
                 <li class="inv-item inv-item--@group.Status" data-category="@group.CategoryId" data-category-name="@group.CategoryName" data-status="@group.Status" data-name="@group.IngredientName.ToLowerInvariant()"
                     data-search="@((group.IngredientName + " " + group.CategoryName).ToLowerInvariant())" data-days="@group.SortDays">
-                    <details class="inv-details">
-                        <summary>
-                            <input type="checkbox" class="checkbox inv-select" value="@group.IngredientId" aria-label="Select @group.IngredientName" />
-                            <span class="inv-tile inv-tile--@(group.CategoryId % 6)" aria-hidden="true">@group.Initial</span>
-                            <span class="inv-main">
-                                <span class="inv-meta">@group.IngredientName</span>
+                    
+                    @{
+                        var single = group.Batches.Count() == 1;
+                        var first = group.Batches.First();
+                    }
+
+                    <div class="inv-row">
+                        <input type="checkbox" class="checkbox inv-select" value="@group.IngredientId" aria-label="Select @group.IngredientName" />
+                        <span class="inv-tile inv-tile--@(group.CategoryId % 6)" aria-hidden="true">@group.Initial</span>
+                        <span class="inv-main">
+                            <span class="inv-name">@group.IngredientName</span>
+                            <span class="inv-sub">
+                                <span class="chip chip--@group.Status">@group.ExpiryText</span>
                                 <span class="inv-meta">@group.MetaText</span>
                             </span>
-                            <span class="chip chip--@group.Status">@group.ExpiryText</span>
-                        </summary>
+                        </span>
 
-                        <div class="inv-batches">
-                            <ul class="inv-batches-list">
-                                @foreach (var batch in group.Batches)
-                                {
-                                    <li class="inv-batch">
-                                        <span class="inv-batch__amount">@batch.QuantityText</span>
-                                        <span class="chip chip--@batch.Status">@batch.ExpiryText</span>
-                                        <span class="inv-batch__actions">
-                                            <a asp-action="Edit" asp-route-ingredientbatchid="@batch.IngredientBatchId" class="icon-btn icon-btn--soft" aria-label="Edit batch"><i class="ti ti-pencil" aria-hidden="true"></i>Edit</a>
-                                            <a asp-action="Delete" asp-route-ingredientbatchid="@batch.IngredientBatchId" class="icon-btn icon-btn--danger" aria-label="Delete batch"><i class="ti ti-trash" aria-hidden="true"></i>Delete</a>
-                                        </span>
-                                    </li>
-                                }
-                            </ul>
+                        <span class="inv-row__actions">
+                            @if (single)
+                            {
+                                <a asp-action="Edit" asp-route-ingredientbatchid="@first.IngredientBatchId" class="icon-btn icon-btn--soft"><i class="ti ti-pencil" aria-hidden="true"></i><span class="visually-hidden">Edit @group.IngredientName</span></a>
+                            }
+                            else
+                            {
+                                <button type="button" class="icon-btn icon-btn--soft inv-expand" aria-expanded="false" aria-controls="batches-@group.IngredientId"><i class="ti ti-chevron-down" aria-hidden="true"></i><span class="visually-hidden">Show batches of @group.IngredientName</span></button>
+                            }
 
-                            <p><a asp-controller="IngredientReports" asp-action="Create" asp-route-ingredientId="@group.IngredientId" class="report-link">Report a problem with this ingredient</a></p>
-                        </div>
-                    </details>
+                            <details class="inv-more">
+                                <summary class="icon-btn icon-btn--plain" aria-label="More actions for @group.IngredientName"><i class="ti ti-dots-vertical" aria-hidden="true"></i></summary>
+                                <div class="inv-more__menu">
+                                    @if (single)
+                                    {
+                                        <a asp-action="Delete" asp-route-ingredientbatchid="@first.IngredientBatchId" class="inv-more__item inv-more__item--danger"><i class="ti ti-trash" aria-hidden="true"></i>Delete</a>
+                                    }
+                                    <a asp-controller="IngredientReports" asp-action="Create" asp-route-ingredientId="@group.IngredientId" class="inv-more__item"><i class="ti ti-flag" aria-hidden="true"></i>Report a problem</a>
+                                </div>
+                            </details>
+                        </span>
+                    </div>
+                    
+                    @if (!single)
+                    {
+                        <ul class="inv-batch-list" id="batches-@group.IngredientId" hidden>
+                            @foreach (var batch in group.Batches)
+                            {
+                                <li class="inv-batch">
+                                    <span class="inv-batch__amount">@batch.QuantityText</span>
+                                    <span class="inv-batch__date inv-batch__date--@batch.Status">@batch.ExpiryText</span>
+                                    <span class="inv-batch__actions">
+                                        <a asp-action="Edit" asp-route-ingredientbatchid="@batch.IngredientBatchId" class="icon-btn icon-btn--soft"><i class="ti ti-pencil" aria-hidden="true"></i><span class="visually-hidden">Edit this batch</span></a>
+                                        <a asp-action="Delete" asp-route-ingredientbatchid="@batch.IngredientBatchId" class="icon-btn icon-btn--danger"><i class="ti ti-trash" aria-hidden="true"></i><span class="visually-hidden">Delete this batch</span></a>
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    }
                 </li>
             }
         </ul>

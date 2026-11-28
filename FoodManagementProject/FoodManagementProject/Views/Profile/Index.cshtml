@@ -77,11 +77,17 @@
             <label asp-for="Password.NewPassword" class="field__label"></label>
             <input asp-for="Password.NewPassword" class="input" autocomplete="new-password" value="@Model.Password.NewPassword" />
             <span asp-validation-for="Password.NewPassword" class="field__error"></span>
+            <ul class="password-rules" data-for="Password_NewPassword">
+                <li data-rule="length"><i class="ti ti-circle-x" aria-hidden="true"></i>At least 8 characters</li>
+                <li data-rule="letter"><i class="ti ti-circle-x" aria-hidden="true"></i>1 letter</li>
+                <li data-rule="number"><i class="ti ti-circle-x" aria-hidden="true"></i>1 number</li>
+                <li data-rule="special"><i class="ti ti-circle-x" aria-hidden="true"></i>1 special character</li>
+            </ul>
         </div>
 
         <div class="field">
             <label asp-for="Password.ConfirmPassword" class="field__label"></label>
-            <input asp-for="Password.ConfirmPassword" class="input" autocomplete="new-password" value="@Model.Password.NewPassword" />
+            <input asp-for="Password.ConfirmPassword" class="input" autocomplete="new-password" value="@Model.Password.ConfirmPassword" />
             <span asp-validation-for="Password.ConfirmPassword" class="field__error"></span>
         </div>
 

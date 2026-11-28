@@ -23,7 +23,9 @@ namespace FoodManagementProject.Models
         [Display(Name = "Current password")]
         public string CurrentPassword { get; set; } = string.Empty;
 
-        [Required, DataType(DataType.Password), StringLength(100, MinimumLength = 8)]
+        [Required, DataType(DataType.Password)]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Please create a password that meets all requirements below.")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).+$", ErrorMessage = "Please create a password that meets all requirements below.")]  // regex for a letter, a digit, and something that is neither
         [Display(Name = "New password")]
         public string NewPassword { get; set; } = string.Empty;
 

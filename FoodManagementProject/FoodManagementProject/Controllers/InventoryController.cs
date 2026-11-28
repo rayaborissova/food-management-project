@@ -41,7 +41,7 @@ public class InventoryController : HouseholdControllerBase
 
         if (!string.IsNullOrWhiteSpace(search)) // if not search is not empty
         {
-            search = search.Trim().ToLower(); // trim and put in lowercase to compare to the normalized names
+            search = IngredientNormalizer.Normalize(search);
 
             ingredients = ingredients.Where(i => i.IngredientNameNormalized.Contains(search) || EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, search) >= 0.17).
                 OrderByDescending(i => EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, search)); // either contains the search or is close to the search; threshold was chosen based on trial and error

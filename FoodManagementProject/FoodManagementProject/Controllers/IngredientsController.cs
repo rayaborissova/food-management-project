@@ -24,7 +24,7 @@ namespace FoodManagementProject.Controllers
             var ingredients = _context.Ingredients.Include(i => i.Category).AsQueryable();
             if (!string.IsNullOrWhiteSpace(search))
             { //if search is not null or a white space
-                search = search.Trim().ToLower();
+                search = IngredientNormalizer.Normalize(search);
                 //fuzzy search using the postgres extention pg_trgm
                 ingredients = ingredients.Where(i => i.IngredientNameNormalized.Contains(search) || EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, search) >= 0.17) // 0.17 was chosen based on the "chik" search, I wanted to output all chicken related ingredients
                     .OrderByDescending(i => EF.Functions.TrigramsSimilarity(i.IngredientNameNormalized, search));

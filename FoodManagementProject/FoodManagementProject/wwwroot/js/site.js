@@ -55,8 +55,8 @@ document.querySelectorAll('input[type="password"]').forEach(function (input) {
 
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "btn btn--outline btn--sm password-toggle";
-    button.textContent = "Show";
+    button.className = "password-toggle";
+    button.innerHTML = '<i class="ti ti-eye" aria-hidden=true></i>'; // adding an eye icon for password show/hide
     button.setAttribute("aria-label", "Show password");
     button.setAttribute("aria-pressed", "false");
 
@@ -64,10 +64,36 @@ document.querySelectorAll('input[type="password"]').forEach(function (input) {
         const show = input.type === "password";
         input.type = show ? "text" : "password";
         input.spellcheck = false;
-        button.textContent = show ? "Hide" : "Show";
+        button.querySelector("i").className = show ? "ti ti-eye-off" : "ti ti-eye"; // adding an eye icon for password show/hide
         button.setAttribute("aria-label", show ? "Hide password" : "Show password");
         button.setAttribute("aria-pressed", String(show));
     });
 
     wrapper.appendChild(button);
+});
+
+document.querySelectorAll(".password-rules").forEach(function (list) {
+    const input = document.getElementById(list.dataset.for);
+    if (!input) {
+        return;
+    }
+
+    const checks = {
+        length: function (value) { return value.length >= 8; },
+        letter: function (value) { return /[A-Za-z]/.test(value); },
+        number: function (value) { return /\d/.test(value); },
+        special: function (value) { return /[^A-Za-z\d]/.test(value); }
+    };
+
+    function updateRules() {
+        for (const item of list.querySelectorAll("li")) {
+            const met = checks[item.dataset.rule](input.value);
+            item.classList.toggle("is-met", met);
+            item.querySelector("i").className = met ? "ti ti-circle-check" : "ti ti-circle-x";
+        }
+    }
+
+    input.addEventListener("input", updateRules);
+    updateRules(); // so the sicks are rigth when the page reloads with an error
+
 });
